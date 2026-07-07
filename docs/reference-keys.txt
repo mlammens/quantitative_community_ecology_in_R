@@ -2,6 +2,8 @@ fig:nice-fig
 tab:nice-tab
 prerequisites
 intro
+short-course-description
+original-materials-from-template-below
 literature
 methods
 math-example

@@ -1,5 +1,16 @@
 # Introduction {#intro}
 
+## Short Course Description
+
+Participants will be introduced to fundamental and cutting-edge techniques in R that will enable them to answer important questions in community ecology. 
+The course will cover both basic and intermediate multivariate methods, such as calculating a variety of community diversity metrics, distance (dissimilarity) measures, transformations, ordination, clustering, indicator species analysis, tests for multivariate differences between groups, and data visualization. 
+We will also demonstrate how one might integrate phylogenetic and spatial information for community analysis. Interspersing short lectures with break-out groups, participants will use data provided by the course leaders to solve analytical problems using R [https://www.r-project.org/](https://www.r-project.org/), 
+an open-source statistical software widely and increasingly used by ecologists. Participants will be exposed to a variety of R packages for data clean-up and organization (tidyr, ggplot2) and multivariate analyses (vegan, betapart, labdsv, ade4, ecodist, ape, picante), and all data files, code, and supporting documents will be made available prior to the short course to enhance learning. 
+Although no prior experience in R is required to attend, participants with a basic statistical and community ecology background may find this course most beneficial. 
+We recommend, and will provide, a short R tutorial prior to attending for all participants who have not used R previously.
+
+## Original materials from template below
+
 You can label chapter and section titles using `{#label}` after them, e.g., we can reference Chapter \@ref(intro). If you do not manually label them, there will be automatic labels anyway, e.g., Chapter \@ref(methods).
 
 Figures and tables with captions will be placed in `figure` and `table` environments, respectively.

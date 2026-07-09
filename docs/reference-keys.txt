@@ -1,8 +1,10 @@
 fig:nice-fig
 tab:nice-tab
-prerequisites
-intro
+introduction
 short-course-description
+prereq
+software-needed
+get-the-data
 original-materials-from-template-below
 literature
 methods

@@ -30,6 +30,14 @@ snk <- capture.output(sapply(pkg, require, character.only = TRUE))
 source("https://github.com/mlammens/esa2025/raw/main/R/utils_color.R")
 ```
 
+## Get the data
+
+```{r get-dataset-gh, eval=FALSE}
+u <- 'https://github.com/mlammens/esa2025/raw/main/data/veg.rda'
+u <- url(u)
+load(u)
+```
+
 
 ## Original materials from template below
 

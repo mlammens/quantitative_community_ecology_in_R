@@ -8,6 +8,10 @@
 
 3\. Install packages (only once!)  
 
+After you've installed R and RStudio, copy and paste the code below into the RStudio console and hit enter. 
+This will install all of the packages in the list labeled `pkg`.
+You only need to do this once, but you may need to update packages in the future (especially if you update your R version).
+
 ```{r pkg-load-01, eval = FALSE}
 pkg <- c('vegan', 'betapart', 'labdsv', 'ade4', 'ecodist', 'ape', 'picante')
 install.packages(pkg)

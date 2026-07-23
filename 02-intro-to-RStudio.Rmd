@@ -78,7 +78,7 @@ Use the `help.search` function to search for something in statistics that you th
 
 ## R as a calculator
 
-We can use R just like any other calculator. Execute the commands below in the RStudio **Console** panel. After you write the code, press enter to execute it. **Note:** in most cases, *white space* (i.e., extra spaces) is ignored by R. So `3+5` and `3 + 5` result in identical output.
+We can use R just like any other calculator. Execute the commands below in the RStudio **Console** panel. After you write the code, press enter to execute it. **NOTE:** in most cases, *white space* (i.e., extra spaces) is ignored by R. So `3+5` and `3 + 5` result in identical output.
 
 ```{r}
 3 + 5
@@ -360,7 +360,7 @@ Check out
 * Looking at specific `data.frame` elements. Use *row* and *column* notation.
 
 Here is the 5th row, 3rd column (Site).
-**Note: We are using square brackets to index the `data.frame` and we *always* use [row, column] notation.**
+**NOTE: We are using square brackets to index the `data.frame` and we *always* use [row, column] notation.**
 
 ```{r}
 trait_data[5, 3]
@@ -393,7 +393,7 @@ trait_data$min_height[5]
 * Looking at all entries for a given row.
 
 Here's all the entries for the 5th row.
-**Note: here we leave the column part blank, but still add the comma.**
+**NOTE: here we leave the column part blank, but still add the comma.**
 
 ```{r}
 trait_data[5, ]
@@ -402,7 +402,7 @@ trait_data[5, ]
 * Looking at a set of rows and/or columns.
 
 Here's all the entries in the 5th through 10th rows, 5th through 7th columns.
-**Note: we use the `:` operator to look at a range of value.**
+**NOTE: we use the `:` operator to look at a range of value.**
 
 ```{r}
 trait_data[5:10, 5:7]
@@ -425,6 +425,29 @@ head(trait_data[c("species","min_height")])
 ```
 
 ***
+
+## Looking for missing elements
+
+Many analyses in quantiative community ecology rely on multivariate statistical approaches, such as PCA, RDA, and NMDS. These analyses require complete data sets, and will not work if there are missing values. Below we go through an example of how to search for and replace a missing value. **NOTE: data imputation (i.e., replacing missing values with approximate values) is an area of study all by itself and we will not be covering it here.**
+
+```{r missing-data}
+## create matrix object
+m <- matrix(c(1:8,NA), nrow=3, ncol=3) # a 3x3 matrix
+
+## identify missing values
+anyNA(m)
+is.na(m[1,1])
+is.na(m[2,2])
+is.na(m[3,3])
+is.na(m)
+
+na_matrix <- is.na(df)
+na_count <- sum(is.na(df))
+
+## replace missing values with the average of all values
+m[is.na(m)] <- mean(m, na.rm = TRUE)        # assign one value to any missing values
+
+```
 
 
 ## Basic data visualization

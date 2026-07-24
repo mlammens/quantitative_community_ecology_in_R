@@ -4,7 +4,7 @@
 
 Often times community ecology data is recorded in a set of tables that contain information on species presence/absence (or abundance) in plots, species trait values, environmental conditions of plots, and a phylogeny of the species.
 
-![matrices](./fig/mx_c.png)
+![Community ecology data tables](./fig/mx_c.png)
 
 
 ## Today's example data set - Mafragh, Algeria vegetation data
@@ -22,7 +22,7 @@ Specifically, `veg` is a list containing five items:
 
 ### Load the data
 
-While we went over how to read in data via a \*.csv file in \@ref(intro-to-RStudo), we will take advantage of the fact that our example data sets have already been read in to R and saved as a \*.rda object.
+While we went over how to read in data via a \*.csv file in Section \@ref(intro-to-RStudio), we will take advantage of the fact that our example data sets have already been read in to R and saved as a \*.rda object.
 The `veg.rda` object is a *list* object, with five elements. 
 Each element is one of the data tables we will need for our analyses.
 
@@ -41,7 +41,7 @@ ls()                    # list objects now in this local environment
 
 #### Challenge 
 
-Use the R functions and techniques covered in \@ref(intro-to-RStudio) to explore and examine the various data sets in the `veg` object. What information do you think each data table contains?
+Use the R functions and techniques covered in Section \@ref(intro-to-RStudio) to explore and examine the various data tables we just created from the `veg` object. What information do you think each data table contains?
 
 ***
 

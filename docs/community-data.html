@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Page not found | Quantitative Community Ecology in R</title>
+  <title>Chapter 4 Community Data | Quantitative Community Ecology in R</title>
   <meta name="description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Page not found | Quantitative Community Ecology in R" />
+  <meta property="og:title" content="Chapter 4 Community Data | Quantitative Community Ecology in R" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Page not found | Quantitative Community Ecology in R" />
+  <meta name="twitter:title" content="Chapter 4 Community Data | Quantitative Community Ecology in R" />
   
   <meta name="twitter:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-
-
+<link rel="prev" href="intro-to-RStudio.html"/>
+<link rel="next" href="applications.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -235,19 +235,80 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="page-not-found" class="section level1">
-<h1>Page not found</h1>
-<p>The page you requested cannot be found (perhaps it was moved or renamed).</p>
-<p>You may want to try searching to find the page's new location, or use
-the table of contents to find the page you are looking for.</p>
+<div id="community-data" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Community Data<a href="community-data.html#community-data" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="general-structure-of-community-ecology-data-sets" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> General structure of community ecology data sets<a href="community-data.html#general-structure-of-community-ecology-data-sets" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Often times community ecology data is recorded in a set of tables that contain information on species presence/absence (or abundance) in plots, species trait values, environmental conditions of plots, and a phylogeny of the species.</p>
+<div class="float">
+<img src="fig/mx_c.png" alt="Community ecology data tables" />
+<div class="figcaption">Community ecology data tables</div>
+</div>
+</div>
+<div id="todays-example-data-set---mafragh-algeria-vegetation-data" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Today’s example data set - Mafragh, Algeria vegetation data<a href="community-data.html#todays-example-data-set---mafragh-algeria-vegetation-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We will use one core dataset throughout this tutorial. The <code>veg</code> dataset gives information about spatial coordinates, species, environment, traits, and phylogeny for plants on the Mafragh coastal plain in North Africa.</p>
+<p>Specifically, <code>veg</code> is a list containing five items:</p>
+<ul>
+<li><code>xy</code> 97 observations of 2 spatial coordinates</li>
+<li><code>spe</code> 97 observations of 56 plant species</li>
+<li><code>env</code> 97 observations of 11 soil environmental variables</li>
+<li><code>tra</code> 12 traits for 56 plant species</li>
+<li><code>phy</code> phylogeny for 56 plant species</li>
+</ul>
+<div id="load-the-data" class="section level3 hasAnchor" number="4.2.1">
+<h3><span class="header-section-number">4.2.1</span> Load the data<a href="community-data.html#load-the-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>While we went over how to read in data via a *.csv file in Section <a href="intro-to-RStudio.html#intro-to-RStudio">3</a>, we will take advantage of the fact that our example data sets have already been read in to R and saved as a *.rda object.
+The <code>veg.rda</code> object is a <em>list</em> object, with five elements.
+Each element is one of the data tables we will need for our analyses.</p>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="community-data.html#cb105-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&#39;data/veg.rda&#39;</span>)  <span class="co"># load the object (contains multiple objects)</span></span>
+<span id="cb105-2"><a href="community-data.html#cb105-2" tabindex="-1"></a>xy  <span class="ot">&lt;-</span> veg<span class="sc">$</span>xy           <span class="co"># spatial</span></span>
+<span id="cb105-3"><a href="community-data.html#cb105-3" tabindex="-1"></a>spe <span class="ot">&lt;-</span> veg<span class="sc">$</span>spe          <span class="co"># species</span></span>
+<span id="cb105-4"><a href="community-data.html#cb105-4" tabindex="-1"></a>env <span class="ot">&lt;-</span> veg<span class="sc">$</span>env          <span class="co"># environment</span></span>
+<span id="cb105-5"><a href="community-data.html#cb105-5" tabindex="-1"></a>tra <span class="ot">&lt;-</span> veg<span class="sc">$</span>tra          <span class="co"># traits</span></span>
+<span id="cb105-6"><a href="community-data.html#cb105-6" tabindex="-1"></a>phy <span class="ot">&lt;-</span> veg<span class="sc">$</span>phy          <span class="co"># phylogeny</span></span>
+<span id="cb105-7"><a href="community-data.html#cb105-7" tabindex="-1"></a><span class="fu">rm</span>(veg)                 <span class="co"># cleanup</span></span>
+<span id="cb105-8"><a href="community-data.html#cb105-8" tabindex="-1"></a><span class="fu">ls</span>()                    <span class="co"># list objects now in this local environment</span></span></code></pre></div>
+<pre><code>## [1] &quot;env&quot; &quot;phy&quot; &quot;spe&quot; &quot;tra&quot; &quot;xy&quot;</code></pre>
+<hr />
+<div id="challenge-6" class="section level4 hasAnchor" number="4.2.1.1">
+<h4><span class="header-section-number">4.2.1.1</span> Challenge<a href="community-data.html#challenge-6" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Use the R functions and techniques covered in Section <a href="intro-to-RStudio.html#intro-to-RStudio">3</a> to explore and examine the various data tables we just created from the <code>veg</code> object. What information do you think each data table contains?</p>
+<hr />
+</div>
+</div>
+</div>
+<div id="study-area-description" class="section level2 hasAnchor" number="4.3">
+<h2><span class="header-section-number">4.3</span> Study area description<a href="community-data.html#study-area-description" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The Mafragh plain is in El Tarf Province of far northeast Algeria (36.84704, 7.945). According to documentation in R package <code>ade4</code>:</p>
+<blockquote>
+<p>This marshy coastal plain is a geomorphological feature, east of Port of Annaba, limited to the north by the Mediterranean Sea and a dune cordon, to the south by clay-sandstone Numidian massifs, to the west by a wadi and to East by an irrigated perimeter. It covers 15,000 ha of which 10,000 form the area of study.</p>
+</blockquote>
+<p>Potential human pressures include grazing, irrigation and salination, plowing, and housing development. Its Köppen climate type is “Csa: Hot-summer Mediterranean climate”.</p>
+</div>
+<div id="history-of-the-mafragh-dataset" class="section level2 hasAnchor" number="4.4">
+<h2><span class="header-section-number">4.4</span> History of the Mafragh dataset<a href="community-data.html#history-of-the-mafragh-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The data originate from the field studies of Prof. Gérard de Bélair of Annaba in northeast Algeria. Born in France, de Bélair became a missionary priest in 1969 shortly after Algeria’s independence, then an agronomist during the Agrarian Revolution, then a botanist, then professor, then conservationist (according to his on account <a href="https://www.visages-diocese-autun.fr/visage/de-belair-gerard/">https://www.visages-diocese-autun.fr/visage/de-belair-gerard/</a>). As of 2026, he continues to actively publish on the vegetation of northern Algeria.</p>
+<p>We should recognize the colonialist legacies that brought us here. France controlled Algeria from 1830 until its independence in 1962. Prior to that, Algeria was occupied by Ottoman Turks, Spaniards, Arab Muslims, Berber/Amazigh, Romans, Phoenicians, and prehistoric occupants dating to at least 1.8 million years ago. We may speculate that the region’s vegetation and cultural histories have been closely intertwined.</p>
+<p>The data were included in early versions of the ade4 software (Dray and Dufour 2007) which itself has its roots at Université Lyon 1, France. The present data are lightly modified from Appendix S4 of Pavoine et al. (2011), who also added a phylogeny.</p>
+</div>
+<div id="key-references" class="section level2 hasAnchor" number="4.5">
+<h2><span class="header-section-number">4.5</span> Key references<a href="community-data.html#key-references" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>de Bélair, G. 1981. Biogéographie et aménagement de la Plaine de la Mafragh (Annaba - Algérie) [Biogeography and development of the Mafragh Plain (Annaba, Algeria)]. Dissertation, Université Paul Valéry, Montpellier. <a href="http://www.sudoc.fr/00871262X" class="uri">http://www.sudoc.fr/00871262X</a></p>
+<p>de Bélair, G. 1990. Structure, fonctionnement et perspectives de gestion de quatre écocomplexes lacustres et marécageux (El Kala, Est-Algérien) [Structure, function and management perspectives of four lake and marsh eco-complexes (El Kala, East Algeria)]. Dissertation, Université des sciences et techniques de Montpellier 2. <a href="http://www.sudoc.fr/007729197" class="uri">http://www.sudoc.fr/007729197</a></p>
+<p>de Bélair, G. and M. Bencheikh-Lehocine. 1987. Composition et déterminisme de la végétation d’une plaine côtière marécageuse: La Mafragh (Annaba, Algérie) [Composition and determinism of the vegetation of a marshy coastal plain: La Mafragh (Annaba, Algeria)]. Bulletin d’Ecologie, 18(4): 393–407.</p>
+<p>Dray, S. and A. Dufour. 2007. The ade4 package: implementing the duality diagram for ecologists. Journal of Statistical Software 22(4): 1-20. <a href="doi:10.18637/jss.v022.i04" class="uri">doi:10.18637/jss.v022.i04</a></p>
+<p>Pavoine, S., Vela, E., Gachet, S., de Bélair, G. and Bonsall, M. B. 2011. Linking patterns in phylogeny, traits, abiotic variables and space: a novel approach to linking environmental filtering and plant community assembly. Journal of Ecology 99: 165–175. <a href="doi:10.1111/j.1365-2745.2010.01743.x" class="uri">doi:10.1111/j.1365-2745.2010.01743.x</a></p>
+
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-
-
+<a href="intro-to-RStudio.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="applications.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -278,7 +339,7 @@ gitbook.start({
     "size": 2
   },
   "edit": {
-    "link": "https://github.com/rstudio/bookdown-demo/edit/master/%s",
+    "link": "https://github.com/rstudio/bookdown-demo/edit/master/03-community-data.Rmd",
     "text": "Edit"
   },
   "history": {

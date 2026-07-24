@@ -1,4 +1,4 @@
-# Introduction to R and RStudio
+# Introduction to R and RStudio {#intro-to-RStudio}
 
 ## Learning Outcomes
 
@@ -548,4 +548,15 @@ ggplot(data = trait_data, aes(x = as.factor(perennial), y = max_height)) +
 #### Challenge
 
 Using R, read in a data file from your own research, look at the summary statistics for a few of the columns, and then make a plot of your own choosing.
+
+***
+
+## Clean up your work space
+
+It's good practice to keep your R work space (i.e., your **Environment**) tidy. 
+At this point in the lesson we can go ahed and remove all of the variables we created.
+
+```{r}
+rm(list = ls())
+```
 

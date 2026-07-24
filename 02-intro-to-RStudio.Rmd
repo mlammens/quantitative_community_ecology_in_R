@@ -428,7 +428,12 @@ head(trait_data[c("species","min_height")])
 
 ## Looking for missing elements
 
-Many analyses in quantiative community ecology rely on multivariate statistical approaches, such as PCA, RDA, and NMDS. These analyses require complete data sets, and will not work if there are missing values. Below we go through an example of how to search for and replace a missing value. **NOTE: data imputation (i.e., replacing missing values with approximate values) is an area of study all by itself and we will not be covering it here.**
+Many analyses in quantitative community ecology rely on multivariate statistical approaches, such as PCA, RDA, and NMDS. 
+These analyses require complete data sets, and will not work if there are missing values. 
+Below we go through an example of how to search for and replace a missing value. 
+
+> **NOTE:** data imputation (i.e., replacing missing values with approximate values) is an area of study all by itself and we will not be covering it here. We encourage you to look in to this topic on your own, but here is a primer that might be useful to start with -- [https://libguides.princeton.edu/R-Missingdata](https://libguides.princeton.edu/R-Missingdata).
+
 
 ```{r missing-data}
 ## create matrix object

@@ -1,5 +1,12 @@
 # Community Data
 
+## General structure of community ecology data sets
+
+Often times community ecology data is recorded in a set of tables that contain information on species presence/absence (or abundance) in plots, species trait values, environmental conditions of plots, and a phylogeny of the species.
+
+![matrices](./fig/mx_c.png)
+
+
 ## Today's example data set - Mafragh, Algeria vegetation data
 
 We will use one core dataset throughout this tutorial. The `veg` dataset gives information about spatial coordinates, species, environment, traits, and phylogeny for plants on the Mafragh coastal plain in North Africa. 

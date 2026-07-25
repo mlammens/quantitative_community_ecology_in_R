@@ -1,5 +1,10 @@
 # Data Transformations and Exploration {#data-transform}
 
+```{r, echo=FALSE}
+source("R/utils_color.R")
+```
+
+
 ## Why transform?
 
 Transforming data for the sake of meeting assumptions of statistical tests is a common practice in ecology.

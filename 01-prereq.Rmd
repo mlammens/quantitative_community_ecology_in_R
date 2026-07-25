@@ -30,9 +30,10 @@ snk <- capture.output(sapply(pkg, require, character.only = TRUE))
 
 5\. Load some utility functions  
 
-```{r source-utils, eval = FALSE}
-source("https://github.com/mlammens/esa2025/raw/main/R/utils_color.R")
+```{r source-utils, eval=FALSE}
+source("https://github.com/mlammens/quantitative_community_ecology_in_R/raw/main/R/utils_color.R")
 ```
+
 
 ## Get the data
 

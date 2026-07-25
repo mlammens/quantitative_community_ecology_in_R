@@ -1,8 +1,8 @@
-# Community Data
+# Community Data {#comm-data}
 
 ## General structure of community ecology data sets
 
-Often times community ecology data is recorded in a set of tables that contain information on species presence/absence (or abundance) in plots, species trait values, environmental conditions of plots, and a phylogeny of the species.
+Often times community ecology data are recorded in a set of tables that contain information on species presence/absence (or abundance) in plots, species trait values, environmental conditions of plots, and a phylogeny of the species.
 
 ![Community ecology data tables](./fig/mx_c.png)
 

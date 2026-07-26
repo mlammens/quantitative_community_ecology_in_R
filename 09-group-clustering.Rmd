@@ -1,4 +1,4 @@
-# Group clustering
+# Group clustering {#cluster}
 
 **How to group sites according to dissimilarity of community compositions?**
 

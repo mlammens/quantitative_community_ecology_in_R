@@ -79,7 +79,7 @@ what-metric-to-use
 partitioning-turnover-and-nestedness
 stepacross-adjustment
 key-references-3
-ordination-unconstrained
+ord_unconstrained
 the-three-major-unconstrained-ordination-methods
 challenge-9
 using-biplots-to-visalize-relationships-between-species-and-sites
@@ -93,8 +93,13 @@ pcoa-principal-coordinates-analysis
 pca-principal-components-analysis
 comparison-summary
 key-references-4
-ordination-constrained
+ord_constrained
 constrained-ordination-overview
 dbrda-the-community-analysis-swiss-army-knife
 visualizing-site-x-environment-relationships-with-rda-and-dbrda
 tri-plots---site-species-and-environmental-together
+key-references-5
+group-clustering
+hierarchical-wards-clustering
+non-hierarchical-fuzzy-clustering
+key-references-6

@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 7 Dissimilarities | Quantitative Community Ecology in R</title>
+  <title>Chapter 9 Ordination (constrained) | Quantitative Community Ecology in R</title>
   <meta name="description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 7 Dissimilarities | Quantitative Community Ecology in R" />
+  <meta property="og:title" content="Chapter 9 Ordination (constrained) | Quantitative Community Ecology in R" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="github-repo" content="mlammens/quantitative_community_ecology_in_R" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 7 Dissimilarities | Quantitative Community Ecology in R" />
+  <meta name="twitter:title" content="Chapter 9 Ordination (constrained) | Quantitative Community Ecology in R" />
   
   <meta name="twitter:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="diversity.html"/>
-<link rel="next" href="ord_unconstrained.html"/>
+<link rel="prev" href="ord_unconstrained.html"/>
+<link rel="next" href="group-clustering.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -295,102 +295,179 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="dissim" class="section level1 hasAnchor" number="7">
-<h1><span class="header-section-number">Chapter 7</span> Dissimilarities<a href="dissim.html#dissim" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p><strong><em>How dissimilar are community compositions among sites?</em></strong></p>
-<p>Dissimilarities among sites help us position sites along gradients, organize them into clusters, or distinguish differences among groups of sites.</p>
-<div id="dissimilarity-matrix-for-species" class="section level2 hasAnchor" number="7.1">
-<h2><span class="header-section-number">7.1</span> Dissimilarity matrix for species<a href="dissim.html#dissimilarity-matrix-for-species" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>We can create a pairwise dissimilarity matrix <code>D</code> based on shared and unshared species among sites.
-An easy way to calculate this matrix is to use the <code>vegdist</code> (i.e., vegetation distance) function in the <code>vegan</code> package.
-For the resulting dissimilarity values, high values = more dissimilar (different) and low values = more similar (same).</p>
-<p>Euclidean distance is probably the most intuitive dissimilarity metric, however it is seldom useful for species abundance data.
-Here we use the more preferable Bray-Curtis (Sørensen) dissimilarity.
-Legendre and Legendre (2012) give a full survey of existing distance/dissimilarity measures (there are many – in fact, the <code>vegdist</code> function includes 22 different dissimilarity methods!!).
-Also, checkout the help file for <code>vegdist</code> for lots of helpful information and references – <code>?vegdist</code>.</p>
-<p>As in Section <a href="data-transform.html#data-transform">5</a> we are using the <code>tabasco</code> function to create a heatmap of a matrix.
-Recall that darker colors indicate greater values, thus greater turn-over in this case.</p>
-<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="dissim.html#cb146-1" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="at">method=</span><span class="st">&#39;bray&#39;</span>, <span class="at">binary=</span>T)</span>
-<span id="cb146-2"><a href="dissim.html#cb146-2" tabindex="-1"></a><span class="fu">tabasco</span>(<span class="fu">as.matrix</span>(d), <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-55-1.png" width="672" /></p>
-<hr />
-<div id="challenge-8" class="section level4 hasAnchor" number="7.1.0.1">
-<h4><span class="header-section-number">7.1.0.1</span> Challenge<a href="dissim.html#challenge-8" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Why is the diagonal white (i.e., blank)?</p>
-<hr />
+<div id="ord_constrained" class="section level1 hasAnchor" number="9">
+<h1><span class="header-section-number">Chapter 9</span> Ordination (constrained)<a href="ord_constrained.html#ord_constrained" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><strong>How best to order sites by dissimilarities of community compositions, in response to measured environmental variables?</strong></p>
+<p>Constrained ordination addresses specific <em>a priori</em> hypotheses about variation in community compositions <em>attributable to measured environmental gradients</em>.
+It portrays only a fragment of all community variation, and is not used for exploratory analysis.</p>
+<div id="constrained-ordination-overview" class="section level2 hasAnchor" number="9.1">
+<h2><span class="header-section-number">9.1</span> Constrained ordination overview<a href="ord_constrained.html#constrained-ordination-overview" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Important and common constrained ordination tools include redundancy analysis (RDA; constrained PCA), canonical correspondence analysis (CCA), distance-based RDA (dbRDA, McArdle and Anderson 2001), and fuzzy set ordination (FSO, Roberts 2008).
+dbRDA and FSO both let the user select their own dissimilarity measure.
+Other methods (redundancy analysis or constrained correspondence analysis) force an implicit dissimilarity measure and make linearity/distributional assumptions.
+The table below shows connections/analogs between unconstrained and constrained ordination methods.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Unconstrained</th>
+<th>Constrained</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Linear / Euclidean</td>
+<td>PCA</td>
+<td>RDA</td>
+</tr>
+<tr class="even">
+<td>Unimodal / Chi-square</td>
+<td>CA</td>
+<td>CCA</td>
+</tr>
+<tr class="odd">
+<td>Distance-based</td>
+<td>PCoA</td>
+<td>dbRDA</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="what-metric-to-use" class="section level3 hasAnchor" number="7.1.1">
-<h3><span class="header-section-number">7.1.1</span> What metric to use?<a href="dissim.html#what-metric-to-use" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The specific measure used might depend on your particular ecological question, your data collection methods, or on the variable types you are working with.</p>
-<p><strong>Jaccard</strong> - focuses on shared species, using presence-absence data only. Range 0-1.</p>
-<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="dissim.html#cb147-1" tabindex="-1"></a>jaccard <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="at">method =</span> <span class="st">&quot;jaccard&quot;</span>)</span></code></pre></div>
-<p><strong>Bray-Curtis</strong> - considers species composition and abundance. Range 0-1.</p>
-<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="dissim.html#cb148-1" tabindex="-1"></a>bray_curtis <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="at">method =</span> <span class="st">&quot;bray&quot;</span>)</span></code></pre></div>
-<p><strong>Gower</strong> - measures general dissimilarity and can be used with continuous, ordinal, or categorical data. This makes it particularly useful when calculating dissimilarities among plots with mixed environmental variable types or among species with mixed trait variable types.</p>
-<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="dissim.html#cb149-1" tabindex="-1"></a>gower <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(tra, <span class="at">method =</span> <span class="st">&quot;gower&quot;</span>)</span></code></pre></div>
+<div id="dbrda-the-community-analysis-swiss-army-knife" class="section level2 hasAnchor" number="9.2">
+<h2><span class="header-section-number">9.2</span> <code>dbRDA</code> – the community analysis Swiss army knife<a href="ord_constrained.html#dbrda-the-community-analysis-swiss-army-knife" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The dbRDA method, implemented in <code>vegan</code> with the <code>dbrda</code> function, is very versatile and can yield all of the ordination analyses we’ve been discussing based on how it is parameterized and the distance matrix used.
+However, using the <code>dbrda</code> function may limit the use of some useful plotting functions, as we’ll see when we make tri-plots below.</p>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="ord_constrained.html#cb187-1" tabindex="-1"></a><span class="do">## Define multiple different dissimilarity matrices</span></span>
+<span id="cb187-2"><a href="ord_constrained.html#cb187-2" tabindex="-1"></a>D_euc  <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="st">&#39;euc&#39;</span>)  <span class="co"># Euclidean</span></span>
+<span id="cb187-3"><a href="ord_constrained.html#cb187-3" tabindex="-1"></a>D_chi  <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="st">&#39;chi&#39;</span>)  <span class="co"># Chi-sq</span></span>
+<span id="cb187-4"><a href="ord_constrained.html#cb187-4" tabindex="-1"></a>D_bc   <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="st">&#39;bray&#39;</span>) <span class="co"># Bray-Curtis (Sorensen)</span></span>
+<span id="cb187-5"><a href="ord_constrained.html#cb187-5" tabindex="-1"></a></span>
+<span id="cb187-6"><a href="ord_constrained.html#cb187-6" tabindex="-1"></a><span class="do">### PCA: PCO based on Euclidean distances (see `stats::prcomp`)</span></span>
+<span id="cb187-7"><a href="ord_constrained.html#cb187-7" tabindex="-1"></a>pca <span class="ot">&lt;-</span> <span class="fu">dbrda</span>(D_euc <span class="sc">~</span> <span class="dv">1</span>)</span>
+<span id="cb187-8"><a href="ord_constrained.html#cb187-8" tabindex="-1"></a></span>
+<span id="cb187-9"><a href="ord_constrained.html#cb187-9" tabindex="-1"></a><span class="do">### CA/RA (correspondence analysis): PCO based on Chi-sq distances (see `vegan::cca`)</span></span>
+<span id="cb187-10"><a href="ord_constrained.html#cb187-10" tabindex="-1"></a>ca  <span class="ot">&lt;-</span> <span class="fu">dbrda</span>(D_chi <span class="sc">~</span> <span class="dv">1</span>)</span>
+<span id="cb187-11"><a href="ord_constrained.html#cb187-11" tabindex="-1"></a></span>
+<span id="cb187-12"><a href="ord_constrained.html#cb187-12" tabindex="-1"></a><span class="do">### PCoA: generalizes to any dissimilarity (see `labdsv::pco`)</span></span>
+<span id="cb187-13"><a href="ord_constrained.html#cb187-13" tabindex="-1"></a>pco <span class="ot">&lt;-</span> <span class="fu">dbrda</span>(D_bc  <span class="sc">~</span> <span class="dv">1</span>)</span>
+<span id="cb187-14"><a href="ord_constrained.html#cb187-14" tabindex="-1"></a></span>
+<span id="cb187-15"><a href="ord_constrained.html#cb187-15" tabindex="-1"></a><span class="do">### RDA: constrained form of PCA (see `vegan::rda`)</span></span>
+<span id="cb187-16"><a href="ord_constrained.html#cb187-16" tabindex="-1"></a>rda <span class="ot">&lt;-</span> <span class="fu">dbrda</span>(D_euc <span class="sc">~</span> k2o <span class="sc">+</span> mg, <span class="at">data =</span> env)</span>
+<span id="cb187-17"><a href="ord_constrained.html#cb187-17" tabindex="-1"></a></span>
+<span id="cb187-18"><a href="ord_constrained.html#cb187-18" tabindex="-1"></a><span class="do">### CCA: constrained form of CA (see `vegan::cca`)</span></span>
+<span id="cb187-19"><a href="ord_constrained.html#cb187-19" tabindex="-1"></a>cca <span class="ot">&lt;-</span> <span class="fu">dbrda</span>(D_chi <span class="sc">~</span> k2o <span class="sc">+</span> mg, <span class="at">data =</span> env)</span>
+<span id="cb187-20"><a href="ord_constrained.html#cb187-20" tabindex="-1"></a></span>
+<span id="cb187-21"><a href="ord_constrained.html#cb187-21" tabindex="-1"></a><span class="do">### dbRDA: constrained form of PCO; `lingoes` makes so can handle neg eigenvalues</span></span>
+<span id="cb187-22"><a href="ord_constrained.html#cb187-22" tabindex="-1"></a>dbr <span class="ot">&lt;-</span> <span class="fu">dbrda</span>(D_bc  <span class="sc">~</span> k2o <span class="sc">+</span> mg, <span class="at">data =</span> env, <span class="at">add =</span> <span class="st">&#39;lingoes&#39;</span>)</span></code></pre></div>
+<p>Visualize all of the methods together.</p>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="ord_constrained.html#cb188-1" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb188-2"><a href="ord_constrained.html#cb188-2" tabindex="-1"></a></span>
+<span id="cb188-3"><a href="ord_constrained.html#cb188-3" tabindex="-1"></a>u <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">NROW</span>(spe)</span>
+<span id="cb188-4"><a href="ord_constrained.html#cb188-4" tabindex="-1"></a></span>
+<span id="cb188-5"><a href="ord_constrained.html#cb188-5" tabindex="-1"></a>plot_ord <span class="ot">&lt;-</span> <span class="cf">function</span>(ord, xlab, ylab) {</span>
+<span id="cb188-6"><a href="ord_constrained.html#cb188-6" tabindex="-1"></a></span>
+<span id="cb188-7"><a href="ord_constrained.html#cb188-7" tabindex="-1"></a>  sc <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(vegan<span class="sc">::</span><span class="fu">scores</span>(ord, <span class="at">display =</span> <span class="st">&quot;sites&quot;</span>))</span>
+<span id="cb188-8"><a href="ord_constrained.html#cb188-8" tabindex="-1"></a></span>
+<span id="cb188-9"><a href="ord_constrained.html#cb188-9" tabindex="-1"></a>  <span class="fu">names</span>(sc)[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Axis1&quot;</span>, <span class="st">&quot;Axis2&quot;</span>)</span>
+<span id="cb188-10"><a href="ord_constrained.html#cb188-10" tabindex="-1"></a>  sc<span class="sc">$</span>id <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(sc))</span>
+<span id="cb188-11"><a href="ord_constrained.html#cb188-11" tabindex="-1"></a></span>
+<span id="cb188-12"><a href="ord_constrained.html#cb188-12" tabindex="-1"></a>  <span class="fu">ggplot</span>(sc, <span class="fu">aes</span>(Axis1, Axis2)) <span class="sc">+</span></span>
+<span id="cb188-13"><a href="ord_constrained.html#cb188-13" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> id, <span class="at">color =</span> id)) <span class="sc">+</span></span>
+<span id="cb188-14"><a href="ord_constrained.html#cb188-14" tabindex="-1"></a>    <span class="fu">scale_color_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb188-15"><a href="ord_constrained.html#cb188-15" tabindex="-1"></a>    <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
+<span id="cb188-16"><a href="ord_constrained.html#cb188-16" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> xlab, <span class="at">y =</span> ylab) <span class="sc">+</span></span>
+<span id="cb188-17"><a href="ord_constrained.html#cb188-17" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb188-18"><a href="ord_constrained.html#cb188-18" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb188-19"><a href="ord_constrained.html#cb188-19" tabindex="-1"></a>      <span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span></span>
+<span id="cb188-20"><a href="ord_constrained.html#cb188-20" tabindex="-1"></a>    )</span>
+<span id="cb188-21"><a href="ord_constrained.html#cb188-21" tabindex="-1"></a>}</span>
+<span id="cb188-22"><a href="ord_constrained.html#cb188-22" tabindex="-1"></a></span>
+<span id="cb188-23"><a href="ord_constrained.html#cb188-23" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">plot_ord</span>(pca, <span class="st">&quot;PCA1&quot;</span>,   <span class="st">&quot;PCA2&quot;</span>)</span>
+<span id="cb188-24"><a href="ord_constrained.html#cb188-24" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">plot_ord</span>(ca,  <span class="st">&quot;CA1&quot;</span>,    <span class="st">&quot;CA2&quot;</span>)</span>
+<span id="cb188-25"><a href="ord_constrained.html#cb188-25" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">plot_ord</span>(pco, <span class="st">&quot;PCoA1&quot;</span>,  <span class="st">&quot;PCoA2&quot;</span>)</span>
+<span id="cb188-26"><a href="ord_constrained.html#cb188-26" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">plot_ord</span>(rda, <span class="st">&quot;RDA1&quot;</span>,   <span class="st">&quot;RDA2&quot;</span>)</span>
+<span id="cb188-27"><a href="ord_constrained.html#cb188-27" tabindex="-1"></a>p5 <span class="ot">&lt;-</span> <span class="fu">plot_ord</span>(cca, <span class="st">&quot;CCA1&quot;</span>,   <span class="st">&quot;CCA2&quot;</span>)</span>
+<span id="cb188-28"><a href="ord_constrained.html#cb188-28" tabindex="-1"></a>p6 <span class="ot">&lt;-</span> <span class="fu">plot_ord</span>(dbr, <span class="st">&quot;dbRDA1&quot;</span>, <span class="st">&quot;dbRDA2&quot;</span>)</span>
+<span id="cb188-29"><a href="ord_constrained.html#cb188-29" tabindex="-1"></a></span>
+<span id="cb188-30"><a href="ord_constrained.html#cb188-30" tabindex="-1"></a>(p1 <span class="sc">|</span> p2 <span class="sc">|</span> p3) <span class="sc">/</span></span>
+<span id="cb188-31"><a href="ord_constrained.html#cb188-31" tabindex="-1"></a>(p4 <span class="sc">|</span> p5 <span class="sc">|</span> p6)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-74-1.png" width="672" /></p>
+<p><strong>What do we see here?</strong></p>
+<p>The dominant ecological gradient is sufficiently strong that it is recovered regardless of ordination method.
+Unconstrained methods (PCA, CA, PCoA) and constrained methods (RDA, CCA, dbRDA) all reveal a similar separation of sites, indicating that the major pattern in community composition is robust and is strongly associated with the environmental variables included in the constrained analyses.</p>
+</div>
+<div id="visualizing-site-x-environment-relationships-with-rda-and-dbrda" class="section level2 hasAnchor" number="9.3">
+<h2><span class="header-section-number">9.3</span> Visualizing site X environment relationships with RDA and dbRDA<a href="ord_constrained.html#visualizing-site-x-environment-relationships-with-rda-and-dbrda" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="ord_constrained.html#cb189-1" tabindex="-1"></a><span class="co"># color vector for plotting</span></span>
+<span id="cb189-2"><a href="ord_constrained.html#cb189-2" tabindex="-1"></a>u <span class="ot">&lt;-</span> <span class="fu">get_palette</span>()</span>
+<span id="cb189-3"><a href="ord_constrained.html#cb189-3" tabindex="-1"></a>u <span class="ot">&lt;-</span> u[<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(spe)]</span>
+<span id="cb189-4"><a href="ord_constrained.html#cb189-4" tabindex="-1"></a></span>
+<span id="cb189-5"><a href="ord_constrained.html#cb189-5" tabindex="-1"></a><span class="fu">plot</span>(rda, <span class="at">type =</span> <span class="st">&quot;n&quot;</span>, <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb189-6"><a href="ord_constrained.html#cb189-6" tabindex="-1"></a><span class="co"># site coordinates</span></span>
+<span id="cb189-7"><a href="ord_constrained.html#cb189-7" tabindex="-1"></a>site_scores <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">scores</span>(rda, <span class="at">display =</span> <span class="st">&quot;sites&quot;</span>, <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb189-8"><a href="ord_constrained.html#cb189-8" tabindex="-1"></a><span class="co"># site labels with color gradient</span></span>
+<span id="cb189-9"><a href="ord_constrained.html#cb189-9" tabindex="-1"></a><span class="fu">text</span>(site_scores,</span>
+<span id="cb189-10"><a href="ord_constrained.html#cb189-10" tabindex="-1"></a>     <span class="at">labels =</span> <span class="fu">rownames</span>(site_scores),</span>
+<span id="cb189-11"><a href="ord_constrained.html#cb189-11" tabindex="-1"></a>     <span class="at">col =</span> u)</span>
+<span id="cb189-12"><a href="ord_constrained.html#cb189-12" tabindex="-1"></a><span class="co"># environmental vectors</span></span>
+<span id="cb189-13"><a href="ord_constrained.html#cb189-13" tabindex="-1"></a><span class="fu">text</span>(rda,</span>
+<span id="cb189-14"><a href="ord_constrained.html#cb189-14" tabindex="-1"></a>     <span class="at">display =</span> <span class="st">&quot;bp&quot;</span>,</span>
+<span id="cb189-15"><a href="ord_constrained.html#cb189-15" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">&quot;red&quot;</span>,</span>
+<span id="cb189-16"><a href="ord_constrained.html#cb189-16" tabindex="-1"></a>     <span class="at">scaling =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-75-1.png" width="672" /></p>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="ord_constrained.html#cb190-1" tabindex="-1"></a><span class="fu">plot</span>(dbr, <span class="at">type =</span> <span class="st">&quot;n&quot;</span>, <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb190-2"><a href="ord_constrained.html#cb190-2" tabindex="-1"></a><span class="co"># site coordinates</span></span>
+<span id="cb190-3"><a href="ord_constrained.html#cb190-3" tabindex="-1"></a>site_scores <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">scores</span>(dbr, <span class="at">display =</span> <span class="st">&quot;sites&quot;</span>, <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb190-4"><a href="ord_constrained.html#cb190-4" tabindex="-1"></a><span class="co"># site labels with color gradient</span></span>
+<span id="cb190-5"><a href="ord_constrained.html#cb190-5" tabindex="-1"></a><span class="fu">text</span>(site_scores,</span>
+<span id="cb190-6"><a href="ord_constrained.html#cb190-6" tabindex="-1"></a>     <span class="at">labels =</span> <span class="fu">rownames</span>(site_scores),</span>
+<span id="cb190-7"><a href="ord_constrained.html#cb190-7" tabindex="-1"></a>     <span class="at">col =</span> u)</span>
+<span id="cb190-8"><a href="ord_constrained.html#cb190-8" tabindex="-1"></a><span class="co"># environmental vectors</span></span>
+<span id="cb190-9"><a href="ord_constrained.html#cb190-9" tabindex="-1"></a><span class="fu">text</span>(dbr,</span>
+<span id="cb190-10"><a href="ord_constrained.html#cb190-10" tabindex="-1"></a>     <span class="at">display =</span> <span class="st">&quot;bp&quot;</span>,</span>
+<span id="cb190-11"><a href="ord_constrained.html#cb190-11" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">&quot;red&quot;</span>,</span>
+<span id="cb190-12"><a href="ord_constrained.html#cb190-12" tabindex="-1"></a>     <span class="at">scaling =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-76-1.png" width="672" /></p>
+<p><strong>What do we see?</strong></p>
+<p>The RDA and dbRDA ordinations produce very similar site configurations, indicating that the constrained community pattern associated with mg and k2o is robust to the ordination approach. In both analyses, mg is associated with sites positioned high on the second axis, whereas k2o is associated with sites positioned toward the lower-right portion of the ordination, suggesting that these variables represent distinct environmental gradients related to community composition.</p>
+<div id="tri-plots---site-species-and-environmental-together" class="section level3 hasAnchor" number="9.3.1">
+<h3><span class="header-section-number">9.3.1</span> Tri-plots - site, species, and environmental together<a href="ord_constrained.html#tri-plots---site-species-and-environmental-together" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Let’s add the species scores to the RDA plots.</p>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="ord_constrained.html#cb191-1" tabindex="-1"></a>rda_mod <span class="ot">&lt;-</span> <span class="fu">rda</span>(<span class="fu">decostand</span>(spe, <span class="st">&quot;hellinger&quot;</span>) <span class="sc">~</span> k2o <span class="sc">+</span> mg, <span class="at">data =</span> env)</span>
+<span id="cb191-2"><a href="ord_constrained.html#cb191-2" tabindex="-1"></a><span class="co">#rda_mod &lt;- rda(spe ~ k2o + mg, data = env)</span></span>
+<span id="cb191-3"><a href="ord_constrained.html#cb191-3" tabindex="-1"></a></span>
+<span id="cb191-4"><a href="ord_constrained.html#cb191-4" tabindex="-1"></a><span class="do">## Scaling = 2</span></span>
+<span id="cb191-5"><a href="ord_constrained.html#cb191-5" tabindex="-1"></a><span class="fu">plot</span>(rda_mod, <span class="at">type =</span> <span class="st">&quot;n&quot;</span>, <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb191-6"><a href="ord_constrained.html#cb191-6" tabindex="-1"></a><span class="co"># site scores</span></span>
+<span id="cb191-7"><a href="ord_constrained.html#cb191-7" tabindex="-1"></a>site_scores <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">scores</span>(rda_mod,</span>
+<span id="cb191-8"><a href="ord_constrained.html#cb191-8" tabindex="-1"></a>                      <span class="at">display =</span> <span class="st">&quot;sites&quot;</span>,</span>
+<span id="cb191-9"><a href="ord_constrained.html#cb191-9" tabindex="-1"></a>                      <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb191-10"><a href="ord_constrained.html#cb191-10" tabindex="-1"></a><span class="co"># colored site labels</span></span>
+<span id="cb191-11"><a href="ord_constrained.html#cb191-11" tabindex="-1"></a><span class="fu">text</span>(site_scores,</span>
+<span id="cb191-12"><a href="ord_constrained.html#cb191-12" tabindex="-1"></a>     <span class="at">labels =</span> <span class="fu">rownames</span>(spe),</span>
+<span id="cb191-13"><a href="ord_constrained.html#cb191-13" tabindex="-1"></a>     <span class="at">col =</span> u)</span>
+<span id="cb191-14"><a href="ord_constrained.html#cb191-14" tabindex="-1"></a><span class="co"># species labels</span></span>
+<span id="cb191-15"><a href="ord_constrained.html#cb191-15" tabindex="-1"></a><span class="fu">text</span>(rda_mod,</span>
+<span id="cb191-16"><a href="ord_constrained.html#cb191-16" tabindex="-1"></a>     <span class="at">display =</span> <span class="st">&quot;species&quot;</span>,</span>
+<span id="cb191-17"><a href="ord_constrained.html#cb191-17" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">&quot;black&quot;</span>,</span>
+<span id="cb191-18"><a href="ord_constrained.html#cb191-18" tabindex="-1"></a>     <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb191-19"><a href="ord_constrained.html#cb191-19" tabindex="-1"></a><span class="co"># environmental vectors</span></span>
+<span id="cb191-20"><a href="ord_constrained.html#cb191-20" tabindex="-1"></a><span class="fu">text</span>(rda_mod,</span>
+<span id="cb191-21"><a href="ord_constrained.html#cb191-21" tabindex="-1"></a>     <span class="at">display =</span> <span class="st">&quot;bp&quot;</span>,</span>
+<span id="cb191-22"><a href="ord_constrained.html#cb191-22" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">&quot;red&quot;</span>,</span>
+<span id="cb191-23"><a href="ord_constrained.html#cb191-23" tabindex="-1"></a>     <span class="at">scaling =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-77-1.png" width="672" /></p>
+<p><strong>What do we see?</strong></p>
+<p>The environment X site relations are the same as what we saw above.
+With respect to the species, we see many species cluster around the origin, meaning they are not strongly associated with the first two constrained axes.
+Being specific, <em>Sarcocornia fruticosa</em> appears to be positively associated with the environmental gradient represented by Mg and tends to occur in sites with relatively high Mg values.
+<em>Aeluropus littoralis</em> is the only other species that clearly stands out in the ordination and appears associated with the opposite end of the Mg-related gradient from <em>S. fruticosa</em>.</p>
 </div>
 </div>
-<div id="partitioning-turnover-and-nestedness" class="section level2 hasAnchor" number="7.2">
-<h2><span class="header-section-number">7.2</span> Partitioning turnover and nestedness<a href="dissim.html#partitioning-turnover-and-nestedness" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p><strong>Turnover</strong> is related to species replacement across sites (or time)</p>
-<p><strong>Nestedness</strong> is the proportion of species that are subset of the species that occur at another site (or time period). In other words, are the species at one site found in another site?</p>
-<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="dissim.html#cb150-1" tabindex="-1"></a><span class="co"># Calculate beta diversity (Uniqueness and Nestedness)</span></span>
-<span id="cb150-2"><a href="dissim.html#cb150-2" tabindex="-1"></a>spe_pa <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">decostand</span>(spe, <span class="at">method =</span> <span class="st">&quot;pa&quot;</span>)</span>
-<span id="cb150-3"><a href="dissim.html#cb150-3" tabindex="-1"></a>beta_diversity <span class="ot">&lt;-</span> betapart<span class="sc">::</span><span class="fu">beta.pair</span>(spe_pa)</span></code></pre></div>
-<p><strong>There are three items in the list output:</strong></p>
-<p><strong>beta.sim</strong>: turnover component; represents dissimilarity due to species turnover/replacement. High SIM suggests species replacement is a main driver of site differences (not richness)</p>
-<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="dissim.html#cb151-1" tabindex="-1"></a><span class="fu">tabasco</span>(<span class="fu">as.matrix</span>(beta_diversity<span class="sc">$</span>beta.sim), <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
-<p><strong>beta.sne</strong>: nestedness component; represents dissimilarity due to shared species or richness differences. High SNE suggests species loss and nestedness (richness differences) are main drivers of site differences.</p>
-<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb152-1"><a href="dissim.html#cb152-1" tabindex="-1"></a><span class="fu">tabasco</span>(<span class="fu">as.matrix</span>(beta_diversity<span class="sc">$</span>beta.sne), <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-61-1.png" width="672" /></p>
-<p><strong>beta.sor</strong>: total dissimilarity, using Sorenson or Jaccard dissimilarity</p>
-<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="dissim.html#cb153-1" tabindex="-1"></a><span class="fu">tabasco</span>(<span class="fu">as.matrix</span>(beta_diversity<span class="sc">$</span>beta.sor), <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-62-1.png" width="672" /></p>
-</div>
-<div id="stepacross-adjustment" class="section level2 hasAnchor" number="7.3">
-<h2><span class="header-section-number">7.3</span> Stepacross adjustment<a href="dissim.html#stepacross-adjustment" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Sometimes a pair of sites are “maximally dissimilar”: they share no species at all, so pairwise dissimilarity is impossible to quantify using a proportional measure (e.g., Bray-Curtis).
-Stepacross adjustment solves this by linking “no-share” sites with intermediate site(s) that share at least some species in common.
-<em>Why should we be concerned about this?</em>
-As datasets become sparse (many zeros), large numbers of site pairs end up with Bray–Curtis = 1. This causes an accumulation of ties and a loss of information about the underlying ecological gradient.
-Smith (2017) describes other possible solutions.</p>
-<p>Here’s a “toy-example” of the issue:</p>
-<p>How dissimilar are SUs A and C? They share no species in common…</p>
-<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="dissim.html#cb154-1" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>, <span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>, <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="at">nrow=</span><span class="dv">3</span>, <span class="at">byrow=</span>T), </span>
-<span id="cb154-2"><a href="dissim.html#cb154-2" tabindex="-1"></a>                <span class="at">row.names=</span><span class="fu">paste0</span>(<span class="st">&#39;su&#39;</span>,<span class="fu">c</span>(<span class="st">&#39;A&#39;</span>,<span class="st">&#39;B&#39;</span>,<span class="st">&#39;C&#39;</span>)))</span>
-<span id="cb154-3"><a href="dissim.html#cb154-3" tabindex="-1"></a><span class="fu">names</span>(m) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&#39;sp&#39;</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
-<span id="cb154-4"><a href="dissim.html#cb154-4" tabindex="-1"></a>m</span></code></pre></div>
-<pre><code>##     sp1 sp2 sp3 sp4 sp5
-## suA   1   1   0   0   0
-## suB   0   1   1   1   0
-## suC   0   0   0   1   1</code></pre>
-<p>…Bray-Curtis will max out at 1.0…</p>
-<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="dissim.html#cb156-1" tabindex="-1"></a><span class="fu">vegdist</span>(m, <span class="st">&#39;bray&#39;</span>)</span></code></pre></div>
-<pre><code>##     suA suB
-## suB 0.6    
-## suC 1.0 0.6</code></pre>
-<p>…but <code>stepacross()</code> replaces “too long” distances with shortest path.</p>
-<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="dissim.html#cb158-1" tabindex="-1"></a>sa <span class="ot">&lt;-</span> <span class="fu">stepacross</span>(<span class="fu">vegdist</span>(m, <span class="st">&#39;bray&#39;</span>))</span></code></pre></div>
-<pre><code>## Too long or NA distances: 1 out of 3 (33.3%)
-## Stepping across 3 dissimilarities...</code></pre>
-<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="dissim.html#cb160-1" tabindex="-1"></a>sa</span></code></pre></div>
-<pre><code>##     suA suB
-## suB 0.6    
-## suC 1.2 0.6</code></pre>
-<p>Visually we can think of this as the figure below:</p>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-63-1.png" width="672" /></p>
-<p>And here we show what happens when we use the <code>stepacross</code> function on our Mafragh data set.</p>
-<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="dissim.html#cb162-1" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="fu">stepacross</span>(d, <span class="st">&#39;shortest&#39;</span>, <span class="at">toolong =</span> <span class="dv">1</span>)</span></code></pre></div>
-<pre><code>## Too long or NA distances: 2055 out of 4656 (44.1%)
-## Stepping across 4656 dissimilarities...</code></pre>
-<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="dissim.html#cb164-1" tabindex="-1"></a><span class="fu">plot</span>(d, D, <span class="at">xlab =</span> <span class="st">&#39;Original&#39;</span>, <span class="at">ylab =</span> <span class="st">&#39;Stepacross&#39;</span>)</span></code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-64-1.png" width="672" /></p>
-</div>
-<div id="key-references-3" class="section level2 hasAnchor" number="7.4">
-<h2><span class="header-section-number">7.4</span> Key references<a href="dissim.html#key-references-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Legendre, P., and L. Legendre. 2012. Numerical Ecology. Volume 24, Third Edition. Elsevier.</p>
-<p>Smith, R.J. 2017. Solutions for loss of information in high-beta-diversity community data. Methods in Ecology and Evolution 8:68–74.</p>
+<div id="key-references-5" class="section level2 hasAnchor" number="9.4">
+<h2><span class="header-section-number">9.4</span> Key references<a href="ord_constrained.html#key-references-5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>McArdle, B.H. &amp; Anderson, M.J. 2001. Fitting multivariate models to community data: a comment on distance-based redundancy analysis. Ecology 82: 290-297.</p>
+<p>Roberts, D.W. 2008. Statistical analysis of multidimensional fuzzy set ordinations. Ecology 89: 1246-1260.</p>
 
 </div>
 </div>
@@ -399,8 +476,8 @@ Smith (2017) describes other possible solutions.</p>
           </div>
         </div>
       </div>
-<a href="diversity.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="ord_unconstrained.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="ord_unconstrained.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="group-clustering.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -431,7 +508,7 @@ gitbook.start({
     "size": 2
   },
   "edit": {
-    "link": "https://github.com/rstudio/bookdown-demo/edit/master/06-dissimilarities.Rmd",
+    "link": "https://github.com/rstudio/bookdown-demo/edit/master/08-ordination-constrained.Rmd",
     "text": "Edit"
   },
   "history": {

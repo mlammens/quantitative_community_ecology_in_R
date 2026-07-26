@@ -1,0 +1,79 @@
+# Group differences {#grp_diffs}
+
+**Do community compositions significantly differ among groups?**
+
+Let’s assume PERMANOVA is the best choice for comparing groups in multivariate space. Other methods (ANOSIM, MRPP) exist, but PERMANOVA usually has better power and false-detection rates, even when groups may have different dispersions (Anderson and Walsh 2013) among other operational advantages.
+
+> **PERMANOVA** (Permutational Multivariate Analysis of Variance) tests whether the composition of groups differs in multivariate space based on a dissimilarity matrix (e.g., Bray-Curtis). It is analogous to ANOVA for community data and uses permutations rather than normality assumptions to assess statistical significance.
+
+```{r}
+## Recall in unconstrained ordination section
+m1 <- metaMDS(D, k=2, maxit=250, try=100, trymax=101, trace=0) # NMDS
+
+### define and visualize four groups
+brk     <- quantile(env$k, probs=seq(0,1,by=0.25))   # define breaks
+grp_k <- cut(env$k, brk, include.lowest=T,
+               labels=c('lo','med','hi','veryhi'))   # group memberships
+table(grp_k, useNA='always')                       # group tally
+tapply(env$k, INDEX = grp_k, FUN = mean)           # group means
+plot(m1$points, pch=NA)                              # visualize on the NMS
+text(m1$points, labels=grp_k, col=as.numeric(grp_k)) # group memberships
+ordispider(m1, groups=grp_k, col=1:4)              # group centroids 
+```
+
+**What do we see?**
+
+Grouping sites into quartiles of k shows that community composition varies along a k gradient in NMDS space. 
+Low-k sites tend to occur toward the left side of the ordination, whereas very high-k sites are concentrated toward the right, suggesting that k is associated with the dominant compositional gradient.
+We can actually compare this to the NMDS plots created with environmental gradients in **Section** \@ref{ord_unconstrained} and see this pattern as well.
+
+
+## Test for difference in community compositions
+
+PERMANOVA tests for differences in multivariate centroids, in the space of the chosen dissimilarity measure. 
+Recall that matrix D was our matrix of pairwise Bray-Curtis dissimilarities.
+
+```{r}
+### permanova: test for differences in multivariate *centroid*
+a1 <- adonis2(D ~ grp_k, permu=999)
+a1
+```
+
+**How do we interpret this result?** 
+
+Based on Bray-Curtis dissimilarities, four groups defined by soil potassium significantly differed in community compositions (PERMANOVA pseudo-F = 10.2, permutational p = 0.001, R2 = 0.25). 
+The NMDS ordination helps us see that this is largely driven by the “veryhi” group, which you can test formally by repeating PERMANOVA for pairwise multiple comparisons.
+
+### Test for homogeneity of community compositions
+
+A related test, PERMDISP, tests for differences in multivariate dispersion, in the space of the chosen dissimilarity measure. This is interpreted as a test of among-group homogeneity of community compositions, i.e., beta-diversity. Conveniently, we can ask for pairwise multiple comparisons.
+
+```{r}
+### permdisp: test for differences in multivariate *dispersion*
+b1 <- betadisper(D, grp_k)
+b1
+permutest(b1, pairwise=TRUE, permu=999)
+boxplot(b1)
+```
+
+**How do we interpret this?** 
+
+Based on Principal Coordinates reduction of original Bray-Curtis dissimilarities, the four groups defined by soil potassium significantly differed in homogeneity of community compositions (PERMDISP F = 7.98, permutational p = 0.001). 
+This was due to the “veryhi” potassium group having significantly lower dispersion (lower beta-diversity) than the lower-potassium groups.
+
+
+## PERMANOVA equivalence to ANOVA
+
+PERMANOVA works as ‘regular’ ANOVA when using Euclidean distances. We’d expect a different p-value since we’re using permutations, but identical F-values and sums-of-squares.
+
+```{r}
+De <- dist(env$k, 'euc')            # Euclidean distances
+adonis2(De ~ grp_k, perm=999)      # examine F and SS
+print(anova(lm(k ~ grp_k, env)))      # expect identical F and SS
+```
+
+
+## Key references
+
+Anderson, M. J., and D. C. I. Walsh. 2013. PERMANOVA, ANOSIM, and the Mantel test in the face of heterogeneous dispersions: What null hypothesis are you testing? Ecological Monographs 83:557–574. https://doi.org/10.1890/12-2010.1
+

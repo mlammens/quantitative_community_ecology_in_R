@@ -18,7 +18,7 @@ The three major unconstrained ordination methods are:
 3. **Principal Components Analysis (PCA)** - a linear method that reduces the dimensionality of the data by finding new axes (principal components) that maximize variance. PCA is best suited for continuous data and assumes linear relationships among variables.
 
 Below we briefly show how to perform these three ordination methods in R using the `vegan` package for NMDS and PCoA, and the base R function `prcomp` for PCA.
-Note that we are using the dissimilarity matrix `D` calculated in Section \@ref(dissimilarities) - **Stepacross adjustment** for NMDS and PCoA, while PCA is performed directly on the species abundance matrix `spe`.
+Note that we are using the dissimilarity matrix `D` calculated in **Section** \@ref(dissim) - **Stepacross adjustment** for NMDS and PCoA, while PCA is performed directly on the species abundance matrix `spe`.
 
 ```{r}
 m1 <- metaMDS(D, k=2, maxit=250, try=100, trymax=101, trace=0) # NMDS
@@ -142,6 +142,132 @@ scree_nms <- function(D, k=5, ...) {
 scree <- scree_nms(D, k=5, trymax=10)
 scree
 ```
+
+## Brief discussion of PCA vs PCoA vs NMDS
+
+For a **species abundance matrix** (sites × species), the choice among **NMDS**, **PCoA**, and **PCA** largely comes down to how well they handle the properties of community data:
+
+* many zeros,
+* non-normal distributions,
+* nonlinear species responses,
+* choice of ecological distance measure.
+
+### NMDS (Non-metric Multidimensional Scaling)
+
+**Advantages**
+
+* Uses almost any dissimilarity measure (Bray–Curtis is especially common).
+* Works well with zero-heavy community matrices.
+* Makes very few assumptions about the data.
+* Preserves the **rank order** of dissimilarities rather than the actual distances.
+* Often gives the most ecologically meaningful representation of species abundance data.
+
+For most plant community datasets, NMDS with Bray–Curtis is the default recommendation.
+
+**Disadvantages**
+
+* Iterative optimization means there is no unique solution.
+* Different runs can produce slightly different ordinations.
+* Results depend on stress minimization.
+* No axes with simple variance-explained interpretations.
+* Computationally slower than PCA or PCoA.
+
+**Good choice when**
+
+* Community data contain many zeros.
+* Species responses are likely unimodal.
+* You care primarily about ecological gradients.
+
+
+### PCoA (Principal Coordinates Analysis)
+
+**Advantages**
+
+* Can use virtually any dissimilarity matrix:
+  * Bray–Curtis
+  * Jaccard
+  * Gower
+  * UniFrac
+  * etc.
+* Axes have eigenvalues that can be interpreted similarly to PCA.
+* Often easier to explain than NMDS.
+* Deterministic (same answer every time).
+
+**Disadvantages**
+
+* The quality of the ordination depends strongly on the distance measure.
+* Bray–Curtis is not strictly Euclidean, so negative eigenvalues may occur.
+* Sensitive to the loss-of-sensitivity problem when many site pairs have no species in common (sometimes addressed with `stepacross()`).
+
+**Good choice when**
+
+* You already have a meaningful dissimilarity matrix.
+* You want an eigenvalue-based ordination.
+* You want something similar to PCA but based on Bray–Curtis or Jaccard distances.
+
+
+### PCA (Principal Components Analysis)
+
+**Advantages**
+
+* Fast, simple, and widely understood.
+* Axes maximize explained variance.
+* Species and sites can be displayed together in a biplot.
+* Strong mathematical foundation.
+
+**Disadvantages**
+
+For raw abundance matrices, PCA is often problematic:
+
+1. Uses Euclidean distance implicitly.
+2. Double zeros contribute to similarity.
+3. Dominant species can overwhelm patterns.
+4. Assumes approximately linear responses.
+5. Rare species contribute little.
+
+Raw species abundance matrices often violate these assumptions badly.
+
+**Good choice when**
+
+The data have been transformed appropriately:
+
+```r
+spe.hel <- decostand(spe, "hellinger")
+rda(spe.hel)
+```
+
+or
+
+```r
+spe.log <- log1p(spe)
+rda(spe.log)
+```
+
+Hellinger-transformed PCA is very common and has strong theoretical support because Euclidean distances on Hellinger-transformed data approximate ecologically meaningful differences among communities.
+
+
+### Comparison summary
+
+If you have a typical vegetation dataset:
+
+| Method                                 | Recommendation           |
+| -------------------------------------- | ------------------------ |
+| Raw abundance matrix                   | NMDS                     |
+| Bray–Curtis distance matrix            | NMDS or PCoA             |
+| Hellinger-transformed abundance matrix | PCA                      |
+| Mixed species traits                   | PCoA (often using Gower) |
+
+**Rule of thumb**
+
+> **PCA** analyzes variance in the species matrix itself and works best after transformations such as Hellinger.  
+> **PCoA** analyzes a distance matrix and can therefore use ecologically meaningful distances such as Bray–Curtis.  
+> **NMDS** analyzes the rank order of distances and is usually the most robust choice for sparse community abundance data.
+
+For modern community ecology, the two approaches you will see most often are:
+
+1. **NMDS on Bray–Curtis distances**
+2. **PCA/RDA on Hellinger-transformed abundances**
+
 
 ## Key references
 

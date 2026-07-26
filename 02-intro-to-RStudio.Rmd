@@ -7,7 +7,7 @@ At the end of this session you should be able to:
 * Perform basic arithmetic using R/RStudio
 * Identify the major components of the RStudio interface
 * Create an Rmd file and use it to document a sequence of R functions
-* Read in a data set and perform basic data summary procedures in R
+* Read in a dataset and perform basic data summary procedures in R
 
 ## Getting started
 
@@ -316,13 +316,13 @@ pets[c(1,4)]
 
 ### Reading in your own data
 
-One of the most basic things you will need to do in R is read in your own data set. 
+One of the most basic things you will need to do in R is read in your own dataset. 
 You can read in Excel files, simple text files, and even files from Google Sheets (this is a bit more complicated though).
 But the easiest type of file to read in is a comma separated values (CSV) file. 
 You can save an Excel workbook (or Numbers workbook or Google Sheet) as a CSV file by using the "Save as ..." menu item. 
 
-Let's read in a data set of trait measurements from 56 different plant species using the function `read.csv`.
-First, you'll need to download the data set from the workshop site. 
+Let's read in a dataset of trait measurements from 56 different plant species using the function `read.csv`.
+First, you'll need to download the dataset from the workshop site. 
 Second, move the file to the `data` sub-folder in your `ESA_QuantComm` folder.
 Then, we'll read in the file. **NOTE: you may need to adjust the path to the file.**
 
@@ -339,7 +339,7 @@ tail(trait_data)
 
 #### `summary` function
 
-Next we'll use the `summary` function to examine this data set.
+Next we'll use the `summary` function to examine this dataset.
 `summary` returns many standard statistics.
 When doing data exploration, a few things you want to look at are:
 
@@ -429,7 +429,7 @@ head(trait_data[c("species","min_height")])
 ## Looking for missing elements
 
 Many analyses in quantitative community ecology rely on multivariate statistical approaches, such as PCA, RDA, and NMDS. 
-These analyses require complete data sets, and will not work if there are missing values. 
+These analyses require complete datasets, and will not work if there are missing values. 
 Below we go through an example of how to search for and replace a missing value. 
 
 > **NOTE:** data imputation (i.e., replacing missing values with approximate values) is an area of study all by itself and we will not be covering it here. We encourage you to look in to this topic on your own, but here is a primer that might be useful to start with -- [https://libguides.princeton.edu/R-Missingdata](https://libguides.princeton.edu/R-Missingdata).
@@ -487,7 +487,7 @@ library(ggplot2)
 
 ### Histograms
 
-Let's make a histogram of minimum heights in the trait data set.
+Let's make a histogram of minimum heights in the trait dataset.
 
 ```{r}
 ggplot(data = trait_data, aes(x = min_height)) +

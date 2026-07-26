@@ -1,15 +1,17 @@
 # Community Data {#comm-data}
 
-## General structure of community ecology data sets
+## General structure of community ecology datasets
 
 Often times community ecology data are recorded in a set of tables that contain information on species presence/absence (or abundance) in plots, species trait values, environmental conditions of plots, and a phylogeny of the species.
 
 ![Community ecology data tables](./fig/mx_c.png)
 
 
-## Today's example data set - Mafragh, Algeria vegetation data
+## Today's example dataset - Mafragh, Algeria vegetation data
 
-We will use one core dataset throughout this tutorial. The `veg` dataset gives information about spatial coordinates, species, environment, traits, and phylogeny for plants on the Mafragh coastal plain in North Africa. 
+We will use one main dataset throughout this tutorial. 
+You should have loaded this dataset in the **Get the data** sub-section of Section \@ref(prereq), but we'll load the data again below.
+The `veg` variable is a `list` object that includes data tables with information on spatial coordinates, species abundances, environment, traits, and phylogeny for plants on the Mafragh coastal plain in North Africa. 
 
 Specifically, `veg` is a list containing five items:
 
@@ -19,10 +21,17 @@ Specifically, `veg` is a list containing five items:
 - `tra` 12 traits for 56 plant species
 - `phy` phylogeny for 56 plant species
 
+> **NOTE:** the information in the `veg` object are derived from a dataset included in the `ade4` package. You can load the data from `ade4` with the code below and use the `?` function to access included documentation about these data. However, the data tables have different names in the included data than what we are working with today.
+
+```{r, eval=FALSE}
+data("mafragh", package = "ade4")
+?ade4::mafragh
+```
+
 
 ### Load the data
 
-While we went over how to read in data via a \*.csv file in Section \@ref(intro-to-RStudio), we will take advantage of the fact that our example data sets have already been read in to R and saved as a \*.rda object.
+While we went over how to read in data via a \*.csv file in Section \@ref(intro-to-RStudio), we will take advantage of the fact that our example datasets have already been read in to R and saved as a \*.rda object.
 The `veg.rda` object is a *list* object, with five elements. 
 Each element is one of the data tables we will need for our analyses.
 

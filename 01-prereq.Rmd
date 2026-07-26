@@ -38,7 +38,7 @@ source("https://github.com/mlammens/quantitative_community_ecology_in_R/raw/main
 ## Get the data
 
 ```{r get-dataset-gh, eval=FALSE}
-u <- 'https://github.com/mlammens/esa2025/raw/main/data/veg.rda'
+u <- 'https://github.com/mlammens/quantitative_community_ecology_in_R/raw/main/data/veg.rda'
 u <- url(u)
 load(u)
 ```

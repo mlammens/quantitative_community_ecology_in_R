@@ -21,6 +21,7 @@ The table below shows connections/analogs between unconstrained and constrained 
 ## `dbRDA` -- the community analysis Swiss army knife
 
 The dbRDA method, implemented in `vegan` with the `dbrda` function, is very versatile and can yield all of the ordination analyses we've been discussing based on how it is parameterized and the distance matrix used.
+However, using the `dbrda` function may limit the use of some useful plotting functions, as we'll see when we make tri-plots below.
 
 ```{r}
 ## Define multiple different dissimilarity matrices
@@ -91,38 +92,78 @@ Unconstrained methods (PCA, CA, PCoA) and constrained methods (RDA, CCA, dbRDA) 
 ## Visualizing site X environment relationships with RDA and dbRDA 
 
 
-
 ```{r}
-rda_mod <- rda(spe ~ k2o + mg, data = env)
-
-plot(rda_mod, type = "n", scaling = 2)
-points(rda_mod, display = "sites", pch = 16, scaling = 2)
-text(rda_mod, display = "species", col = "blue", scaling = 2)
-text(rda_mod, display = "bp", col = "red", scaling = 2)
-
-plot(rda_mod, type = "n", scaling = 1)
-points(rda_mod, display = "sites", pch = 16, scaling = 1)
-text(rda_mod, display = "species", col = "blue", scaling = 1)
-text(rda_mod, display = "bp", col = "red", scaling = 1)
-```
-
-
-```{r}
-# site_scores <- vegan::scores(rda, display = "sites", scaling = 2)
-# env_scores <- vegan::scores(rda, display = "bp", scaling = 2)
-
-
-
 plot(rda, type = "n", scaling = 2)
-points(rda, display = "sites", pch = 16, scaling = 2)
-text(rda, display = "bp", col = "red", scaling = 2)
+# site coordinates
+site_scores <- vegan::scores(rda, display = "sites", scaling = 2)
+# site labels with color gradient
+text(site_scores,
+     labels = rownames(site_scores),
+     col = u)
+# environmental vectors
+text(rda,
+     display = "bp",
+     col = "red",
+     scaling = 2)
 ```
 
 
 
 ```{r}
 plot(dbr, type = "n", scaling = 2)
-points(dbr, display = "sites", pch = 16, scaling = 2)
-text(dbr, display = "bp", col = "red", scaling = 2)
+# site coordinates
+site_scores <- vegan::scores(dbr, display = "sites", scaling = 2)
+# site labels with color gradient
+text(site_scores,
+     labels = rownames(site_scores),
+     col = u)
+# environmental vectors
+text(dbr,
+     display = "bp",
+     col = "red",
+     scaling = 2)
 ```
+
+**What do we see?**
+
+The RDA and dbRDA ordinations produce very similar site configurations, indicating that the constrained community pattern associated with mg and k2o is robust to the ordination approach. In both analyses, mg is associated with sites positioned high on the second axis, whereas k2o is associated with sites positioned toward the lower-right portion of the ordination, suggesting that these variables represent distinct environmental gradients related to community composition.
+
+### Tri-plots - site, species, and environmental together
+
+Let's add the species scores to the RDA plots.
+
+```{r}
+rda_mod <- rda(decostand(spe, "hellinger") ~ k2o + mg, data = env)
+#rda_mod <- rda(spe ~ k2o + mg, data = env)
+
+## Scaling = 2
+plot(rda_mod, type = "n", scaling = 2)
+# site scores
+site_scores <- vegan::scores(rda_mod,
+                      display = "sites",
+                      scaling = 2)
+# colored site labels
+text(site_scores,
+     labels = rownames(spe),
+     col = u)
+# species labels
+text(rda_mod,
+     display = "species",
+     col = "black",
+     scaling = 2)
+# environmental vectors
+text(rda_mod,
+     display = "bp",
+     col = "red",
+     scaling = 2)
+
+```
+
+**What do we see?**
+
+The environment X site relations are the same as what we saw above. 
+With respect to the species, we see many species cluster around the origin, meaning they are not strongly associated with the first two constrained axes.
+Being specific, *Sarcocornia fruticosa* appears to be positively associated with the environmental gradient represented by Mg and tends to occur in sites with relatively high Mg values.
+*Aeluropus littoralis* is the only other species that clearly stands out in the ordination and appears associated with the opposite end of the Mg-related gradient from *S. fruticosa*.
+
 

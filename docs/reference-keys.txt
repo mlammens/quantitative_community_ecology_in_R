@@ -79,4 +79,14 @@ what-metric-to-use
 partitioning-turnover-and-nestedness
 stepacross-adjustment
 key-references-3
-literature
+ordination-unconstrained
+challenge-9
+adding-environmental-information
+ordination-goodness-of-fit
+dimensionality-selection-in-nmds
+brief-discussion-of-pca-vs-pcoa-vs-nmds
+nmds-non-metric-multidimensional-scaling
+pcoa-principal-coordinates-analysis
+pca-principal-components-analysis
+comparison-summary
+key-references-4

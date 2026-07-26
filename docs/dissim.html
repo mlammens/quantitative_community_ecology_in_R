@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 8 Literature | Quantitative Community Ecology in R</title>
+  <title>Chapter 7 Dissimilarities | Quantitative Community Ecology in R</title>
   <meta name="description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 8 Literature | Quantitative Community Ecology in R" />
+  <meta property="og:title" content="Chapter 7 Dissimilarities | Quantitative Community Ecology in R" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="github-repo" content="mlammens/quantitative_community_ecology_in_R" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 8 Literature | Quantitative Community Ecology in R" />
+  <meta name="twitter:title" content="Chapter 7 Dissimilarities | Quantitative Community Ecology in R" />
   
   <meta name="twitter:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="dissim.html"/>
-
+<link rel="prev" href="diversity.html"/>
+<link rel="next" href="literature.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -261,18 +261,112 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="literature" class="section level1 hasAnchor" number="8">
-<h1><span class="header-section-number">Chapter 8</span> Literature<a href="literature.html#literature" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p>Here is a review of existing methods.</p>
+<div id="dissim" class="section level1 hasAnchor" number="7">
+<h1><span class="header-section-number">Chapter 7</span> Dissimilarities<a href="dissim.html#dissim" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><strong><em>How dissimilar are community compositions among sites?</em></strong></p>
+<p>Dissimilarities among sites help us position sites along gradients, organize them into clusters, or distinguish differences among groups of sites.</p>
+<div id="dissimilarity-matrix-for-species" class="section level2 hasAnchor" number="7.1">
+<h2><span class="header-section-number">7.1</span> Dissimilarity matrix for species<a href="dissim.html#dissimilarity-matrix-for-species" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We can create a pairwise dissimilarity matrix <code>D</code> based on shared and unshared species among sites.
+An easy way to calculate this matrix is to use the <code>vegdist</code> (i.e., vegetation distance) function in the <code>vegan</code> package.
+For the resulting dissimilarity values, high values = more dissimilar (different) and low values = more similar (same).</p>
+<p>Euclidean distance is probably the most intuitive dissimilarity metric, however it is seldom useful for species abundance data.
+Here we use the more preferable Bray-Curtis (Sørensen) dissimilarity.
+Legendre and Legendre (2012) give a full survey of existing distance/dissimilarity measures (there are many – in fact, the <code>vegdist</code> function includes 22 different dissimilarity methods!!).
+Also, checkout the help file for <code>vegdist</code> for lots of helpful information and references – <code>?vegdist</code>.</p>
+<p>As in Section <a href="data-transform.html#data-transform">5</a> we are using the <code>tabasco</code> function to create a heatmap of a matrix.
+Recall that darker colors indicate greater values, thus greater turn-over in this case.</p>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="dissim.html#cb146-1" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="at">method=</span><span class="st">&#39;bray&#39;</span>, <span class="at">binary=</span>T)</span>
+<span id="cb146-2"><a href="dissim.html#cb146-2" tabindex="-1"></a><span class="fu">tabasco</span>(<span class="fu">as.matrix</span>(d), <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-55-1.png" width="672" /></p>
+<hr />
+<div id="challenge-8" class="section level4 hasAnchor" number="7.1.0.1">
+<h4><span class="header-section-number">7.1.0.1</span> Challenge<a href="dissim.html#challenge-8" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Why is the diagonal white (i.e., blank)?</p>
+<hr />
+</div>
+<div id="what-metric-to-use" class="section level3 hasAnchor" number="7.1.1">
+<h3><span class="header-section-number">7.1.1</span> What metric to use?<a href="dissim.html#what-metric-to-use" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The specific measure used might depend on your particular ecological question, your data collection methods, or on the variable types you are working with.</p>
+<p><strong>Jaccard</strong> - focuses on shared species, using presence-absence data only. Range 0-1.</p>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="dissim.html#cb147-1" tabindex="-1"></a>jaccard <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="at">method =</span> <span class="st">&quot;jaccard&quot;</span>)</span></code></pre></div>
+<p><strong>Bray-Curtis</strong> - considers species composition and abundance. Range 0-1.</p>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="dissim.html#cb148-1" tabindex="-1"></a>bray_curtis <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="at">method =</span> <span class="st">&quot;bray&quot;</span>)</span></code></pre></div>
+<p><strong>Gower</strong> - measures general dissimilarity and can be used with continuous, ordinal, or categorical data. This makes it particularly useful when calculating dissimilarities among plots with mixed environmental variable types or among species with mixed trait variable types.</p>
+<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="dissim.html#cb149-1" tabindex="-1"></a>gower <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(tra, <span class="at">method =</span> <span class="st">&quot;gower&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="partitioning-turnover-and-nestedness" class="section level2 hasAnchor" number="7.2">
+<h2><span class="header-section-number">7.2</span> Partitioning turnover and nestedness<a href="dissim.html#partitioning-turnover-and-nestedness" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Turnover</strong> is related to species replacement across sites (or time)</p>
+<p><strong>Nestedness</strong> is the proportion of species that are subset of the species that occur at another site (or time period). In other words, are the species at one site found in another site?</p>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="dissim.html#cb150-1" tabindex="-1"></a><span class="co"># Calculate beta diversity (Uniqueness and Nestedness)</span></span>
+<span id="cb150-2"><a href="dissim.html#cb150-2" tabindex="-1"></a>spe_pa <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">decostand</span>(spe, <span class="at">method =</span> <span class="st">&quot;pa&quot;</span>)</span>
+<span id="cb150-3"><a href="dissim.html#cb150-3" tabindex="-1"></a>beta_diversity <span class="ot">&lt;-</span> betapart<span class="sc">::</span><span class="fu">beta.pair</span>(spe_pa)</span></code></pre></div>
+<p><strong>There are three items in the list output:</strong></p>
+<p><strong>beta.sim</strong>: turnover component; represents dissimilarity due to species turnover/replacement. High SIM suggests species replacement is a main driver of site differences (not richness)</p>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="dissim.html#cb151-1" tabindex="-1"></a><span class="fu">tabasco</span>(<span class="fu">as.matrix</span>(beta_diversity<span class="sc">$</span>beta.sim), <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
+<p><strong>beta.sne</strong>: nestedness component; represents dissimilarity due to shared species or richness differences. High SNE suggests species loss and nestedness (richness differences) are main drivers of site differences.</p>
+<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb152-1"><a href="dissim.html#cb152-1" tabindex="-1"></a><span class="fu">tabasco</span>(<span class="fu">as.matrix</span>(beta_diversity<span class="sc">$</span>beta.sne), <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-61-1.png" width="672" /></p>
+<p><strong>beta.sor</strong>: total dissimilarity, using Sorenson or Jaccard dissimilarity</p>
+<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="dissim.html#cb153-1" tabindex="-1"></a><span class="fu">tabasco</span>(<span class="fu">as.matrix</span>(beta_diversity<span class="sc">$</span>beta.sor), <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-62-1.png" width="672" /></p>
+</div>
+<div id="stepacross-adjustment" class="section level2 hasAnchor" number="7.3">
+<h2><span class="header-section-number">7.3</span> Stepacross adjustment<a href="dissim.html#stepacross-adjustment" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Sometimes a pair of sites are “maximally dissimilar”: they share no species at all, so pairwise dissimilarity is impossible to quantify using a proportional measure (e.g., Bray-Curtis).
+Stepacross adjustment solves this by linking “no-share” sites with intermediate site(s) that share at least some species in common.
+<em>Why should we be concerned about this?</em>
+As datasets become sparse (many zeros), large numbers of site pairs end up with Bray–Curtis = 1. This causes an accumulation of ties and a loss of information about the underlying ecological gradient.
+Smith (2017) describes other possible solutions.</p>
+<p>Here’s a “toy-example” of the issue:</p>
+<p>How dissimilar are SUs A and C? They share no species in common…</p>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="dissim.html#cb154-1" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>, <span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>, <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="at">nrow=</span><span class="dv">3</span>, <span class="at">byrow=</span>T), </span>
+<span id="cb154-2"><a href="dissim.html#cb154-2" tabindex="-1"></a>                <span class="at">row.names=</span><span class="fu">paste0</span>(<span class="st">&#39;su&#39;</span>,<span class="fu">c</span>(<span class="st">&#39;A&#39;</span>,<span class="st">&#39;B&#39;</span>,<span class="st">&#39;C&#39;</span>)))</span>
+<span id="cb154-3"><a href="dissim.html#cb154-3" tabindex="-1"></a><span class="fu">names</span>(m) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&#39;sp&#39;</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb154-4"><a href="dissim.html#cb154-4" tabindex="-1"></a>m</span></code></pre></div>
+<pre><code>##     sp1 sp2 sp3 sp4 sp5
+## suA   1   1   0   0   0
+## suB   0   1   1   1   0
+## suC   0   0   0   1   1</code></pre>
+<p>…Bray-Curtis will max out at 1.0…</p>
+<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="dissim.html#cb156-1" tabindex="-1"></a><span class="fu">vegdist</span>(m, <span class="st">&#39;bray&#39;</span>)</span></code></pre></div>
+<pre><code>##     suA suB
+## suB 0.6    
+## suC 1.0 0.6</code></pre>
+<p>…but <code>stepacross()</code> replaces “too long” distances with shortest path.</p>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="dissim.html#cb158-1" tabindex="-1"></a>sa <span class="ot">&lt;-</span> <span class="fu">stepacross</span>(<span class="fu">vegdist</span>(m, <span class="st">&#39;bray&#39;</span>))</span></code></pre></div>
+<pre><code>## Too long or NA distances: 1 out of 3 (33.3%)
+## Stepping across 3 dissimilarities...</code></pre>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="dissim.html#cb160-1" tabindex="-1"></a>sa</span></code></pre></div>
+<pre><code>##     suA suB
+## suB 0.6    
+## suC 1.2 0.6</code></pre>
+<p>Visually we can think of this as the figure below:</p>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-63-1.png" width="672" /></p>
+<p>And here we show what happens when we use the <code>stepacross</code> function on our Mafragh data set.</p>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="dissim.html#cb162-1" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="fu">stepacross</span>(d, <span class="st">&#39;shortest&#39;</span>, <span class="at">toolong =</span> <span class="dv">1</span>)</span></code></pre></div>
+<pre><code>## Too long or NA distances: 2055 out of 4656 (44.1%)
+## Stepping across 4656 dissimilarities...</code></pre>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="dissim.html#cb164-1" tabindex="-1"></a><span class="fu">plot</span>(d, D, <span class="at">xlab =</span> <span class="st">&#39;Original&#39;</span>, <span class="at">ylab =</span> <span class="st">&#39;Stepacross&#39;</span>)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-64-1.png" width="672" /></p>
+</div>
+<div id="key-references-3" class="section level2 hasAnchor" number="7.4">
+<h2><span class="header-section-number">7.4</span> Key references<a href="dissim.html#key-references-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Legendre, P., and L. Legendre. 2012. Numerical Ecology. Volume 24, Third Edition. Elsevier.</p>
+<p>Smith, R.J. 2017. Solutions for loss of information in high-beta-diversity community data. Methods in Ecology and Evolution 8:68–74.</p>
 
+</div>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="dissim.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="diversity.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="literature.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -303,7 +397,7 @@ gitbook.start({
     "size": 2
   },
   "edit": {
-    "link": "https://github.com/rstudio/bookdown-demo/edit/master/07-literature.Rmd",
+    "link": "https://github.com/rstudio/bookdown-demo/edit/master/06-dissimilarities.Rmd",
     "text": "Edit"
   },
   "history": {

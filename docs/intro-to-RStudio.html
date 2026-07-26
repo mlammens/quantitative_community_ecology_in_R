@@ -12,7 +12,7 @@
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
-  <meta name="github-repo" content="rstudio/bookdown-demo" />
+  <meta name="github-repo" content="mlammens/quantitative_community_ecology_in_R" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Chapter 3 Introduction to R and RStudio | Quantitative Community Ecology in R" />
@@ -230,8 +230,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.5" data-path="diversity.html"><a href="diversity.html#beta-diversity-no-share-sites"><i class="fa fa-check"></i><b>6.5</b> Beta-diversity: no-share sites</a></li>
 <li class="chapter" data-level="6.6" data-path="diversity.html"><a href="diversity.html#key-references-2"><i class="fa fa-check"></i><b>6.6</b> Key references</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
-<li class="chapter" data-level="7" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>7</b> Literature</a></li>
+<li class="chapter" data-level="7" data-path="dissim.html"><a href="dissim.html"><i class="fa fa-check"></i><b>7</b> Dissimilarities</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="dissim.html"><a href="dissim.html#dissimilarity-matrix-for-species"><i class="fa fa-check"></i><b>7.1</b> Dissimilarity matrix for species</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="dissim.html"><a href="dissim.html#what-metric-to-use"><i class="fa fa-check"></i><b>7.1.1</b> What metric to use?</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="dissim.html"><a href="dissim.html#partitioning-turnover-and-nestedness"><i class="fa fa-check"></i><b>7.2</b> Partitioning turnover and nestedness</a></li>
+<li class="chapter" data-level="7.3" data-path="dissim.html"><a href="dissim.html#stepacross-adjustment"><i class="fa fa-check"></i><b>7.3</b> Stepacross adjustment</a></li>
+<li class="chapter" data-level="7.4" data-path="dissim.html"><a href="dissim.html#key-references-3"><i class="fa fa-check"></i><b>7.4</b> Key references</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>8</b> Literature</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -746,8 +755,8 @@ used to create a plot is a little more involved than base R (i.e., the <code>gra
 <p>Let’s make a histogram of minimum heights in the trait dataset.</p>
 <div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="intro-to-RStudio.html#cb98-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> trait_data, <span class="fu">aes</span>(<span class="at">x =</span> min_height)) <span class="sc">+</span></span>
 <span id="cb98-2"><a href="intro-to-RStudio.html#cb98-2" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better
-## value with `binwidth`.</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick
+## better value with `binwidth`.</code></pre>
 <p><img src="bookdown-demo_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
 <p>Let’s break down this call to introduce a few key things about ggplot</p>
 <ul>
@@ -775,7 +784,8 @@ For example, let’s add a trend line to the data we just plotted.</p>
 <div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="intro-to-RStudio.html#cb101-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> trait_data, <span class="fu">aes</span>(<span class="at">x =</span> min_height, <span class="at">y =</span> max_height)) <span class="sc">+</span></span>
 <span id="cb101-2"><a href="intro-to-RStudio.html#cb101-2" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb101-3"><a href="intro-to-RStudio.html#cb101-3" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>)</span></code></pre></div>
-<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~
+## x&#39;</code></pre>
 <p><img src="bookdown-demo_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
 </div>
 <div id="boxplots" class="section level3 hasAnchor" number="3.12.5">

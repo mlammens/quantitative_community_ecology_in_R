@@ -12,7 +12,7 @@
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
-  <meta name="github-repo" content="rstudio/bookdown-demo" />
+  <meta name="github-repo" content="mlammens/quantitative_community_ecology_in_R" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Chapter 6 Diversity Measures | Quantitative Community Ecology in R" />
@@ -31,7 +31,7 @@
   
   
 <link rel="prev" href="data-transform.html"/>
-<link rel="next" href="references.html"/>
+<link rel="next" href="dissim.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -230,8 +230,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="6.5" data-path="diversity.html"><a href="diversity.html#beta-diversity-no-share-sites"><i class="fa fa-check"></i><b>6.5</b> Beta-diversity: no-share sites</a></li>
 <li class="chapter" data-level="6.6" data-path="diversity.html"><a href="diversity.html#key-references-2"><i class="fa fa-check"></i><b>6.6</b> Key references</a></li>
 </ul></li>
-<li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
-<li class="chapter" data-level="7" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>7</b> Literature</a></li>
+<li class="chapter" data-level="7" data-path="dissim.html"><a href="dissim.html"><i class="fa fa-check"></i><b>7</b> Dissimilarities</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="dissim.html"><a href="dissim.html#dissimilarity-matrix-for-species"><i class="fa fa-check"></i><b>7.1</b> Dissimilarity matrix for species</a>
+<ul>
+<li class="chapter" data-level="7.1.1" data-path="dissim.html"><a href="dissim.html#what-metric-to-use"><i class="fa fa-check"></i><b>7.1.1</b> What metric to use?</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="dissim.html"><a href="dissim.html#partitioning-turnover-and-nestedness"><i class="fa fa-check"></i><b>7.2</b> Partitioning turnover and nestedness</a></li>
+<li class="chapter" data-level="7.3" data-path="dissim.html"><a href="dissim.html#stepacross-adjustment"><i class="fa fa-check"></i><b>7.3</b> Stepacross adjustment</a></li>
+<li class="chapter" data-level="7.4" data-path="dissim.html"><a href="dissim.html#key-references-3"><i class="fa fa-check"></i><b>7.4</b> Key references</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>8</b> Literature</a></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
 
@@ -261,26 +270,33 @@ Here we assume that <code>spe</code> is a species abundance matrix where rows = 
 <em>Recall that we did a validity test on the <code>spe</code> data table in Section <a href="data-transform.html#data-transform">5</a>, ensuring there weren’t any <code>NA</code> values. We could do a similar test looking for negative values.</em></p>
 <div id="gamma-regional-diversity" class="section level2 hasAnchor" number="6.1">
 <h2><span class="header-section-number">6.1</span> Gamma (regional) diversity<a href="diversity.html#gamma-regional-diversity" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The total number of species in a given region.</p>
 <div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb133-1"><a href="diversity.html#cb133-1" tabindex="-1"></a>gamma <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">colSums</span>(spe) <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
 <span id="cb133-2"><a href="diversity.html#cb133-2" tabindex="-1"></a>gamma</span></code></pre></div>
 <pre><code>## [1] 56</code></pre>
+<blockquote>
+<p><strong>NOTE:</strong> there are other approaches to calculating gamma diversity that incorporate both richness and evenness, such as Shannon, Simpson, and Hill indices. We will not cover these calculations today, but you should be aware of them and investigate them for the future. Below is an example of calculating Shannon gamma.</p>
+</blockquote>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="diversity.html#cb135-1" tabindex="-1"></a><span class="co"># calculate Shannon index on a vector of summed abundances across all sites for each species</span></span>
+<span id="cb135-2"><a href="diversity.html#cb135-2" tabindex="-1"></a>gamma_shannon <span class="ot">&lt;-</span> <span class="fu">diversity</span>(<span class="fu">colSums</span>(spe), <span class="at">index =</span> <span class="st">&quot;shannon&quot;</span>)</span></code></pre></div>
 </div>
 <div id="alpha-per-site-diversity" class="section level2 hasAnchor" number="6.2">
 <h2><span class="header-section-number">6.2</span> Alpha (per-site) diversity<a href="diversity.html#alpha-per-site-diversity" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="diversity.html#cb135-1" tabindex="-1"></a><span class="do">### Alpha (per-site) diversity</span></span>
-<span id="cb135-2"><a href="diversity.html#cb135-2" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(spe <span class="sc">&gt;</span> <span class="dv">0</span>)  <span class="co"># within-site</span></span>
-<span id="cb135-3"><a href="diversity.html#cb135-3" tabindex="-1"></a>avgalpha <span class="ot">&lt;-</span> <span class="fu">mean</span>(alpha) <span class="co"># average within-site</span></span>
-<span id="cb135-4"><a href="diversity.html#cb135-4" tabindex="-1"></a></span>
-<span id="cb135-5"><a href="diversity.html#cb135-5" tabindex="-1"></a>avgalpha</span></code></pre></div>
+<p>The number of species in a plot, averaged over all plots for Whittaker’s alpha.</p>
+<div class="sourceCode" id="cb136"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb136-1"><a href="diversity.html#cb136-1" tabindex="-1"></a><span class="do">### Alpha (per-site) diversity</span></span>
+<span id="cb136-2"><a href="diversity.html#cb136-2" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(spe <span class="sc">&gt;</span> <span class="dv">0</span>)  <span class="co"># within-site</span></span>
+<span id="cb136-3"><a href="diversity.html#cb136-3" tabindex="-1"></a>avgalpha <span class="ot">&lt;-</span> <span class="fu">mean</span>(alpha) <span class="co"># average within-site</span></span>
+<span id="cb136-4"><a href="diversity.html#cb136-4" tabindex="-1"></a></span>
+<span id="cb136-5"><a href="diversity.html#cb136-5" tabindex="-1"></a>avgalpha</span></code></pre></div>
 <pre><code>## [1] 6.268041</code></pre>
 </div>
 <div id="beta-among-site-diversity-whittakers" class="section level2 hasAnchor" number="6.3">
 <h2><span class="header-section-number">6.3</span> Beta (among-site) diversity: Whittaker’s<a href="diversity.html#beta-among-site-diversity-whittakers" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>The calculation below is for a classic Whittaker’s beta diversity measure, but we’ve subtracted a value of 1 from the ratio of gamma and avgalpha.
 This is because if we didn’t subtract 1 and there was <em>no turnover</em>, then beta would equal 1, which can be confusing.</p>
-<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="diversity.html#cb137-1" tabindex="-1"></a><span class="do">### Beta (among-site) diversity: Whittaker&#39;s</span></span>
-<span id="cb137-2"><a href="diversity.html#cb137-2" tabindex="-1"></a>beta <span class="ot">&lt;-</span> gamma <span class="sc">/</span> avgalpha <span class="sc">-</span> <span class="dv">1</span></span>
-<span id="cb137-3"><a href="diversity.html#cb137-3" tabindex="-1"></a>beta</span></code></pre></div>
+<div class="sourceCode" id="cb138"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb138-1"><a href="diversity.html#cb138-1" tabindex="-1"></a><span class="do">### Beta (among-site) diversity: Whittaker&#39;s</span></span>
+<span id="cb138-2"><a href="diversity.html#cb138-2" tabindex="-1"></a>beta <span class="ot">&lt;-</span> gamma <span class="sc">/</span> avgalpha <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb138-3"><a href="diversity.html#cb138-3" tabindex="-1"></a>beta</span></code></pre></div>
 <pre><code>## [1] 7.934211</code></pre>
 </div>
 <div id="beta-diversity-dust-bunny-indices-dbi" class="section level2 hasAnchor" number="6.4">
@@ -291,8 +307,8 @@ High values indicate that most species occur in few sites and/or at low relative
 Low values indicate broadly distributed and abundant taxa.
 This information is important because many multivariate methods become harder to interpret, and potentially invalid, when matrices have high dust-bunny values (many rare species and zeros), which is common in community ecology datasets.</p>
 <p><strong>Calculate the proportion of zeros in the matrix, independent of abundance</strong></p>
-<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="diversity.html#cb139-1" tabindex="-1"></a>propzero <span class="ot">&lt;-</span> <span class="fu">sum</span>(spe <span class="sc">&lt;</span> .Machine<span class="sc">$</span>double.eps) <span class="sc">/</span> <span class="fu">prod</span>(<span class="fu">dim</span>(spe))</span>
-<span id="cb139-2"><a href="diversity.html#cb139-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;Proportion of zeros in matrix:&#39;</span>, propzero, <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb140-1"><a href="diversity.html#cb140-1" tabindex="-1"></a>propzero <span class="ot">&lt;-</span> <span class="fu">sum</span>(spe <span class="sc">&lt;</span> .Machine<span class="sc">$</span>double.eps) <span class="sc">/</span> <span class="fu">prod</span>(<span class="fu">dim</span>(spe))</span>
+<span id="cb140-2"><a href="diversity.html#cb140-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;Proportion of zeros in matrix:&#39;</span>, propzero, <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
 <pre><code>## Proportion of zeros in matrix: 0.8880707</code></pre>
 <p><strong>Calculate the dust-bunny index (DBI) for the matrix, including abundances</strong></p>
 <p>The code below includes many steps in one line. Here’s what’s going on:</p>
@@ -302,18 +318,18 @@ This information is important because many multivariate methods become harder to
 <li><code>mean(as.matrix(...))</code> = calculates the overall average abundance for all species at all sites</li>
 <li><code>1 - mean(...)</code> = results in an index where a value of 0 indicates a dense matrix, with few zeros, where most species are common and a value of 1 indicates a sparse matrix, with many zeros, where rare species dominate</li>
 </ul>
-<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="diversity.html#cb141-1" tabindex="-1"></a>dbi <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">mean</span>(<span class="fu">as.matrix</span>(vegan<span class="sc">::</span><span class="fu">decostand</span>(spe, <span class="at">method=</span><span class="st">&#39;max&#39;</span>)))</span>
-<span id="cb141-2"><a href="diversity.html#cb141-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;Dust bunny index:&#39;</span>, dbi, <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb142-1"><a href="diversity.html#cb142-1" tabindex="-1"></a>dbi <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">mean</span>(<span class="fu">as.matrix</span>(vegan<span class="sc">::</span><span class="fu">decostand</span>(spe, <span class="at">method=</span><span class="st">&#39;max&#39;</span>)))</span>
+<span id="cb142-2"><a href="diversity.html#cb142-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;Dust bunny index:&#39;</span>, dbi, <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
 <pre><code>## Dust bunny index: 0.9325203</code></pre>
 </div>
 <div id="beta-diversity-no-share-sites" class="section level2 hasAnchor" number="6.5">
 <h2><span class="header-section-number">6.5</span> Beta-diversity: no-share sites<a href="diversity.html#beta-diversity-no-share-sites" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>High species turnover (beta-diversity) can cause many site-pairs to share no species in common.
 What proportion of all pairs of sites have totally different sets of species?</p>
-<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="diversity.html#cb143-1" tabindex="-1"></a><span class="do">### how many site-pairs share no species in common?</span></span>
-<span id="cb143-2"><a href="diversity.html#cb143-2" tabindex="-1"></a>z <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">no.shared</span>(spe)</span>
-<span id="cb143-3"><a href="diversity.html#cb143-3" tabindex="-1"></a>propnoshare <span class="ot">&lt;-</span> <span class="fu">sum</span>(z) <span class="sc">/</span> <span class="fu">length</span>(z)</span>
-<span id="cb143-4"><a href="diversity.html#cb143-4" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;Proportion of no-share sites:&#39;</span>, propnoshare, <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb144-1"><a href="diversity.html#cb144-1" tabindex="-1"></a><span class="do">### how many site-pairs share no species in common?</span></span>
+<span id="cb144-2"><a href="diversity.html#cb144-2" tabindex="-1"></a>z <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">no.shared</span>(spe)</span>
+<span id="cb144-3"><a href="diversity.html#cb144-3" tabindex="-1"></a>propnoshare <span class="ot">&lt;-</span> <span class="fu">sum</span>(z) <span class="sc">/</span> <span class="fu">length</span>(z)</span>
+<span id="cb144-4"><a href="diversity.html#cb144-4" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;Proportion of no-share sites:&#39;</span>, propnoshare, <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
 <pre><code>## Proportion of no-share sites: 0.441366</code></pre>
 </div>
 <div id="key-references-2" class="section level2 hasAnchor" number="6.6">
@@ -328,7 +344,7 @@ What proportion of all pairs of sites have totally different sets of species?</p
         </div>
       </div>
 <a href="data-transform.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="dissim.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

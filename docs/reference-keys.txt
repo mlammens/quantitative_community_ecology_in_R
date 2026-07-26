@@ -72,4 +72,11 @@ beta-among-site-diversity-whittakers
 beta-diversity-dust-bunny-indices-dbi
 beta-diversity-no-share-sites
 key-references-2
+dissim
+dissimilarity-matrix-for-species
+challenge-8
+what-metric-to-use
+partitioning-turnover-and-nestedness
+stepacross-adjustment
+key-references-3
 literature

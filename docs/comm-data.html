@@ -23,7 +23,7 @@
 <meta name="author" content="Matthew Aiello-Lammens and many others" />
 
 
-<meta name="date" content="2026-07-24" />
+<meta name="date" content="2026-07-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -198,8 +198,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="4" data-path="comm-data.html"><a href="comm-data.html"><i class="fa fa-check"></i><b>4</b> Community Data</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="comm-data.html"><a href="comm-data.html#general-structure-of-community-ecology-data-sets"><i class="fa fa-check"></i><b>4.1</b> General structure of community ecology data sets</a></li>
-<li class="chapter" data-level="4.2" data-path="comm-data.html"><a href="comm-data.html#todays-example-data-set---mafragh-algeria-vegetation-data"><i class="fa fa-check"></i><b>4.2</b> Today’s example data set - Mafragh, Algeria vegetation data</a>
+<li class="chapter" data-level="4.1" data-path="comm-data.html"><a href="comm-data.html#general-structure-of-community-ecology-datasets"><i class="fa fa-check"></i><b>4.1</b> General structure of community ecology datasets</a></li>
+<li class="chapter" data-level="4.2" data-path="comm-data.html"><a href="comm-data.html#todays-example-dataset---mafragh-algeria-vegetation-data"><i class="fa fa-check"></i><b>4.2</b> Today’s example dataset - Mafragh, Algeria vegetation data</a>
 <ul>
 <li class="chapter" data-level="4.2.1" data-path="comm-data.html"><a href="comm-data.html#load-the-data"><i class="fa fa-check"></i><b>4.2.1</b> Load the data</a></li>
 </ul></li>
@@ -221,7 +221,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.4" data-path="data-transform.html"><a href="data-transform.html#visualizing-our-community-data"><i class="fa fa-check"></i><b>5.4</b> Visualizing our community data</a></li>
 <li class="chapter" data-level="5.5" data-path="data-transform.html"><a href="data-transform.html#key-references-1"><i class="fa fa-check"></i><b>5.5</b> Key references</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>6</b> Final Words</a></li>
+<li class="chapter" data-level="6" data-path="diversity.html"><a href="diversity.html"><i class="fa fa-check"></i><b>6</b> Diversity Measures</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="diversity.html"><a href="diversity.html#gamma-regional-diversity"><i class="fa fa-check"></i><b>6.1</b> Gamma (regional) diversity</a></li>
+<li class="chapter" data-level="6.2" data-path="diversity.html"><a href="diversity.html#alpha-per-site-diversity"><i class="fa fa-check"></i><b>6.2</b> Alpha (per-site) diversity</a></li>
+<li class="chapter" data-level="6.3" data-path="diversity.html"><a href="diversity.html#beta-among-site-diversity-whittakers"><i class="fa fa-check"></i><b>6.3</b> Beta (among-site) diversity: Whittaker’s</a></li>
+<li class="chapter" data-level="6.4" data-path="diversity.html"><a href="diversity.html#beta-diversity-dust-bunny-indices-dbi"><i class="fa fa-check"></i><b>6.4</b> Beta diversity: dust bunny indices (DBI)</a></li>
+<li class="chapter" data-level="6.5" data-path="diversity.html"><a href="diversity.html#beta-diversity-no-share-sites"><i class="fa fa-check"></i><b>6.5</b> Beta-diversity: no-share sites</a></li>
+<li class="chapter" data-level="6.6" data-path="diversity.html"><a href="diversity.html#key-references-2"><i class="fa fa-check"></i><b>6.6</b> Key references</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="chapter" data-level="7" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>7</b> Literature</a></li>
 <li class="divider"></li>
@@ -246,17 +254,19 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="comm-data" class="section level1 hasAnchor" number="4">
 <h1><span class="header-section-number">Chapter 4</span> Community Data<a href="comm-data.html#comm-data" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="general-structure-of-community-ecology-data-sets" class="section level2 hasAnchor" number="4.1">
-<h2><span class="header-section-number">4.1</span> General structure of community ecology data sets<a href="comm-data.html#general-structure-of-community-ecology-data-sets" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="general-structure-of-community-ecology-datasets" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> General structure of community ecology datasets<a href="comm-data.html#general-structure-of-community-ecology-datasets" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Often times community ecology data are recorded in a set of tables that contain information on species presence/absence (or abundance) in plots, species trait values, environmental conditions of plots, and a phylogeny of the species.</p>
 <div class="float">
 <img src="fig/mx_c.png" alt="Community ecology data tables" />
 <div class="figcaption">Community ecology data tables</div>
 </div>
 </div>
-<div id="todays-example-data-set---mafragh-algeria-vegetation-data" class="section level2 hasAnchor" number="4.2">
-<h2><span class="header-section-number">4.2</span> Today’s example data set - Mafragh, Algeria vegetation data<a href="comm-data.html#todays-example-data-set---mafragh-algeria-vegetation-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>We will use one core dataset throughout this tutorial. The <code>veg</code> dataset gives information about spatial coordinates, species, environment, traits, and phylogeny for plants on the Mafragh coastal plain in North Africa.</p>
+<div id="todays-example-dataset---mafragh-algeria-vegetation-data" class="section level2 hasAnchor" number="4.2">
+<h2><span class="header-section-number">4.2</span> Today’s example dataset - Mafragh, Algeria vegetation data<a href="comm-data.html#todays-example-dataset---mafragh-algeria-vegetation-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>We will use one main dataset throughout this tutorial.
+You should have loaded this dataset in the <strong>Get the data</strong> sub-section of Section <a href="prereq.html#prereq">2</a>, but we’ll load the data again below.
+The <code>veg</code> variable is a <code>list</code> object that includes data tables with information on spatial coordinates, species abundances, environment, traits, and phylogeny for plants on the Mafragh coastal plain in North Africa.</p>
 <p>Specifically, <code>veg</code> is a list containing five items:</p>
 <ul>
 <li><code>xy</code> 97 observations of 2 spatial coordinates</li>
@@ -265,19 +275,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><code>tra</code> 12 traits for 56 plant species</li>
 <li><code>phy</code> phylogeny for 56 plant species</li>
 </ul>
+<blockquote>
+<p><strong>NOTE:</strong> the information in the <code>veg</code> object are derived from a dataset included in the <code>ade4</code> package. You can load the data from <code>ade4</code> with the code below and use the <code>?</code> function to access included documentation about these data. However, the data tables have different names in the included data than what we are working with today.</p>
+</blockquote>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="comm-data.html#cb105-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mafragh&quot;</span>, <span class="at">package =</span> <span class="st">&quot;ade4&quot;</span>)</span>
+<span id="cb105-2"><a href="comm-data.html#cb105-2" tabindex="-1"></a>?ade4<span class="sc">::</span>mafragh</span></code></pre></div>
 <div id="load-the-data" class="section level3 hasAnchor" number="4.2.1">
 <h3><span class="header-section-number">4.2.1</span> Load the data<a href="comm-data.html#load-the-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>While we went over how to read in data via a *.csv file in Section <a href="intro-to-RStudio.html#intro-to-RStudio">3</a>, we will take advantage of the fact that our example data sets have already been read in to R and saved as a *.rda object.
+<p>While we went over how to read in data via a *.csv file in Section <a href="intro-to-RStudio.html#intro-to-RStudio">3</a>, we will take advantage of the fact that our example datasets have already been read in to R and saved as a *.rda object.
 The <code>veg.rda</code> object is a <em>list</em> object, with five elements.
 Each element is one of the data tables we will need for our analyses.</p>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="comm-data.html#cb105-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&#39;data/veg.rda&#39;</span>)  <span class="co"># load the object (contains multiple objects)</span></span>
-<span id="cb105-2"><a href="comm-data.html#cb105-2" tabindex="-1"></a>xy  <span class="ot">&lt;-</span> veg<span class="sc">$</span>xy           <span class="co"># spatial</span></span>
-<span id="cb105-3"><a href="comm-data.html#cb105-3" tabindex="-1"></a>spe <span class="ot">&lt;-</span> veg<span class="sc">$</span>spe          <span class="co"># species</span></span>
-<span id="cb105-4"><a href="comm-data.html#cb105-4" tabindex="-1"></a>env <span class="ot">&lt;-</span> veg<span class="sc">$</span>env          <span class="co"># environment</span></span>
-<span id="cb105-5"><a href="comm-data.html#cb105-5" tabindex="-1"></a>tra <span class="ot">&lt;-</span> veg<span class="sc">$</span>tra          <span class="co"># traits</span></span>
-<span id="cb105-6"><a href="comm-data.html#cb105-6" tabindex="-1"></a>phy <span class="ot">&lt;-</span> veg<span class="sc">$</span>phy          <span class="co"># phylogeny</span></span>
-<span id="cb105-7"><a href="comm-data.html#cb105-7" tabindex="-1"></a><span class="fu">rm</span>(veg)                 <span class="co"># cleanup</span></span>
-<span id="cb105-8"><a href="comm-data.html#cb105-8" tabindex="-1"></a><span class="fu">ls</span>()                    <span class="co"># list objects now in this local environment</span></span></code></pre></div>
+<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="comm-data.html#cb106-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&#39;data/veg.rda&#39;</span>)  <span class="co"># load the object (contains multiple objects)</span></span>
+<span id="cb106-2"><a href="comm-data.html#cb106-2" tabindex="-1"></a>xy  <span class="ot">&lt;-</span> veg<span class="sc">$</span>xy           <span class="co"># spatial</span></span>
+<span id="cb106-3"><a href="comm-data.html#cb106-3" tabindex="-1"></a>spe <span class="ot">&lt;-</span> veg<span class="sc">$</span>spe          <span class="co"># species</span></span>
+<span id="cb106-4"><a href="comm-data.html#cb106-4" tabindex="-1"></a>env <span class="ot">&lt;-</span> veg<span class="sc">$</span>env          <span class="co"># environment</span></span>
+<span id="cb106-5"><a href="comm-data.html#cb106-5" tabindex="-1"></a>tra <span class="ot">&lt;-</span> veg<span class="sc">$</span>tra          <span class="co"># traits</span></span>
+<span id="cb106-6"><a href="comm-data.html#cb106-6" tabindex="-1"></a>phy <span class="ot">&lt;-</span> veg<span class="sc">$</span>phy          <span class="co"># phylogeny</span></span>
+<span id="cb106-7"><a href="comm-data.html#cb106-7" tabindex="-1"></a><span class="fu">rm</span>(veg)                 <span class="co"># cleanup</span></span>
+<span id="cb106-8"><a href="comm-data.html#cb106-8" tabindex="-1"></a><span class="fu">ls</span>()                    <span class="co"># list objects now in this local environment</span></span></code></pre></div>
 <pre><code>## [1] &quot;env&quot; &quot;phy&quot; &quot;spe&quot; &quot;tra&quot; &quot;xy&quot;</code></pre>
 <hr />
 <div id="challenge-6" class="section level4 hasAnchor" number="4.2.1.1">

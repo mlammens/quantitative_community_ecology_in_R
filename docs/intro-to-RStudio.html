@@ -23,7 +23,7 @@
 <meta name="author" content="Matthew Aiello-Lammens and many others" />
 
 
-<meta name="date" content="2026-07-24" />
+<meta name="date" content="2026-07-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -198,8 +198,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="4" data-path="comm-data.html"><a href="comm-data.html"><i class="fa fa-check"></i><b>4</b> Community Data</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="comm-data.html"><a href="comm-data.html#general-structure-of-community-ecology-data-sets"><i class="fa fa-check"></i><b>4.1</b> General structure of community ecology data sets</a></li>
-<li class="chapter" data-level="4.2" data-path="comm-data.html"><a href="comm-data.html#todays-example-data-set---mafragh-algeria-vegetation-data"><i class="fa fa-check"></i><b>4.2</b> Today’s example data set - Mafragh, Algeria vegetation data</a>
+<li class="chapter" data-level="4.1" data-path="comm-data.html"><a href="comm-data.html#general-structure-of-community-ecology-datasets"><i class="fa fa-check"></i><b>4.1</b> General structure of community ecology datasets</a></li>
+<li class="chapter" data-level="4.2" data-path="comm-data.html"><a href="comm-data.html#todays-example-dataset---mafragh-algeria-vegetation-data"><i class="fa fa-check"></i><b>4.2</b> Today’s example dataset - Mafragh, Algeria vegetation data</a>
 <ul>
 <li class="chapter" data-level="4.2.1" data-path="comm-data.html"><a href="comm-data.html#load-the-data"><i class="fa fa-check"></i><b>4.2.1</b> Load the data</a></li>
 </ul></li>
@@ -221,7 +221,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.4" data-path="data-transform.html"><a href="data-transform.html#visualizing-our-community-data"><i class="fa fa-check"></i><b>5.4</b> Visualizing our community data</a></li>
 <li class="chapter" data-level="5.5" data-path="data-transform.html"><a href="data-transform.html#key-references-1"><i class="fa fa-check"></i><b>5.5</b> Key references</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>6</b> Final Words</a></li>
+<li class="chapter" data-level="6" data-path="diversity.html"><a href="diversity.html"><i class="fa fa-check"></i><b>6</b> Diversity Measures</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="diversity.html"><a href="diversity.html#gamma-regional-diversity"><i class="fa fa-check"></i><b>6.1</b> Gamma (regional) diversity</a></li>
+<li class="chapter" data-level="6.2" data-path="diversity.html"><a href="diversity.html#alpha-per-site-diversity"><i class="fa fa-check"></i><b>6.2</b> Alpha (per-site) diversity</a></li>
+<li class="chapter" data-level="6.3" data-path="diversity.html"><a href="diversity.html#beta-among-site-diversity-whittakers"><i class="fa fa-check"></i><b>6.3</b> Beta (among-site) diversity: Whittaker’s</a></li>
+<li class="chapter" data-level="6.4" data-path="diversity.html"><a href="diversity.html#beta-diversity-dust-bunny-indices-dbi"><i class="fa fa-check"></i><b>6.4</b> Beta diversity: dust bunny indices (DBI)</a></li>
+<li class="chapter" data-level="6.5" data-path="diversity.html"><a href="diversity.html#beta-diversity-no-share-sites"><i class="fa fa-check"></i><b>6.5</b> Beta-diversity: no-share sites</a></li>
+<li class="chapter" data-level="6.6" data-path="diversity.html"><a href="diversity.html#key-references-2"><i class="fa fa-check"></i><b>6.6</b> Key references</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="chapter" data-level="7" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>7</b> Literature</a></li>
 <li class="divider"></li>
@@ -253,7 +261,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>Perform basic arithmetic using R/RStudio</li>
 <li>Identify the major components of the RStudio interface</li>
 <li>Create an Rmd file and use it to document a sequence of R functions</li>
-<li>Read in a data set and perform basic data summary procedures in R</li>
+<li>Read in a dataset and perform basic data summary procedures in R</li>
 </ul>
 </div>
 <div id="getting-started" class="section level2 hasAnchor" number="3.2">
@@ -511,12 +519,12 @@ class()</code></pre>
 <h2><span class="header-section-number">3.10</span> Data frames<a href="intro-to-RStudio.html#data-frames" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <div id="reading-in-your-own-data" class="section level3 hasAnchor" number="3.10.1">
 <h3><span class="header-section-number">3.10.1</span> Reading in your own data<a href="intro-to-RStudio.html#reading-in-your-own-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>One of the most basic things you will need to do in R is read in your own data set.
+<p>One of the most basic things you will need to do in R is read in your own dataset.
 You can read in Excel files, simple text files, and even files from Google Sheets (this is a bit more complicated though).
 But the easiest type of file to read in is a comma separated values (CSV) file.
 You can save an Excel workbook (or Numbers workbook or Google Sheet) as a CSV file by using the “Save as …” menu item.</p>
-<p>Let’s read in a data set of trait measurements from 56 different plant species using the function <code>read.csv</code>.
-First, you’ll need to download the data set from the workshop site.
+<p>Let’s read in a dataset of trait measurements from 56 different plant species using the function <code>read.csv</code>.
+First, you’ll need to download the dataset from the workshop site.
 Second, move the file to the <code>data</code> sub-folder in your <code>ESA_QuantComm</code> folder.
 Then, we’ll read in the file. <strong>NOTE: you may need to adjust the path to the file.</strong></p>
 <div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="intro-to-RStudio.html#cb59-1" tabindex="-1"></a>trait_data <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/tra.csv&quot;</span>)</span></code></pre></div>
@@ -553,7 +561,7 @@ Then, we’ll read in the file. <strong>NOTE: you may need to adjust the path to
 ## 56         1 1.0986123  -1.609438  0.0000000 5.0         0            1</code></pre>
 <div id="summary-function" class="section level4 hasAnchor" number="3.10.1.1">
 <h4><span class="header-section-number">3.10.1.1</span> <code>summary</code> function<a href="intro-to-RStudio.html#summary-function" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Next we’ll use the <code>summary</code> function to examine this data set.
+<p>Next we’ll use the <code>summary</code> function to examine this dataset.
 <code>summary</code> returns many standard statistics.
 When doing data exploration, a few things you want to look at are:</p>
 <ul>
@@ -684,7 +692,7 @@ Check out
 <div id="looking-for-missing-elements" class="section level2 hasAnchor" number="3.11">
 <h2><span class="header-section-number">3.11</span> Looking for missing elements<a href="intro-to-RStudio.html#looking-for-missing-elements" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Many analyses in quantitative community ecology rely on multivariate statistical approaches, such as PCA, RDA, and NMDS.
-These analyses require complete data sets, and will not work if there are missing values.
+These analyses require complete datasets, and will not work if there are missing values.
 Below we go through an example of how to search for and replace a missing value.</p>
 <blockquote>
 <p><strong>NOTE:</strong> data imputation (i.e., replacing missing values with approximate values) is an area of study all by itself and we will not be covering it here. We encourage you to look in to this topic on your own, but here is a primer that might be useful to start with – <a href="https://libguides.princeton.edu/R-Missingdata">https://libguides.princeton.edu/R-Missingdata</a>.</p>
@@ -735,7 +743,7 @@ used to create a plot is a little more involved than base R (i.e., the <code>gra
 </div>
 <div id="histograms" class="section level3 hasAnchor" number="3.12.3">
 <h3><span class="header-section-number">3.12.3</span> Histograms<a href="intro-to-RStudio.html#histograms" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>Let’s make a histogram of minimum heights in the trait data set.</p>
+<p>Let’s make a histogram of minimum heights in the trait dataset.</p>
 <div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="intro-to-RStudio.html#cb98-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> trait_data, <span class="fu">aes</span>(<span class="at">x =</span> min_height)) <span class="sc">+</span></span>
 <span id="cb98-2"><a href="intro-to-RStudio.html#cb98-2" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better

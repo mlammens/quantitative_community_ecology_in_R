@@ -23,7 +23,7 @@
 <meta name="author" content="Matthew Aiello-Lammens and many others" />
 
 
-<meta name="date" content="2026-07-24" />
+<meta name="date" content="2026-07-25" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -31,7 +31,7 @@
   
   
 <link rel="prev" href="comm-data.html"/>
-<link rel="next" href="final-words.html"/>
+<link rel="next" href="diversity.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -198,8 +198,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="4" data-path="comm-data.html"><a href="comm-data.html"><i class="fa fa-check"></i><b>4</b> Community Data</a>
 <ul>
-<li class="chapter" data-level="4.1" data-path="comm-data.html"><a href="comm-data.html#general-structure-of-community-ecology-data-sets"><i class="fa fa-check"></i><b>4.1</b> General structure of community ecology data sets</a></li>
-<li class="chapter" data-level="4.2" data-path="comm-data.html"><a href="comm-data.html#todays-example-data-set---mafragh-algeria-vegetation-data"><i class="fa fa-check"></i><b>4.2</b> Today’s example data set - Mafragh, Algeria vegetation data</a>
+<li class="chapter" data-level="4.1" data-path="comm-data.html"><a href="comm-data.html#general-structure-of-community-ecology-datasets"><i class="fa fa-check"></i><b>4.1</b> General structure of community ecology datasets</a></li>
+<li class="chapter" data-level="4.2" data-path="comm-data.html"><a href="comm-data.html#todays-example-dataset---mafragh-algeria-vegetation-data"><i class="fa fa-check"></i><b>4.2</b> Today’s example dataset - Mafragh, Algeria vegetation data</a>
 <ul>
 <li class="chapter" data-level="4.2.1" data-path="comm-data.html"><a href="comm-data.html#load-the-data"><i class="fa fa-check"></i><b>4.2.1</b> Load the data</a></li>
 </ul></li>
@@ -221,7 +221,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="5.4" data-path="data-transform.html"><a href="data-transform.html#visualizing-our-community-data"><i class="fa fa-check"></i><b>5.4</b> Visualizing our community data</a></li>
 <li class="chapter" data-level="5.5" data-path="data-transform.html"><a href="data-transform.html#key-references-1"><i class="fa fa-check"></i><b>5.5</b> Key references</a></li>
 </ul></li>
-<li class="chapter" data-level="6" data-path="final-words.html"><a href="final-words.html"><i class="fa fa-check"></i><b>6</b> Final Words</a></li>
+<li class="chapter" data-level="6" data-path="diversity.html"><a href="diversity.html"><i class="fa fa-check"></i><b>6</b> Diversity Measures</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="diversity.html"><a href="diversity.html#gamma-regional-diversity"><i class="fa fa-check"></i><b>6.1</b> Gamma (regional) diversity</a></li>
+<li class="chapter" data-level="6.2" data-path="diversity.html"><a href="diversity.html#alpha-per-site-diversity"><i class="fa fa-check"></i><b>6.2</b> Alpha (per-site) diversity</a></li>
+<li class="chapter" data-level="6.3" data-path="diversity.html"><a href="diversity.html#beta-among-site-diversity-whittakers"><i class="fa fa-check"></i><b>6.3</b> Beta (among-site) diversity: Whittaker’s</a></li>
+<li class="chapter" data-level="6.4" data-path="diversity.html"><a href="diversity.html#beta-diversity-dust-bunny-indices-dbi"><i class="fa fa-check"></i><b>6.4</b> Beta diversity: dust bunny indices (DBI)</a></li>
+<li class="chapter" data-level="6.5" data-path="diversity.html"><a href="diversity.html#beta-diversity-no-share-sites"><i class="fa fa-check"></i><b>6.5</b> Beta-diversity: no-share sites</a></li>
+<li class="chapter" data-level="6.6" data-path="diversity.html"><a href="diversity.html#key-references-2"><i class="fa fa-check"></i><b>6.6</b> Key references</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="chapter" data-level="7" data-path="literature.html"><a href="literature.html"><i class="fa fa-check"></i><b>7</b> Literature</a></li>
 <li class="divider"></li>
@@ -257,27 +265,27 @@ In quantitative community ecology, we may apply transformations to change the re
 <h4><span class="header-section-number">5.1.1.1</span> log10<a href="data-transform.html#log10" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>A log10 transformation is very common when dealing with skewed data. Here’s an example using one of the environmental variables, <code>na_l</code>, which is soluble sodium (i.e., the sodium ion concentration measured per liter of soil solution).</p>
 <p><strong>Without transformation:</strong></p>
-<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="data-transform.html#cb107-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> env, <span class="fu">aes</span>(<span class="at">x =</span> na_l)) <span class="sc">+</span></span>
-<span id="cb107-2"><a href="data-transform.html#cb107-2" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() </span></code></pre></div>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better
-## value with `binwidth`.</code></pre>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
-<p><strong>With log10 transformation:</strong></p>
-<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="data-transform.html#cb109-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> env, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">log10</span>(na_l<span class="fl">+0.1</span>))) <span class="sc">+</span></span>
-<span id="cb109-2"><a href="data-transform.html#cb109-2" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb108"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb108-1"><a href="data-transform.html#cb108-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> env, <span class="fu">aes</span>(<span class="at">x =</span> na_l)) <span class="sc">+</span></span>
+<span id="cb108-2"><a href="data-transform.html#cb108-2" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() </span></code></pre></div>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better
 ## value with `binwidth`.</code></pre>
 <p><img src="bookdown-demo_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
+<p><strong>With log10 transformation:</strong></p>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="data-transform.html#cb110-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> env, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">log10</span>(na_l<span class="fl">+0.1</span>))) <span class="sc">+</span></span>
+<span id="cb110-2"><a href="data-transform.html#cb110-2" tabindex="-1"></a>  <span class="fu">geom_histogram</span>()</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better
+## value with `binwidth`.</code></pre>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
 <blockquote>
 <p><strong>NOTE:</strong> We did a log10 transformation “on the fly” in the ggplot call above, but we could also create a new variable in the <code>env</code> data frame that is the log10 transformation of <code>na_l</code>. Also, we added 0.1 to avoid taking the log of zero.</p>
 </blockquote>
 <p><strong>A <code>ggplot2</code> alternative approach:</strong></p>
-<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb111-1"><a href="data-transform.html#cb111-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> env, <span class="fu">aes</span>(<span class="at">x =</span> na_l)) <span class="sc">+</span></span>
-<span id="cb111-2"><a href="data-transform.html#cb111-2" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span></span>
-<span id="cb111-3"><a href="data-transform.html#cb111-3" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="data-transform.html#cb112-1" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> env, <span class="fu">aes</span>(<span class="at">x =</span> na_l)) <span class="sc">+</span></span>
+<span id="cb112-2"><a href="data-transform.html#cb112-2" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span></span>
+<span id="cb112-3"><a href="data-transform.html#cb112-3" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>()</span></code></pre></div>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better
 ## value with `binwidth`.</code></pre>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
 </div>
 </div>
 <div id="scaling" class="section level3 hasAnchor" number="5.1.2">
@@ -290,21 +298,21 @@ In both cases, the goal is to make the data more comparable across variables and
 However, we are going to use the <code>decostand()</code> function in the <code>vegan</code> package, which has many options for scaling and standardizing data.
 A key advantage to using <code>decostand()</code> is that it can be applied to a data frame or matrix of data, which is very convenient when we have many variables to scale.</p>
 <p><strong>Scaling all our environmental variables to a range of 0 to 1:</strong></p>
-<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb113-1"><a href="data-transform.html#cb113-1" tabindex="-1"></a><span class="co"># Create a new, scaled data frame of environmental variables</span></span>
-<span id="cb113-2"><a href="data-transform.html#cb113-2" tabindex="-1"></a>env_scaled <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">decostand</span>(env, <span class="st">&#39;range&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="data-transform.html#cb114-1" tabindex="-1"></a><span class="co"># Create a new, scaled data frame of environmental variables</span></span>
+<span id="cb114-2"><a href="data-transform.html#cb114-2" tabindex="-1"></a>env_scaled <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">decostand</span>(env, <span class="st">&#39;range&#39;</span>)</span></code></pre></div>
 <p><strong>OPTIONAL: Visualize the relationships among environmental variables before and after scaling using <code>GGally::ggpairs()</code></strong></p>
-<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="data-transform.html#cb114-1" tabindex="-1"></a>GGally<span class="sc">::</span><span class="fu">ggpairs</span>(env)</span>
-<span id="cb114-2"><a href="data-transform.html#cb114-2" tabindex="-1"></a>GGally<span class="sc">::</span><span class="fu">ggpairs</span>(env_scaled)</span></code></pre></div>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="data-transform.html#cb115-1" tabindex="-1"></a>GGally<span class="sc">::</span><span class="fu">ggpairs</span>(env)</span>
+<span id="cb115-2"><a href="data-transform.html#cb115-2" tabindex="-1"></a>GGally<span class="sc">::</span><span class="fu">ggpairs</span>(env_scaled)</span></code></pre></div>
 </div>
 <div id="presence-absence" class="section level3 hasAnchor" number="5.1.3">
 <h3><span class="header-section-number">5.1.3</span> Presence /absence<a href="data-transform.html#presence-absence" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>For some analyses, we may want to convert species abundances to presence/absence data.
 Here are two ways to do this, one using base R and one using the <code>decostand</code> function.</p>
-<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb115-1"><a href="data-transform.html#cb115-1" tabindex="-1"></a><span class="co"># base R -- using logical indexing</span></span>
-<span id="cb115-2"><a href="data-transform.html#cb115-2" tabindex="-1"></a>spe_pa <span class="ot">&lt;-</span> (spe <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">*</span> <span class="dv">1</span></span>
-<span id="cb115-3"><a href="data-transform.html#cb115-3" tabindex="-1"></a></span>
-<span id="cb115-4"><a href="data-transform.html#cb115-4" tabindex="-1"></a><span class="co"># decostand -- using the &quot;pa&quot; method</span></span>
-<span id="cb115-5"><a href="data-transform.html#cb115-5" tabindex="-1"></a>spe_pa2 <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">decostand</span>(spe, <span class="st">&#39;pa&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="data-transform.html#cb116-1" tabindex="-1"></a><span class="co"># base R -- using logical indexing</span></span>
+<span id="cb116-2"><a href="data-transform.html#cb116-2" tabindex="-1"></a>spe_pa <span class="ot">&lt;-</span> (spe <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">*</span> <span class="dv">1</span></span>
+<span id="cb116-3"><a href="data-transform.html#cb116-3" tabindex="-1"></a></span>
+<span id="cb116-4"><a href="data-transform.html#cb116-4" tabindex="-1"></a><span class="co"># decostand -- using the &quot;pa&quot; method</span></span>
+<span id="cb116-5"><a href="data-transform.html#cb116-5" tabindex="-1"></a>spe_pa2 <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">decostand</span>(spe, <span class="st">&#39;pa&#39;</span>)</span></code></pre></div>
 </div>
 <div id="hellinger-transformation" class="section level3 hasAnchor" number="5.1.4">
 <h3><span class="header-section-number">5.1.4</span> Hellinger transformation<a href="data-transform.html#hellinger-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h3>
@@ -312,7 +320,7 @@ Here are two ways to do this, one using base R and one using the <code>decostand
 This transformation converts species abundances to square-root-transformed relative abundances.
 It down-weights dominant species and produces a data structure that is well suited for Euclidean ordination methods such as PCA and RDA.
 But be careful, the Hellinger transformation shifts the focus from absolute abundances to relative community composition, which may or may not match the ecological questions you are interested in.</p>
-<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="data-transform.html#cb116-1" tabindex="-1"></a>spe_hell <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">decostand</span>(spe, <span class="st">&#39;hellinger&#39;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="data-transform.html#cb117-1" tabindex="-1"></a>spe_hell <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">decostand</span>(spe, <span class="st">&#39;hellinger&#39;</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="outliers" class="section level2 hasAnchor" number="5.2">
@@ -321,18 +329,18 @@ But be careful, the Hellinger transformation shifts the focus from absolute abun
 A quick way to search for multivariate outliers is to use a distance/dissimilarity matrix.
 A multivariate outlier has unusual values for a combination of multiple variables (McCune and Grace 2002). We can identify them as the sample unit(s) which exceed a defined number of standard deviations away from the grand mean (i.e., a large z-score).</p>
 <p>In the code below, we first define a new function called <code>outliers()</code> that takes a data frame or matrix of species abundances and calculates the mean distance of each site to all other sites, then calculates the z-score for each site, and finally identifies which sites are outliers based on a user-defined threshold (default is 2 standard deviations).</p>
-<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb117-1"><a href="data-transform.html#cb117-1" tabindex="-1"></a><span class="co"># User-defined `outliers` function</span></span>
-<span id="cb117-2"><a href="data-transform.html#cb117-2" tabindex="-1"></a>outliers <span class="ot">&lt;-</span> <span class="cf">function</span> (x, <span class="at">mult=</span><span class="dv">2</span>, <span class="at">method=</span><span class="st">&#39;bray&#39;</span>) {</span>
-<span id="cb117-3"><a href="data-transform.html#cb117-3" tabindex="-1"></a>  d <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(vegan<span class="sc">::</span><span class="fu">vegdist</span>(x, <span class="at">method=</span>method, <span class="at">binary=</span>F, <span class="at">diag=</span>T, <span class="at">upper=</span>T))</span>
-<span id="cb117-4"><a href="data-transform.html#cb117-4" tabindex="-1"></a>  <span class="fu">diag</span>(d) <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="dv">1</span>)     <span class="co"># avoid zero-multiplication</span></span>
-<span id="cb117-5"><a href="data-transform.html#cb117-5" tabindex="-1"></a>  m       <span class="ot">&lt;-</span> <span class="fu">apply</span>(d, <span class="dv">2</span>, mean) <span class="co"># site means</span></span>
-<span id="cb117-6"><a href="data-transform.html#cb117-6" tabindex="-1"></a>  z       <span class="ot">&lt;-</span> <span class="fu">scale</span>(m)          <span class="co"># z-scores</span></span>
-<span id="cb117-7"><a href="data-transform.html#cb117-7" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">mean_dist =</span> m, <span class="at">z =</span> z, <span class="at">is_outlier =</span> <span class="fu">abs</span>(z) <span class="sc">&gt;=</span> mult)</span>
-<span id="cb117-8"><a href="data-transform.html#cb117-8" tabindex="-1"></a>}</span>
-<span id="cb117-9"><a href="data-transform.html#cb117-9" tabindex="-1"></a></span>
-<span id="cb117-10"><a href="data-transform.html#cb117-10" tabindex="-1"></a><span class="co"># Use our new function</span></span>
-<span id="cb117-11"><a href="data-transform.html#cb117-11" tabindex="-1"></a>o <span class="ot">&lt;-</span> <span class="fu">outliers</span>(spe, <span class="at">mult=</span><span class="dv">2</span>)</span>
-<span id="cb117-12"><a href="data-transform.html#cb117-12" tabindex="-1"></a><span class="fu">head</span>(o, <span class="dv">7</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="data-transform.html#cb118-1" tabindex="-1"></a><span class="co"># User-defined `outliers` function</span></span>
+<span id="cb118-2"><a href="data-transform.html#cb118-2" tabindex="-1"></a>outliers <span class="ot">&lt;-</span> <span class="cf">function</span> (x, <span class="at">mult=</span><span class="dv">2</span>, <span class="at">method=</span><span class="st">&#39;bray&#39;</span>) {</span>
+<span id="cb118-3"><a href="data-transform.html#cb118-3" tabindex="-1"></a>  d <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(vegan<span class="sc">::</span><span class="fu">vegdist</span>(x, <span class="at">method=</span>method, <span class="at">binary=</span>F, <span class="at">diag=</span>T, <span class="at">upper=</span>T))</span>
+<span id="cb118-4"><a href="data-transform.html#cb118-4" tabindex="-1"></a>  <span class="fu">diag</span>(d) <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="dv">1</span>)     <span class="co"># avoid zero-multiplication</span></span>
+<span id="cb118-5"><a href="data-transform.html#cb118-5" tabindex="-1"></a>  m       <span class="ot">&lt;-</span> <span class="fu">apply</span>(d, <span class="dv">2</span>, mean) <span class="co"># site means</span></span>
+<span id="cb118-6"><a href="data-transform.html#cb118-6" tabindex="-1"></a>  z       <span class="ot">&lt;-</span> <span class="fu">scale</span>(m)          <span class="co"># z-scores</span></span>
+<span id="cb118-7"><a href="data-transform.html#cb118-7" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">mean_dist =</span> m, <span class="at">z =</span> z, <span class="at">is_outlier =</span> <span class="fu">abs</span>(z) <span class="sc">&gt;=</span> mult)</span>
+<span id="cb118-8"><a href="data-transform.html#cb118-8" tabindex="-1"></a>}</span>
+<span id="cb118-9"><a href="data-transform.html#cb118-9" tabindex="-1"></a></span>
+<span id="cb118-10"><a href="data-transform.html#cb118-10" tabindex="-1"></a><span class="co"># Use our new function</span></span>
+<span id="cb118-11"><a href="data-transform.html#cb118-11" tabindex="-1"></a>o <span class="ot">&lt;-</span> <span class="fu">outliers</span>(spe, <span class="at">mult=</span><span class="dv">2</span>)</span>
+<span id="cb118-12"><a href="data-transform.html#cb118-12" tabindex="-1"></a><span class="fu">head</span>(o, <span class="dv">7</span>)</span></code></pre></div>
 <pre><code>##   mean_dist          z is_outlier
 ## 1 0.8621210  0.3641452      FALSE
 ## 2 0.8151145 -0.7867036      FALSE
@@ -341,7 +349,7 @@ A multivariate outlier has unusual values for a combination of multiple variable
 ## 5 0.8915303  1.0841658      FALSE
 ## 6 0.8592909  0.2948558      FALSE
 ## 7 0.8657330  0.4525754      FALSE</code></pre>
-<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb119-1"><a href="data-transform.html#cb119-1" tabindex="-1"></a><span class="fu">which</span>(o<span class="sc">$</span>is_outlier) </span></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="data-transform.html#cb120-1" tabindex="-1"></a><span class="fu">which</span>(o<span class="sc">$</span>is_outlier) </span></code></pre></div>
 <pre><code>## [1] 32 45 95 97</code></pre>
 <hr />
 <div id="challenge-7" class="section level4 hasAnchor" number="5.2.0.1">
@@ -353,35 +361,35 @@ A multivariate outlier has unusual values for a combination of multiple variable
 <div id="testing-the-validity-of-our-species-matrix" class="section level2 hasAnchor" number="5.3">
 <h2><span class="header-section-number">5.3</span> Testing the validity of our species matrix<a href="data-transform.html#testing-the-validity-of-our-species-matrix" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Before proceeding with most multivariate analyses, our species abundance matrix must have 1) no missing values, 2) every site must have at least one species observation, and 3) every species must occur in at least one site.</p>
-<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="data-transform.html#cb121-1" tabindex="-1"></a><span class="sc">!</span><span class="fu">anyNA</span>(spe)                     <span class="co"># expect TRUE, no missing values</span></span></code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="data-transform.html#cb122-1" tabindex="-1"></a><span class="sc">!</span><span class="fu">anyNA</span>(spe)                     <span class="co"># expect TRUE, no missing values</span></span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
-<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb123-1"><a href="data-transform.html#cb123-1" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">rowSums</span>(spe) <span class="sc">!=</span> <span class="dv">0</span>) <span class="co"># expect TRUE, no empty sites</span></span></code></pre></div>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb124-1"><a href="data-transform.html#cb124-1" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">rowSums</span>(spe) <span class="sc">!=</span> <span class="dv">0</span>) <span class="co"># expect TRUE, no empty sites</span></span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
-<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb125-1"><a href="data-transform.html#cb125-1" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">colSums</span>(spe) <span class="sc">!=</span> <span class="dv">0</span>) <span class="co"># expect TRUE, no empty species</span></span></code></pre></div>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb126-1"><a href="data-transform.html#cb126-1" tabindex="-1"></a><span class="fu">all</span>(<span class="fu">colSums</span>(spe) <span class="sc">!=</span> <span class="dv">0</span>) <span class="co"># expect TRUE, no empty species</span></span></code></pre></div>
 <pre><code>## [1] TRUE</code></pre>
 </div>
 <div id="visualizing-our-community-data" class="section level2 hasAnchor" number="5.4">
 <h2><span class="header-section-number">5.4</span> Visualizing our community data<a href="data-transform.html#visualizing-our-community-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Let’s map the spatial coordinates.</p>
-<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb127-1"><a href="data-transform.html#cb127-1" tabindex="-1"></a><span class="do">### spatial</span></span>
-<span id="cb127-2"><a href="data-transform.html#cb127-2" tabindex="-1"></a><span class="fu">plot</span>(xy, <span class="at">pch=</span><span class="dv">19</span>, <span class="at">col=</span><span class="st">&#39;grey&#39;</span>, <span class="at">xlab=</span><span class="st">&#39;Easting&#39;</span>, <span class="at">ylab=</span><span class="st">&#39;Northing&#39;</span>,</span>
-<span id="cb127-3"><a href="data-transform.html#cb127-3" tabindex="-1"></a>     <span class="at">main=</span><span class="st">&#39;Map of sites in study area&#39;</span>)</span></code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-47-1.png" width="672" /></p>
-<p>Plot the species abundance matrix as a heatmap. Here we are using the <code>tabasco()</code> function in the <code>vegan</code> package, which generates heatmaps of matrices. Darker colors indicate higher values.</p>
-<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb128-1"><a href="data-transform.html#cb128-1" tabindex="-1"></a>vegan<span class="sc">::</span><span class="fu">tabasco</span>(spe, <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
+<div class="sourceCode" id="cb128"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb128-1"><a href="data-transform.html#cb128-1" tabindex="-1"></a><span class="do">### spatial</span></span>
+<span id="cb128-2"><a href="data-transform.html#cb128-2" tabindex="-1"></a><span class="fu">plot</span>(xy, <span class="at">pch=</span><span class="dv">19</span>, <span class="at">col=</span><span class="st">&#39;grey&#39;</span>, <span class="at">xlab=</span><span class="st">&#39;Easting&#39;</span>, <span class="at">ylab=</span><span class="st">&#39;Northing&#39;</span>,</span>
+<span id="cb128-3"><a href="data-transform.html#cb128-3" tabindex="-1"></a>     <span class="at">main=</span><span class="st">&#39;Map of sites in study area&#39;</span>)</span></code></pre></div>
 <p><img src="bookdown-demo_files/figure-html/unnamed-chunk-48-1.png" width="672" /></p>
-<p>Plot the scaled soils (environmental) matrix as a heatmap.</p>
-<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb129-1"><a href="data-transform.html#cb129-1" tabindex="-1"></a>vegan<span class="sc">::</span><span class="fu">tabasco</span>(env_scaled, <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
+<p>Plot the species abundance matrix as a heatmap. Here we are using the <code>tabasco()</code> function in the <code>vegan</code> package, which generates heatmaps of matrices. Darker colors indicate higher values.</p>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb129-1"><a href="data-transform.html#cb129-1" tabindex="-1"></a>vegan<span class="sc">::</span><span class="fu">tabasco</span>(spe, <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
 <p><img src="bookdown-demo_files/figure-html/unnamed-chunk-49-1.png" width="672" /></p>
-<p>Plot the scaled traits matrix as a heatmap.</p>
-<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb130-1"><a href="data-transform.html#cb130-1" tabindex="-1"></a><span class="do">### traits</span></span>
-<span id="cb130-2"><a href="data-transform.html#cb130-2" tabindex="-1"></a>tra_scaled <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">decostand</span>(tra, <span class="st">&#39;range&#39;</span>)</span>
-<span id="cb130-3"><a href="data-transform.html#cb130-3" tabindex="-1"></a>vegan<span class="sc">::</span><span class="fu">tabasco</span>(tra_scaled, <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
+<p>Plot the scaled soils (environmental) matrix as a heatmap.</p>
+<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb130-1"><a href="data-transform.html#cb130-1" tabindex="-1"></a>vegan<span class="sc">::</span><span class="fu">tabasco</span>(env_scaled, <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
 <p><img src="bookdown-demo_files/figure-html/unnamed-chunk-50-1.png" width="672" /></p>
-<p>Plot the phylogenetic tree.</p>
-<div class="sourceCode" id="cb131"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb131-1"><a href="data-transform.html#cb131-1" tabindex="-1"></a><span class="do">### phylogeny</span></span>
-<span id="cb131-2"><a href="data-transform.html#cb131-2" tabindex="-1"></a><span class="fu">plot</span>(phy, <span class="at">cex=</span><span class="fl">0.6</span>, <span class="at">no.margin=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<p>Plot the scaled traits matrix as a heatmap.</p>
+<div class="sourceCode" id="cb131"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb131-1"><a href="data-transform.html#cb131-1" tabindex="-1"></a><span class="do">### traits</span></span>
+<span id="cb131-2"><a href="data-transform.html#cb131-2" tabindex="-1"></a>tra_scaled <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">decostand</span>(tra, <span class="st">&#39;range&#39;</span>)</span>
+<span id="cb131-3"><a href="data-transform.html#cb131-3" tabindex="-1"></a>vegan<span class="sc">::</span><span class="fu">tabasco</span>(tra_scaled, <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
 <p><img src="bookdown-demo_files/figure-html/unnamed-chunk-51-1.png" width="672" /></p>
+<p>Plot the phylogenetic tree.</p>
+<div class="sourceCode" id="cb132"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb132-1"><a href="data-transform.html#cb132-1" tabindex="-1"></a><span class="do">### phylogeny</span></span>
+<span id="cb132-2"><a href="data-transform.html#cb132-2" tabindex="-1"></a><span class="fu">plot</span>(phy, <span class="at">cex=</span><span class="fl">0.6</span>, <span class="at">no.margin=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-52-1.png" width="672" /></p>
 </div>
 <div id="key-references-1" class="section level2 hasAnchor" number="5.5">
 <h2><span class="header-section-number">5.5</span> Key references<a href="data-transform.html#key-references-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
@@ -395,7 +403,7 @@ A multivariate outlier has unusual values for a combination of multiple variable
         </div>
       </div>
 <a href="comm-data.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="final-words.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="diversity.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

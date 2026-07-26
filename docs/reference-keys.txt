@@ -46,8 +46,8 @@ boxplots
 challenge-5
 clean-up-your-work-space
 comm-data
-general-structure-of-community-ecology-data-sets
-todays-example-data-set---mafragh-algeria-vegetation-data
+general-structure-of-community-ecology-datasets
+todays-example-dataset---mafragh-algeria-vegetation-data
 load-the-data
 challenge-6
 study-area-description
@@ -65,5 +65,11 @@ challenge-7
 testing-the-validity-of-our-species-matrix
 visualizing-our-community-data
 key-references-1
-final-words
+diversity
+gamma-regional-diversity
+alpha-per-site-diversity
+beta-among-site-diversity-whittakers
+beta-diversity-dust-bunny-indices-dbi
+beta-diversity-no-share-sites
+key-references-2
 literature

@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Quantitative Community Ecology in R</title>
+  <title>Chapter 6 Diversity Measures | Quantitative Community Ecology in R</title>
   <meta name="description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Quantitative Community Ecology in R" />
+  <meta property="og:title" content="Chapter 6 Diversity Measures | Quantitative Community Ecology in R" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Quantitative Community Ecology in R" />
+  <meta name="twitter:title" content="Chapter 6 Diversity Measures | Quantitative Community Ecology in R" />
   
   <meta name="twitter:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-
-<link rel="next" href="prereq.html"/>
+<link rel="prev" href="data-transform.html"/>
+<link rel="next" href="references.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -252,21 +252,73 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Quantitative Community Ecology in R</h1>
-<p class="author"><em>Matthew Aiello-Lammens and many others</em></p>
-<p class="date"><em>2026-07-25</em></p>
+<div id="diversity" class="section level1 hasAnchor" number="6">
+<h1><span class="header-section-number">Chapter 6</span> Diversity Measures<a href="diversity.html#diversity" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><strong><em>How diverse is this site? many sites? region?</em></strong></p>
+<p>Let’s examine the “diversity” of our sites and study area.
+Diversity can encompass any sort of variation, e.g., taxonomic, trait, or phylogenetic.
+Here we assume that <code>spe</code> is a species abundance matrix where rows = sites, columns = taxa, and values must not be negative or missing.
+<em>Recall that we did a validity test on the <code>spe</code> data table in Section <a href="data-transform.html#data-transform">5</a>, ensuring there weren’t any <code>NA</code> values. We could do a similar test looking for negative values.</em></p>
+<div id="gamma-regional-diversity" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> Gamma (regional) diversity<a href="diversity.html#gamma-regional-diversity" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb133-1"><a href="diversity.html#cb133-1" tabindex="-1"></a>gamma <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">colSums</span>(spe) <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb133-2"><a href="diversity.html#cb133-2" tabindex="-1"></a>gamma</span></code></pre></div>
+<pre><code>## [1] 56</code></pre>
 </div>
-<div id="introduction" class="section level1 hasAnchor" number="1">
-<h1><span class="header-section-number">Chapter 1</span> Introduction<a href="index.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="short-course-description" class="section level2 hasAnchor" number="1.1">
-<h2><span class="header-section-number">1.1</span> Short Course Description<a href="index.html#short-course-description" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Participants will be introduced to fundamental and cutting-edge techniques in R that will enable them to answer important questions in community ecology.
-The course will cover both basic and intermediate multivariate methods, such as calculating a variety of community diversity metrics, distance (dissimilarity) measures, transformations, ordination, clustering, indicator species analysis, tests for multivariate differences between groups, and data visualization.
-We will also demonstrate how one might integrate phylogenetic and spatial information for community analysis. Interspersing short lectures with break-out groups, participants will use data provided by the course leaders to solve analytical problems using R <a href="https://www.r-project.org/">https://www.r-project.org/</a>,
-an open-source statistical software widely and increasingly used by ecologists. Participants will be exposed to a variety of R packages for data clean-up and organization (tidyr, ggplot2) and multivariate analyses (vegan, betapart, labdsv, ade4, ecodist, ape, picante), and all data files, code, and supporting documents will be made available prior to the short course to enhance learning.
-Although no prior experience in R is required to attend, participants with a basic statistical and community ecology background may find this course most beneficial.
-We recommend, and will provide, a short R tutorial prior to attending for all participants who have not used R previously.</p>
+<div id="alpha-per-site-diversity" class="section level2 hasAnchor" number="6.2">
+<h2><span class="header-section-number">6.2</span> Alpha (per-site) diversity<a href="diversity.html#alpha-per-site-diversity" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb135-1"><a href="diversity.html#cb135-1" tabindex="-1"></a><span class="do">### Alpha (per-site) diversity</span></span>
+<span id="cb135-2"><a href="diversity.html#cb135-2" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(spe <span class="sc">&gt;</span> <span class="dv">0</span>)  <span class="co"># within-site</span></span>
+<span id="cb135-3"><a href="diversity.html#cb135-3" tabindex="-1"></a>avgalpha <span class="ot">&lt;-</span> <span class="fu">mean</span>(alpha) <span class="co"># average within-site</span></span>
+<span id="cb135-4"><a href="diversity.html#cb135-4" tabindex="-1"></a></span>
+<span id="cb135-5"><a href="diversity.html#cb135-5" tabindex="-1"></a>avgalpha</span></code></pre></div>
+<pre><code>## [1] 6.268041</code></pre>
+</div>
+<div id="beta-among-site-diversity-whittakers" class="section level2 hasAnchor" number="6.3">
+<h2><span class="header-section-number">6.3</span> Beta (among-site) diversity: Whittaker’s<a href="diversity.html#beta-among-site-diversity-whittakers" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The calculation below is for a classic Whittaker’s beta diversity measure, but we’ve subtracted a value of 1 from the ratio of gamma and avgalpha.
+This is because if we didn’t subtract 1 and there was <em>no turnover</em>, then beta would equal 1, which can be confusing.</p>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb137-1"><a href="diversity.html#cb137-1" tabindex="-1"></a><span class="do">### Beta (among-site) diversity: Whittaker&#39;s</span></span>
+<span id="cb137-2"><a href="diversity.html#cb137-2" tabindex="-1"></a>beta <span class="ot">&lt;-</span> gamma <span class="sc">/</span> avgalpha <span class="sc">-</span> <span class="dv">1</span></span>
+<span id="cb137-3"><a href="diversity.html#cb137-3" tabindex="-1"></a>beta</span></code></pre></div>
+<pre><code>## [1] 7.934211</code></pre>
+</div>
+<div id="beta-diversity-dust-bunny-indices-dbi" class="section level2 hasAnchor" number="6.4">
+<h2><span class="header-section-number">6.4</span> Beta diversity: dust bunny indices (DBI)<a href="diversity.html#beta-diversity-dust-bunny-indices-dbi" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>McCune and Root (2015) proposed two model-free measures of how strongly multivariate species data exhibit a “dust bunny” distribution, that is, departure from multivariate normality because of many zero abundances due to few species occurring in any given sample unit.
+In other words, the DBI measures how much of the community matrix consists of “dust” - i.e., rare species, low abundances, and empty cells.
+High values indicate that most species occur in few sites and/or at low relative abundance.
+Low values indicate broadly distributed and abundant taxa.
+This information is important because many multivariate methods become harder to interpret, and potentially invalid, when matrices have high dust-bunny values (many rare species and zeros), which is common in community ecology datasets.</p>
+<p><strong>Calculate the proportion of zeros in the matrix, independent of abundance</strong></p>
+<div class="sourceCode" id="cb139"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb139-1"><a href="diversity.html#cb139-1" tabindex="-1"></a>propzero <span class="ot">&lt;-</span> <span class="fu">sum</span>(spe <span class="sc">&lt;</span> .Machine<span class="sc">$</span>double.eps) <span class="sc">/</span> <span class="fu">prod</span>(<span class="fu">dim</span>(spe))</span>
+<span id="cb139-2"><a href="diversity.html#cb139-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;Proportion of zeros in matrix:&#39;</span>, propzero, <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
+<pre><code>## Proportion of zeros in matrix: 0.8880707</code></pre>
+<p><strong>Calculate the dust-bunny index (DBI) for the matrix, including abundances</strong></p>
+<p>The code below includes many steps in one line. Here’s what’s going on:</p>
+<ul>
+<li><code>vegan::decostand(spe, method='max')</code> = max-standardize each species column, i.e., divides each column by its maximum value, so each species abundance has a maximum value of 1</li>
+<li><code>as.matrix(...)</code> = treats the output of the max-stadnardization as a <code>matrix</code></li>
+<li><code>mean(as.matrix(...))</code> = calculates the overall average abundance for all species at all sites</li>
+<li><code>1 - mean(...)</code> = results in an index where a value of 0 indicates a dense matrix, with few zeros, where most species are common and a value of 1 indicates a sparse matrix, with many zeros, where rare species dominate</li>
+</ul>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb141-1"><a href="diversity.html#cb141-1" tabindex="-1"></a>dbi <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">mean</span>(<span class="fu">as.matrix</span>(vegan<span class="sc">::</span><span class="fu">decostand</span>(spe, <span class="at">method=</span><span class="st">&#39;max&#39;</span>)))</span>
+<span id="cb141-2"><a href="diversity.html#cb141-2" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;Dust bunny index:&#39;</span>, dbi, <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
+<pre><code>## Dust bunny index: 0.9325203</code></pre>
+</div>
+<div id="beta-diversity-no-share-sites" class="section level2 hasAnchor" number="6.5">
+<h2><span class="header-section-number">6.5</span> Beta-diversity: no-share sites<a href="diversity.html#beta-diversity-no-share-sites" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>High species turnover (beta-diversity) can cause many site-pairs to share no species in common.
+What proportion of all pairs of sites have totally different sets of species?</p>
+<div class="sourceCode" id="cb143"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb143-1"><a href="diversity.html#cb143-1" tabindex="-1"></a><span class="do">### how many site-pairs share no species in common?</span></span>
+<span id="cb143-2"><a href="diversity.html#cb143-2" tabindex="-1"></a>z <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">no.shared</span>(spe)</span>
+<span id="cb143-3"><a href="diversity.html#cb143-3" tabindex="-1"></a>propnoshare <span class="ot">&lt;-</span> <span class="fu">sum</span>(z) <span class="sc">/</span> <span class="fu">length</span>(z)</span>
+<span id="cb143-4"><a href="diversity.html#cb143-4" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&#39;Proportion of no-share sites:&#39;</span>, propnoshare, <span class="st">&#39;</span><span class="sc">\n</span><span class="st">&#39;</span>)</span></code></pre></div>
+<pre><code>## Proportion of no-share sites: 0.441366</code></pre>
+</div>
+<div id="key-references-2" class="section level2 hasAnchor" number="6.6">
+<h2><span class="header-section-number">6.6</span> Key references<a href="diversity.html#key-references-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>McCune, B., and H.T. Root. 2015. Origin of the dust bunny distribution in ecological community data. Plant Ecology 216(5): 645-656.</p>
 
 </div>
 </div>
@@ -275,8 +327,8 @@ We recommend, and will provide, a short R tutorial prior to attending for all pa
           </div>
         </div>
       </div>
-
-<a href="prereq.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="data-transform.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -307,7 +359,7 @@ gitbook.start({
     "size": 2
   },
   "edit": {
-    "link": "https://github.com/rstudio/bookdown-demo/edit/master/index.Rmd",
+    "link": "https://github.com/rstudio/bookdown-demo/edit/master/05-diversity-measures.Rmd",
     "text": "Edit"
   },
   "history": {

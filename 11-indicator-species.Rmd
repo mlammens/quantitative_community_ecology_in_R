@@ -1,0 +1,42 @@
+# Group indicator species
+
+**Which species are indicative of pre-defined groups?**
+
+The Indicator Value (*IndVal*) is the product of a species’ fidelity and specificity to a group (Dufrêne and Legendre 1997).
+
+## Using the `indval` function
+
+Here we use `labdsv::indval` to examine indicators of single groups, but also use R package `indicspecies` to test whether species might indicate multiple groups.
+
+First, let’s use the same groups we used for PERMANOVA: which species are indicative of the four groups defined by soil potassium? 
+We can compare these "real" indicator species against a random expectation.
+
+```{r}
+### real groups -- same as in the Group Differences section
+grp <- cut(env$k, quantile(env$k, probs=seq(0,1,by=0.25)), include.lowest=T,
+               labels=c('lo','med','hi','veryhi'))   # group memberships
+iv  <- labdsv::indval(spe, grp) # indicator species analysis for *real* groups
+summary(iv)                     # IndVal observed
+
+### random groups
+rnd <- sample(grp, length(grp), replace=T) # define random groups by bootstrapping
+ivr <- labdsv::indval(spe, rnd) # indicator species analysis for *random* groups
+summary(ivr)                    # IndVal expected at random
+```
+
+**How many indicator species would you expect at random?**
+
+```{r}
+### null expectation setting alpha = 5%
+ceiling( ncol(spe) * 0.05 )
+```
+
+> **NOTE:** If you defined groups by a clustering method using species information, do not use *IndVal* to find indicator species of those groups (that would be circular logic).
+
+## Key references
+
+Dufrêne, M. and Legendre, P. 1997. Species assemblages and indicator species: the need for a flexible asymmetrical approach. Ecological Monographs 67(3): 345–366.
+
+de Cáceres, M., P. Legendre, and M. Moretti. 2010. Improving indicator species analysis by combining groups of sites. Oikos 119:1674–1684.
+
+

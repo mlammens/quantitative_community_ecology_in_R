@@ -9,12 +9,25 @@ Here we assume that `spe` is a species abundance matrix where rows = sites, colu
 
 ## Gamma (regional) diversity
 
+The total number of species in a given region.
+
+
 ```{r div-01, eval = TRUE, echo = TRUE}
 gamma <- sum(colSums(spe) > 0)
 gamma
 ```
 
+> **NOTE:** there are other approaches to calculating gamma diversity that incorporate both richness and evenness, such as Shannon, Simpson, and Hill indices. We will not cover these calculations today, but you should be aware of them and investigate them for the future. Below is an example of calculating Shannon gamma.
+
+```{r, eval=FALSE}
+# calculate Shannon index on a vector of summed abundances across all sites for each species
+gamma_shannon <- diversity(colSums(spe), index = "shannon")
+```
+
+
 ## Alpha (per-site) diversity
+
+The number of species in a plot, averaged over all plots for Whittaker's alpha.
 
 ```{r div-02, eval = TRUE, echo = TRUE}
 ### Alpha (per-site) diversity

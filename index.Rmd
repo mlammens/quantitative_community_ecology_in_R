@@ -8,7 +8,7 @@ documentclass: book
 bibliography: [book.bib, packages.bib]
 biblio-style: apalike
 link-citations: yes
-github-repo: rstudio/bookdown-demo
+github-repo: mlammens/quantitative_community_ecology_in_R
 description: "This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section."
 ---
 

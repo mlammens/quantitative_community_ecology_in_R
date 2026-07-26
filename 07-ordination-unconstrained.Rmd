@@ -70,7 +70,88 @@ All three methods reveal essentially the same ecological pattern. The similarity
 
 ***
 
-### Adding environmental information
+### Using biplots to visalize relationships between species and sites
+
+We can examine both species and sites in the same ordination plot by creating a biplot.
+
+```{r}
+## Redo PCA using vegan::rda
+m3_hell <- rda(decostand(spe, "hellinger"))
+
+plot(m3_hell,
+     display = c("sites", "species"),
+     type = "n",
+     scaling = 2)
+
+# sites
+text(vegan::scores(m3_hell, display = "sites", scaling = 2),
+     labels = rownames(spe),
+     col = u)
+
+# species
+text(vegan::scores(m3_hell, display = "species", scaling = 2),
+     labels = colnames(spe),
+     col = "black")
+
+```
+
+**A cleaner visual**
+
+We can reduce the number of species labels to only those that are most strongly associated with the ordination axes (i.e., have high loadings on the axes).
+
+```{r}
+sp <- vegan::scores(m3_hell, display = "species", scaling = 2)
+
+r <- sqrt(sp[,1]^2 + sp[,2]^2)
+
+keep <- r > quantile(r, 0.9)
+
+plot(m3_hell, type = "n", scaling = 2)
+
+text(m3_hell,
+     display = "sites",
+     scaling = 2,
+     col = u)
+
+text(sp[keep,1],
+     sp[keep,2],
+     labels = rownames(sp)[keep],
+     col = "black")
+```
+
+> **NOTE:** In the biplot, the direction of a species vector can inform you about associations between sites and species. For example, *Bolboschoenus maritimus* is associated with sites such as 22, 25, and 35 because those sites lie in the same direction as the species vector. The angles between species vectors can also provide information about species associations: species whose vectors point in similar directions tend to occur together, species whose vectors are approximately 90° apart are weakly correlated or largely independent, and species whose vectors point in opposite directions tend to be negatively associated. For example, *B. maritimus* and *Hordeum marinum* appear nearly orthogonal in this biplot, suggesting little association between them along the variation represented by PC1 and PC2. However, distances between species in the biplot are not generally interpretable and should not be treated like distances between sites.
+
+**Biplot scaling-2 cheatsheet**
+
+* Direction of species vectors → association with sites
+* Angle between species vectors → approximate correlation among species
+    * small angle → positive association
+    * ~90° → little association
+    * ~180° → negative association
+* Length of species vectors → strength of relationship with the displayed axes
+* Distances among sites → interpretable
+* Distances among species → generally not interpretable
+
+### Scaling scores
+
+Scaling determines how site and species scores are displayed on an ordination diagram. The ordination itself is unchanged, but different scaling choices emphasize different ecological relationships, such as distances among sites, correlations among species, or associations between sites and species.
+
+Using `vegan::scores(x, scaling = ...)`:
+
+- `scaling = 1` &mdash; focus on sites, scale site scores by $\lambda_i$
+- `scaling = 2` &mdash; focus on species, scale species scores by $\lambda_i$
+- `scaling = 3` &mdash; **symmetric scaling**, scale both scores by $\sqrt{\lambda_i}$
+- `scaling = -1` &mdash; as above, but for `rda()` get correlation scores
+- `scaling = -2` &mdash; for `cca()` multiply results by $\sqrt{(1/(1-\lambda_i))}$
+- `scaling = -3` &mdash; this is Hill's scaling
+- `scaling < 0` &mdash; for `rda()` divide species scores by species' $\sigma$
+- `scaling = 0` &mdash; raw scores
+
+...where $\lambda_i$ is the *i*th eigenvalue.
+
+
+
+### Adding environmental information to NMDS plots
 
 We can add environmental information to the ordination plots to explore potential relationships between community composition and environmental gradients by coloring the points by environmental variable values.
 Below we do this using `ggplot2` to visualize the NMDS results with points colored by three environmental variables: `k`, `k2o`, and `sand`.

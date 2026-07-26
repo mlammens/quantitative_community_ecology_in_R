@@ -1,3 +1,85 @@
-# Final Words
+# Diversity Measures {#diversity}
 
-We have finished a nice book.
+***How diverse is this site? many sites? region?***
+
+Let’s examine the "diversity" of our sites and study area. 
+Diversity can encompass any sort of variation, e.g., taxonomic, trait, or phylogenetic. 
+Here we assume that `spe` is a species abundance matrix where rows = sites, columns = taxa, and values must not be negative or missing.
+*Recall that we did a validity test on the `spe` data table in Section \@ref(data-transform), ensuring there weren't any `NA` values. We could do a similar test looking for negative values.*
+
+## Gamma (regional) diversity
+
+```{r div-01, eval = TRUE, echo = TRUE}
+gamma <- sum(colSums(spe) > 0)
+gamma
+```
+
+## Alpha (per-site) diversity
+
+```{r div-02, eval = TRUE, echo = TRUE}
+### Alpha (per-site) diversity
+alpha <- rowSums(spe > 0)  # within-site
+avgalpha <- mean(alpha) # average within-site
+
+avgalpha
+```
+
+## Beta (among-site) diversity: Whittaker’s
+
+The calculation below is for a classic Whittaker's beta diversity measure, but we've subtracted a value of 1 from the ratio of gamma and avgalpha. 
+This is because if we didn't subtract 1 and there was *no turnover*, then beta would equal 1, which can be confusing.
+
+```{r div-03, eval = TRUE, echo = TRUE}
+### Beta (among-site) diversity: Whittaker's
+beta <- gamma / avgalpha - 1
+beta
+```
+
+## Beta diversity: dust bunny indices (DBI)
+
+McCune and Root (2015) proposed two model-free measures of how strongly multivariate species data exhibit a "dust bunny" distribution, that is, departure from multivariate normality because of many zero abundances due to few species occurring in any given sample unit. 
+In other words, the DBI measures how much of the community matrix consists of "dust" - i.e., rare species, low abundances, and empty cells. 
+High values indicate that most species occur in few sites and/or at low relative abundance. 
+Low values indicate broadly distributed and abundant taxa.
+This information is important because many multivariate methods become harder to interpret, and potentially invalid, when matrices have high dust-bunny values (many rare species and zeros), which is common in community ecology datasets.
+
+
+**Calculate the proportion of zeros in the matrix, independent of abundance**
+
+```{r div-04, eval = TRUE, echo = TRUE}
+propzero <- sum(spe < .Machine$double.eps) / prod(dim(spe))
+cat('Proportion of zeros in matrix:', propzero, '\n')
+```
+
+**Calculate the dust-bunny index (DBI) for the matrix, including abundances**
+
+The code below includes many steps in one line. Here's what's going on:
+
+- `vegan::decostand(spe, method='max')` = max-standardize each species column, i.e., divides each column by its maximum value, so each species abundance has a maximum value of 1
+- `as.matrix(...)` = treats the output of the max-stadnardization as a `matrix`
+- `mean(as.matrix(...))` = calculates the overall average abundance for all species at all sites
+- `1 - mean(...)` = results in an index where a value of 0 indicates a dense matrix, with few zeros, where most species are common and a value of 1 indicates a sparse matrix, with many zeros, where rare species dominate
+
+```{r div-05, eval = TRUE, echo = TRUE}
+dbi <- 1 - mean(as.matrix(vegan::decostand(spe, method='max')))
+cat('Dust bunny index:', dbi, '\n')
+```
+
+
+## Beta-diversity: no-share sites
+
+High species turnover (beta-diversity) can cause many site-pairs to share no species in common. 
+What proportion of all pairs of sites have totally different sets of species?
+
+```{r}
+### how many site-pairs share no species in common?
+z <- vegan::no.shared(spe)
+propnoshare <- sum(z) / length(z)
+cat('Proportion of no-share sites:', propnoshare, '\n')
+```
+
+## Key references
+
+McCune, B., and H.T. Root. 2015. Origin of the dust bunny distribution in ecological community data. Plant Ecology 216(5): 645-656.
+
+

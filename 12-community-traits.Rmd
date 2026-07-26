@@ -197,6 +197,9 @@ fourthcorner.rlq(r, type='Q.axes')
 fourthcorner.rlq(r, type='R.axes')
 ```
 
+**What do we learn here?**
+
+As applied here, fourth-corner tests of the RLQ axes indicate that the dominant trait–environment relationship is concentrated on Axis 1. This axis is positively associated with potassium, sodium, and conductivity and corresponds to a trait shift toward anemogamous, perennial species and away from entomogamous, annual species.
 
 ## Phylogenetic correction of traits
 

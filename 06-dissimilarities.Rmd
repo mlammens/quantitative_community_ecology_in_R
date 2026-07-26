@@ -1,0 +1,154 @@
+# Dissimilarities {#dissim}
+
+***How dissimilar are community compositions among sites?***
+
+Dissimilarities among sites help us position sites along gradients, organize them into clusters, or distinguish differences among groups of sites.
+
+## Dissimilarity matrix for species
+
+We can create a pairwise dissimilarity matrix `D` based on shared and unshared species among sites. 
+An easy way to calculate this matrix is to use the `vegdist` (i.e., vegetation distance) function in the `vegan` package. 
+For the resulting dissimilarity values, high values = more dissimilar (different) and low values = more similar (same).
+
+Euclidean distance is probably the most intuitive dissimilarity metric, however it is seldom useful for species abundance data. 
+Here we use the more preferable Bray-Curtis (Sørensen) dissimilarity. 
+Legendre and Legendre (2012) give a full survey of existing distance/dissimilarity measures (there are many -- in fact, the `vegdist` function includes 22 different dissimilarity methods!!).
+Also, checkout the help file for `vegdist` for lots of helpful information and references -- `?vegdist`.
+
+As in Section \@ref(data-transform) we are using the `tabasco` function to create a heatmap of a matrix. 
+Recall that darker colors indicate greater values, thus greater turn-over in this case.
+
+```{r}
+d <- vegdist(spe, method='bray', binary=T)
+tabasco(as.matrix(d), col=get_palette())
+```
+
+***
+
+#### Challenge 
+
+Why is the diagonal white (i.e., blank)?
+
+***
+
+### What metric to use?
+
+The specific measure used might depend on your particular ecological question, your data collection methods, or on the variable types you are working with.
+
+**Jaccard** - focuses on shared species, using presence-absence data only. Range 0-1.
+
+```{r, eval=FALSE}
+jaccard <- vegdist(spe, method = "jaccard")
+```
+
+**Bray-Curtis** - considers species composition and abundance. Range 0-1.
+
+```{r, eval=FALSE}
+bray_curtis <- vegdist(spe, method = "bray")
+```
+
+**Gower** - measures general dissimilarity and can be used with continuous, ordinal, or categorical data. This makes it particularly useful when calculating dissimilarities among plots with mixed environmental variable types or among species with mixed trait variable types.
+
+```{r, eval=FALSE}
+gower <- vegdist(tra, method = "gower")
+```
+
+## Partitioning turnover and nestedness
+
+**Turnover** is related to species replacement across sites (or time)
+
+**Nestedness** is the proportion of species that are subset of the species that occur at another site (or time period). In other words, are the species at one site found in another site?
+
+```{r}
+# Calculate beta diversity (Uniqueness and Nestedness)
+spe_pa <- vegan::decostand(spe, method = "pa")
+beta_diversity <- betapart::beta.pair(spe_pa)
+```
+
+**There are three items in the list output:**
+
+**beta.sim**: turnover component; represents dissimilarity due to species turnover/replacement. High SIM suggests species replacement is a main driver of site differences (not richness)
+
+```{r}
+tabasco(as.matrix(beta_diversity$beta.sim), col=get_palette())
+```
+
+**beta.sne**: nestedness component; represents dissimilarity due to shared species or richness differences. High SNE suggests species loss and nestedness (richness differences) are main drivers of site differences.
+
+```{r}
+tabasco(as.matrix(beta_diversity$beta.sne), col=get_palette())
+```
+
+**beta.sor**: total dissimilarity, using Sorenson or Jaccard dissimilarity
+
+```{r}
+tabasco(as.matrix(beta_diversity$beta.sor), col=get_palette())
+```
+
+
+
+## Stepacross adjustment
+
+Sometimes a pair of sites are "maximally dissimilar": they share no species at all, so pairwise dissimilarity is impossible to quantify using a proportional measure (e.g., Bray-Curtis). 
+Stepacross adjustment solves this by linking "no-share" sites with intermediate site(s) that share at least some species in common. 
+*Why should we be concerned about this?* 
+As datasets become sparse (many zeros), large numbers of site pairs end up with Bray–Curtis = 1. This causes an accumulation of ties and a loss of information about the underlying ecological gradient.
+Smith (2017) describes other possible solutions.
+
+Here's a "toy-example" of the issue:
+
+How dissimilar are SUs A and C? They share no species in common...
+
+```{r double-zero-01, eval = TRUE}
+m <- data.frame(matrix(c(1,1,0,0,0, 0,1,1,1,0, 0,0,0,1,1), nrow=3, byrow=T), 
+                row.names=paste0('su',c('A','B','C')))
+names(m) <- paste0('sp',1:5)
+m
+```
+
+...Bray-Curtis will max out at 1.0...
+
+```{r double-zero-03, eval = TRUE}
+vegdist(m, 'bray')
+```
+
+...but `stepacross()` replaces "too long" distances with shortest path.
+
+
+```{r double-zero-04, eval = TRUE}
+sa <- stepacross(vegdist(m, 'bray'))
+sa
+```
+
+Visually we can think of this as the figure below:
+
+```{r, echo=FALSE}
+par(mar=c(2,2,0,0), pty='m', bty='L')
+s <- data.frame(x=c(0,0.5,1.0), y=c(0,0.3316625,0))
+plot(s, asp=1, ylab='',xlab='')
+arrows(0,0,0.5,0.3316625, lwd=4, angle=15, col='#1034A9')
+arrows(0.5,0.3316625,1,0, lwd=4, angle=15, col='#1034A9')
+arrows(0,0,1,0, lwd=4, angle=15, col='#a91034')
+points(s, pch=22, fg='black', bg='white', cex=2.75)
+text(s, labels = LETTERS[1:3], cex=1.2)
+text(data.frame(x=c(0.23,0.50,0.77), y=c(0.2,-0.045,0.2)), 
+	 labels=c('0.6','1.2','0.6'), adj=0.5)
+```
+
+And here we show what happens when we use the `stepacross` function on our Mafragh data set.
+
+
+```{r}
+D <- stepacross(d, 'shortest', toolong = 1)
+plot(d, D, xlab = 'Original', ylab = 'Stepacross')
+```
+
+
+## Key references
+
+Legendre, P., and L. Legendre. 2012. Numerical Ecology. Volume 24, Third Edition. Elsevier.
+
+Smith, R.J. 2017. Solutions for loss of information in high-beta-diversity community data. Methods in Ecology and Evolution 8:68–74.
+
+
+

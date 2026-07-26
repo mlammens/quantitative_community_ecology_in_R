@@ -82,7 +82,9 @@ key-references-3
 ordination-unconstrained
 the-three-major-unconstrained-ordination-methods
 challenge-9
-adding-environmental-information
+using-biplots-to-visalize-relationships-between-species-and-sites
+scaling-scores
+adding-environmental-information-to-nmds-plots
 ordination-goodness-of-fit
 dimensionality-selection-in-nmds
 brief-discussion-of-pca-vs-pcoa-vs-nmds
@@ -91,3 +93,8 @@ pcoa-principal-coordinates-analysis
 pca-principal-components-analysis
 comparison-summary
 key-references-4
+ordination-constrained
+constrained-ordination-overview
+dbrda-the-community-analysis-swiss-army-knife
+visualizing-site-x-environment-relationships-with-rda-and-dbrda
+tri-plots---site-species-and-environmental-together

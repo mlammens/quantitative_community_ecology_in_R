@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 4 Community Data | Quantitative Community Ecology in R</title>
+  <title>Chapter 9 Ordination (constrained) | Quantitative Community Ecology in R</title>
   <meta name="description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 4 Community Data | Quantitative Community Ecology in R" />
+  <meta property="og:title" content="Chapter 9 Ordination (constrained) | Quantitative Community Ecology in R" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="github-repo" content="mlammens/quantitative_community_ecology_in_R" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 4 Community Data | Quantitative Community Ecology in R" />
+  <meta name="twitter:title" content="Chapter 9 Ordination (constrained) | Quantitative Community Ecology in R" />
   
   <meta name="twitter:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="intro-to-RStudio.html"/>
-<link rel="next" href="data-transform.html"/>
+<link rel="prev" href="ordination-unconstrained.html"/>
+
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -288,78 +288,175 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="comm-data" class="section level1 hasAnchor" number="4">
-<h1><span class="header-section-number">Chapter 4</span> Community Data<a href="comm-data.html#comm-data" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<div id="general-structure-of-community-ecology-datasets" class="section level2 hasAnchor" number="4.1">
-<h2><span class="header-section-number">4.1</span> General structure of community ecology datasets<a href="comm-data.html#general-structure-of-community-ecology-datasets" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Often times community ecology data are recorded in a set of tables that contain information on species presence/absence (or abundance) in plots, species trait values, environmental conditions of plots, and a phylogeny of the species.</p>
-<div class="float">
-<img src="fig/mx_c.png" alt="Community ecology data tables" />
-<div class="figcaption">Community ecology data tables</div>
+<div id="ordination-constrained" class="section level1 hasAnchor" number="9">
+<h1><span class="header-section-number">Chapter 9</span> Ordination (constrained)<a href="ordination-constrained.html#ordination-constrained" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><strong>How best to order sites by dissimilarities of community compositions, in response to measured environmental variables?</strong></p>
+<p>Constrained ordination addresses specific <em>a priori</em> hypotheses about variation in community compositions <em>attributable to measured environmental gradients</em>.
+It portrays only a fragment of all community variation, and is not used for exploratory analysis.</p>
+<div id="constrained-ordination-overview" class="section level2 hasAnchor" number="9.1">
+<h2><span class="header-section-number">9.1</span> Constrained ordination overview<a href="ordination-constrained.html#constrained-ordination-overview" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Important and common constrained ordination tools include redundancy analysis (RDA; constrained PCA), canonical correspondence analysis (CCA), distance-based RDA (dbRDA, McArdle and Anderson 2001), and fuzzy set ordination (FSO, Roberts 2008).
+dbRDA and FSO both let the user select their own dissimilarity measure.
+Other methods (redundancy analysis or constrained correspondence analysis) force an implicit dissimilarity measure and make linearity/distributional assumptions.
+The table below shows connections/analogs between unconstrained and constrained ordination methods.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Unconstrained</th>
+<th>Constrained</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Linear / Euclidean</td>
+<td>PCA</td>
+<td>RDA</td>
+</tr>
+<tr class="even">
+<td>Unimodal / Chi-square</td>
+<td>CA</td>
+<td>CCA</td>
+</tr>
+<tr class="odd">
+<td>Distance-based</td>
+<td>PCoA</td>
+<td>dbRDA</td>
+</tr>
+</tbody>
+</table>
 </div>
+<div id="dbrda-the-community-analysis-swiss-army-knife" class="section level2 hasAnchor" number="9.2">
+<h2><span class="header-section-number">9.2</span> <code>dbRDA</code> – the community analysis Swiss army knife<a href="ordination-constrained.html#dbrda-the-community-analysis-swiss-army-knife" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The dbRDA method, implemented in <code>vegan</code> with the <code>dbrda</code> function, is very versatile and can yield all of the ordination analyses we’ve been discussing based on how it is parameterized and the distance matrix used.
+However, using the <code>dbrda</code> function may limit the use of some useful plotting functions, as we’ll see when we make tri-plots below.</p>
+<div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="ordination-constrained.html#cb187-1" tabindex="-1"></a><span class="do">## Define multiple different dissimilarity matrices</span></span>
+<span id="cb187-2"><a href="ordination-constrained.html#cb187-2" tabindex="-1"></a>D_euc  <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="st">&#39;euc&#39;</span>)  <span class="co"># Euclidean</span></span>
+<span id="cb187-3"><a href="ordination-constrained.html#cb187-3" tabindex="-1"></a>D_chi  <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="st">&#39;chi&#39;</span>)  <span class="co"># Chi-sq</span></span>
+<span id="cb187-4"><a href="ordination-constrained.html#cb187-4" tabindex="-1"></a>D_bc   <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="st">&#39;bray&#39;</span>) <span class="co"># Bray-Curtis (Sorensen)</span></span>
+<span id="cb187-5"><a href="ordination-constrained.html#cb187-5" tabindex="-1"></a></span>
+<span id="cb187-6"><a href="ordination-constrained.html#cb187-6" tabindex="-1"></a><span class="do">### PCA: PCO based on Euclidean distances (see `stats::prcomp`)</span></span>
+<span id="cb187-7"><a href="ordination-constrained.html#cb187-7" tabindex="-1"></a>pca <span class="ot">&lt;-</span> <span class="fu">dbrda</span>(D_euc <span class="sc">~</span> <span class="dv">1</span>)</span>
+<span id="cb187-8"><a href="ordination-constrained.html#cb187-8" tabindex="-1"></a></span>
+<span id="cb187-9"><a href="ordination-constrained.html#cb187-9" tabindex="-1"></a><span class="do">### CA/RA (correspondence analysis): PCO based on Chi-sq distances (see `vegan::cca`)</span></span>
+<span id="cb187-10"><a href="ordination-constrained.html#cb187-10" tabindex="-1"></a>ca  <span class="ot">&lt;-</span> <span class="fu">dbrda</span>(D_chi <span class="sc">~</span> <span class="dv">1</span>)</span>
+<span id="cb187-11"><a href="ordination-constrained.html#cb187-11" tabindex="-1"></a></span>
+<span id="cb187-12"><a href="ordination-constrained.html#cb187-12" tabindex="-1"></a><span class="do">### PCoA: generalizes to any dissimilarity (see `labdsv::pco`)</span></span>
+<span id="cb187-13"><a href="ordination-constrained.html#cb187-13" tabindex="-1"></a>pco <span class="ot">&lt;-</span> <span class="fu">dbrda</span>(D_bc  <span class="sc">~</span> <span class="dv">1</span>)</span>
+<span id="cb187-14"><a href="ordination-constrained.html#cb187-14" tabindex="-1"></a></span>
+<span id="cb187-15"><a href="ordination-constrained.html#cb187-15" tabindex="-1"></a><span class="do">### RDA: constrained form of PCA (see `vegan::rda`)</span></span>
+<span id="cb187-16"><a href="ordination-constrained.html#cb187-16" tabindex="-1"></a>rda <span class="ot">&lt;-</span> <span class="fu">dbrda</span>(D_euc <span class="sc">~</span> k2o <span class="sc">+</span> mg, <span class="at">data =</span> env)</span>
+<span id="cb187-17"><a href="ordination-constrained.html#cb187-17" tabindex="-1"></a></span>
+<span id="cb187-18"><a href="ordination-constrained.html#cb187-18" tabindex="-1"></a><span class="do">### CCA: constrained form of CA (see `vegan::cca`)</span></span>
+<span id="cb187-19"><a href="ordination-constrained.html#cb187-19" tabindex="-1"></a>cca <span class="ot">&lt;-</span> <span class="fu">dbrda</span>(D_chi <span class="sc">~</span> k2o <span class="sc">+</span> mg, <span class="at">data =</span> env)</span>
+<span id="cb187-20"><a href="ordination-constrained.html#cb187-20" tabindex="-1"></a></span>
+<span id="cb187-21"><a href="ordination-constrained.html#cb187-21" tabindex="-1"></a><span class="do">### dbRDA: constrained form of PCO; `lingoes` makes so can handle neg eigenvalues</span></span>
+<span id="cb187-22"><a href="ordination-constrained.html#cb187-22" tabindex="-1"></a>dbr <span class="ot">&lt;-</span> <span class="fu">dbrda</span>(D_bc  <span class="sc">~</span> k2o <span class="sc">+</span> mg, <span class="at">data =</span> env, <span class="at">add =</span> <span class="st">&#39;lingoes&#39;</span>)</span></code></pre></div>
+<p>Visualize all of the methods together.</p>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb188-1"><a href="ordination-constrained.html#cb188-1" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb188-2"><a href="ordination-constrained.html#cb188-2" tabindex="-1"></a></span>
+<span id="cb188-3"><a href="ordination-constrained.html#cb188-3" tabindex="-1"></a>u <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">NROW</span>(spe)</span>
+<span id="cb188-4"><a href="ordination-constrained.html#cb188-4" tabindex="-1"></a></span>
+<span id="cb188-5"><a href="ordination-constrained.html#cb188-5" tabindex="-1"></a>plot_ord <span class="ot">&lt;-</span> <span class="cf">function</span>(ord, xlab, ylab) {</span>
+<span id="cb188-6"><a href="ordination-constrained.html#cb188-6" tabindex="-1"></a></span>
+<span id="cb188-7"><a href="ordination-constrained.html#cb188-7" tabindex="-1"></a>  sc <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(vegan<span class="sc">::</span><span class="fu">scores</span>(ord, <span class="at">display =</span> <span class="st">&quot;sites&quot;</span>))</span>
+<span id="cb188-8"><a href="ordination-constrained.html#cb188-8" tabindex="-1"></a></span>
+<span id="cb188-9"><a href="ordination-constrained.html#cb188-9" tabindex="-1"></a>  <span class="fu">names</span>(sc)[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Axis1&quot;</span>, <span class="st">&quot;Axis2&quot;</span>)</span>
+<span id="cb188-10"><a href="ordination-constrained.html#cb188-10" tabindex="-1"></a>  sc<span class="sc">$</span>id <span class="ot">&lt;-</span> <span class="fu">seq_len</span>(<span class="fu">nrow</span>(sc))</span>
+<span id="cb188-11"><a href="ordination-constrained.html#cb188-11" tabindex="-1"></a></span>
+<span id="cb188-12"><a href="ordination-constrained.html#cb188-12" tabindex="-1"></a>  <span class="fu">ggplot</span>(sc, <span class="fu">aes</span>(Axis1, Axis2)) <span class="sc">+</span></span>
+<span id="cb188-13"><a href="ordination-constrained.html#cb188-13" tabindex="-1"></a>    <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> id, <span class="at">color =</span> id)) <span class="sc">+</span></span>
+<span id="cb188-14"><a href="ordination-constrained.html#cb188-14" tabindex="-1"></a>    <span class="fu">scale_color_viridis_c</span>() <span class="sc">+</span></span>
+<span id="cb188-15"><a href="ordination-constrained.html#cb188-15" tabindex="-1"></a>    <span class="fu">coord_equal</span>() <span class="sc">+</span></span>
+<span id="cb188-16"><a href="ordination-constrained.html#cb188-16" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> xlab, <span class="at">y =</span> ylab) <span class="sc">+</span></span>
+<span id="cb188-17"><a href="ordination-constrained.html#cb188-17" tabindex="-1"></a>    <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb188-18"><a href="ordination-constrained.html#cb188-18" tabindex="-1"></a>    <span class="fu">theme</span>(</span>
+<span id="cb188-19"><a href="ordination-constrained.html#cb188-19" tabindex="-1"></a>      <span class="at">legend.position =</span> <span class="st">&quot;none&quot;</span></span>
+<span id="cb188-20"><a href="ordination-constrained.html#cb188-20" tabindex="-1"></a>    )</span>
+<span id="cb188-21"><a href="ordination-constrained.html#cb188-21" tabindex="-1"></a>}</span>
+<span id="cb188-22"><a href="ordination-constrained.html#cb188-22" tabindex="-1"></a></span>
+<span id="cb188-23"><a href="ordination-constrained.html#cb188-23" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">plot_ord</span>(pca, <span class="st">&quot;PCA1&quot;</span>,   <span class="st">&quot;PCA2&quot;</span>)</span>
+<span id="cb188-24"><a href="ordination-constrained.html#cb188-24" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">plot_ord</span>(ca,  <span class="st">&quot;CA1&quot;</span>,    <span class="st">&quot;CA2&quot;</span>)</span>
+<span id="cb188-25"><a href="ordination-constrained.html#cb188-25" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">plot_ord</span>(pco, <span class="st">&quot;PCoA1&quot;</span>,  <span class="st">&quot;PCoA2&quot;</span>)</span>
+<span id="cb188-26"><a href="ordination-constrained.html#cb188-26" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">plot_ord</span>(rda, <span class="st">&quot;RDA1&quot;</span>,   <span class="st">&quot;RDA2&quot;</span>)</span>
+<span id="cb188-27"><a href="ordination-constrained.html#cb188-27" tabindex="-1"></a>p5 <span class="ot">&lt;-</span> <span class="fu">plot_ord</span>(cca, <span class="st">&quot;CCA1&quot;</span>,   <span class="st">&quot;CCA2&quot;</span>)</span>
+<span id="cb188-28"><a href="ordination-constrained.html#cb188-28" tabindex="-1"></a>p6 <span class="ot">&lt;-</span> <span class="fu">plot_ord</span>(dbr, <span class="st">&quot;dbRDA1&quot;</span>, <span class="st">&quot;dbRDA2&quot;</span>)</span>
+<span id="cb188-29"><a href="ordination-constrained.html#cb188-29" tabindex="-1"></a></span>
+<span id="cb188-30"><a href="ordination-constrained.html#cb188-30" tabindex="-1"></a>(p1 <span class="sc">|</span> p2 <span class="sc">|</span> p3) <span class="sc">/</span></span>
+<span id="cb188-31"><a href="ordination-constrained.html#cb188-31" tabindex="-1"></a>(p4 <span class="sc">|</span> p5 <span class="sc">|</span> p6)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-74-1.png" width="672" /></p>
+<p><strong>What do we see here?</strong></p>
+<p>The dominant ecological gradient is sufficiently strong that it is recovered regardless of ordination method.
+Unconstrained methods (PCA, CA, PCoA) and constrained methods (RDA, CCA, dbRDA) all reveal a similar separation of sites, indicating that the major pattern in community composition is robust and is strongly associated with the environmental variables included in the constrained analyses.</p>
 </div>
-<div id="todays-example-dataset---mafragh-algeria-vegetation-data" class="section level2 hasAnchor" number="4.2">
-<h2><span class="header-section-number">4.2</span> Today’s example dataset - Mafragh, Algeria vegetation data<a href="comm-data.html#todays-example-dataset---mafragh-algeria-vegetation-data" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>We will use one main dataset throughout this tutorial.
-You should have loaded this dataset in the <strong>Get the data</strong> sub-section of Section <a href="prereq.html#prereq">2</a>, but we’ll load the data again below.
-The <code>veg</code> variable is a <code>list</code> object that includes data tables with information on spatial coordinates, species abundances, environment, traits, and phylogeny for plants on the Mafragh coastal plain in North Africa.</p>
-<p>Specifically, <code>veg</code> is a list containing five items:</p>
-<ul>
-<li><code>xy</code> 97 observations of 2 spatial coordinates</li>
-<li><code>spe</code> 97 observations of 56 plant species</li>
-<li><code>env</code> 97 observations of 11 soil environmental variables</li>
-<li><code>tra</code> 12 traits for 56 plant species</li>
-<li><code>phy</code> phylogeny for 56 plant species</li>
-</ul>
-<blockquote>
-<p><strong>NOTE:</strong> the information in the <code>veg</code> object are derived from a dataset included in the <code>ade4</code> package. You can load the data from <code>ade4</code> with the code below and use the <code>?</code> function to access included documentation about these data. However, the data tables have different names in the included data than what we are working with today.</p>
-</blockquote>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="comm-data.html#cb105-1" tabindex="-1"></a><span class="fu">data</span>(<span class="st">&quot;mafragh&quot;</span>, <span class="at">package =</span> <span class="st">&quot;ade4&quot;</span>)</span>
-<span id="cb105-2"><a href="comm-data.html#cb105-2" tabindex="-1"></a>?ade4<span class="sc">::</span>mafragh</span></code></pre></div>
-<div id="load-the-data" class="section level3 hasAnchor" number="4.2.1">
-<h3><span class="header-section-number">4.2.1</span> Load the data<a href="comm-data.html#load-the-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>While we went over how to read in data via a *.csv file in Section <a href="intro-to-RStudio.html#intro-to-RStudio">3</a>, we will take advantage of the fact that our example datasets have already been read in to R and saved as a *.rda object.
-The <code>veg.rda</code> object is a <em>list</em> object, with five elements.
-Each element is one of the data tables we will need for our analyses.</p>
-<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="comm-data.html#cb106-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&#39;data/veg.rda&#39;</span>)  <span class="co"># load the object (contains multiple objects)</span></span>
-<span id="cb106-2"><a href="comm-data.html#cb106-2" tabindex="-1"></a>xy  <span class="ot">&lt;-</span> veg<span class="sc">$</span>xy           <span class="co"># spatial</span></span>
-<span id="cb106-3"><a href="comm-data.html#cb106-3" tabindex="-1"></a>spe <span class="ot">&lt;-</span> veg<span class="sc">$</span>spe          <span class="co"># species</span></span>
-<span id="cb106-4"><a href="comm-data.html#cb106-4" tabindex="-1"></a>env <span class="ot">&lt;-</span> veg<span class="sc">$</span>env          <span class="co"># environment</span></span>
-<span id="cb106-5"><a href="comm-data.html#cb106-5" tabindex="-1"></a>tra <span class="ot">&lt;-</span> veg<span class="sc">$</span>tra          <span class="co"># traits</span></span>
-<span id="cb106-6"><a href="comm-data.html#cb106-6" tabindex="-1"></a>phy <span class="ot">&lt;-</span> veg<span class="sc">$</span>phy          <span class="co"># phylogeny</span></span>
-<span id="cb106-7"><a href="comm-data.html#cb106-7" tabindex="-1"></a><span class="fu">rm</span>(veg)                 <span class="co"># cleanup</span></span>
-<span id="cb106-8"><a href="comm-data.html#cb106-8" tabindex="-1"></a><span class="fu">ls</span>()                    <span class="co"># list objects now in this local environment</span></span></code></pre></div>
-<pre><code>## [1] &quot;env&quot; &quot;phy&quot; &quot;spe&quot; &quot;tra&quot; &quot;xy&quot;</code></pre>
-<hr />
-<div id="challenge-6" class="section level4 hasAnchor" number="4.2.1.1">
-<h4><span class="header-section-number">4.2.1.1</span> Challenge<a href="comm-data.html#challenge-6" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Use the R functions and techniques covered in Section <a href="intro-to-RStudio.html#intro-to-RStudio">3</a> to explore and examine the various data tables we just created from the <code>veg</code> object. What information do you think each data table contains?</p>
-<hr />
-</div>
-</div>
-</div>
-<div id="study-area-description" class="section level2 hasAnchor" number="4.3">
-<h2><span class="header-section-number">4.3</span> Study area description<a href="comm-data.html#study-area-description" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The Mafragh plain is in El Tarf Province of far northeast Algeria (36.84704, 7.945). According to documentation in R package <code>ade4</code>:</p>
-<blockquote>
-<p>This marshy coastal plain is a geomorphological feature, east of Port of Annaba, limited to the north by the Mediterranean Sea and a dune cordon, to the south by clay-sandstone Numidian massifs, to the west by a wadi and to East by an irrigated perimeter. It covers 15,000 ha of which 10,000 form the area of study.</p>
-</blockquote>
-<p>Potential human pressures include grazing, irrigation and salination, plowing, and housing development. Its Köppen climate type is “Csa: Hot-summer Mediterranean climate”.</p>
-</div>
-<div id="history-of-the-mafragh-dataset" class="section level2 hasAnchor" number="4.4">
-<h2><span class="header-section-number">4.4</span> History of the Mafragh dataset<a href="comm-data.html#history-of-the-mafragh-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>The data originate from the field studies of Prof. Gérard de Bélair of Annaba in northeast Algeria. Born in France, de Bélair became a missionary priest in 1969 shortly after Algeria’s independence, then an agronomist during the Agrarian Revolution, then a botanist, then professor, then conservationist (according to his on account <a href="https://www.visages-diocese-autun.fr/visage/de-belair-gerard/">https://www.visages-diocese-autun.fr/visage/de-belair-gerard/</a>). As of 2026, he continues to actively publish on the vegetation of northern Algeria.</p>
-<p>We should recognize the colonialist legacies that brought us here. France controlled Algeria from 1830 until its independence in 1962. Prior to that, Algeria was occupied by Ottoman Turks, Spaniards, Arab Muslims, Berber/Amazigh, Romans, Phoenicians, and prehistoric occupants dating to at least 1.8 million years ago. We may speculate that the region’s vegetation and cultural histories have been closely intertwined.</p>
-<p>The data were included in early versions of the ade4 software (Dray and Dufour 2007) which itself has its roots at Université Lyon 1, France. The present data are lightly modified from Appendix S4 of Pavoine et al. (2011), who also added a phylogeny.</p>
-</div>
-<div id="key-references" class="section level2 hasAnchor" number="4.5">
-<h2><span class="header-section-number">4.5</span> Key references<a href="comm-data.html#key-references" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>de Bélair, G. 1981. Biogéographie et aménagement de la Plaine de la Mafragh (Annaba - Algérie) [Biogeography and development of the Mafragh Plain (Annaba, Algeria)]. Dissertation, Université Paul Valéry, Montpellier. <a href="http://www.sudoc.fr/00871262X" class="uri">http://www.sudoc.fr/00871262X</a></p>
-<p>de Bélair, G. 1990. Structure, fonctionnement et perspectives de gestion de quatre écocomplexes lacustres et marécageux (El Kala, Est-Algérien) [Structure, function and management perspectives of four lake and marsh eco-complexes (El Kala, East Algeria)]. Dissertation, Université des sciences et techniques de Montpellier 2. <a href="http://www.sudoc.fr/007729197" class="uri">http://www.sudoc.fr/007729197</a></p>
-<p>de Bélair, G. and M. Bencheikh-Lehocine. 1987. Composition et déterminisme de la végétation d’une plaine côtière marécageuse: La Mafragh (Annaba, Algérie) [Composition and determinism of the vegetation of a marshy coastal plain: La Mafragh (Annaba, Algeria)]. Bulletin d’Ecologie, 18(4): 393–407.</p>
-<p>Dray, S. and A. Dufour. 2007. The ade4 package: implementing the duality diagram for ecologists. Journal of Statistical Software 22(4): 1-20. <a href="doi:10.18637/jss.v022.i04" class="uri">doi:10.18637/jss.v022.i04</a></p>
-<p>Pavoine, S., Vela, E., Gachet, S., de Bélair, G. and Bonsall, M. B. 2011. Linking patterns in phylogeny, traits, abiotic variables and space: a novel approach to linking environmental filtering and plant community assembly. Journal of Ecology 99: 165–175. <a href="doi:10.1111/j.1365-2745.2010.01743.x" class="uri">doi:10.1111/j.1365-2745.2010.01743.x</a></p>
+<div id="visualizing-site-x-environment-relationships-with-rda-and-dbrda" class="section level2 hasAnchor" number="9.3">
+<h2><span class="header-section-number">9.3</span> Visualizing site X environment relationships with RDA and dbRDA<a href="ordination-constrained.html#visualizing-site-x-environment-relationships-with-rda-and-dbrda" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb189-1"><a href="ordination-constrained.html#cb189-1" tabindex="-1"></a><span class="co"># color vector for plotting</span></span>
+<span id="cb189-2"><a href="ordination-constrained.html#cb189-2" tabindex="-1"></a>u <span class="ot">&lt;-</span> <span class="fu">get_palette</span>()</span>
+<span id="cb189-3"><a href="ordination-constrained.html#cb189-3" tabindex="-1"></a>u <span class="ot">&lt;-</span> u[<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(spe)]</span>
+<span id="cb189-4"><a href="ordination-constrained.html#cb189-4" tabindex="-1"></a></span>
+<span id="cb189-5"><a href="ordination-constrained.html#cb189-5" tabindex="-1"></a><span class="fu">plot</span>(rda, <span class="at">type =</span> <span class="st">&quot;n&quot;</span>, <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb189-6"><a href="ordination-constrained.html#cb189-6" tabindex="-1"></a><span class="co"># site coordinates</span></span>
+<span id="cb189-7"><a href="ordination-constrained.html#cb189-7" tabindex="-1"></a>site_scores <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">scores</span>(rda, <span class="at">display =</span> <span class="st">&quot;sites&quot;</span>, <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb189-8"><a href="ordination-constrained.html#cb189-8" tabindex="-1"></a><span class="co"># site labels with color gradient</span></span>
+<span id="cb189-9"><a href="ordination-constrained.html#cb189-9" tabindex="-1"></a><span class="fu">text</span>(site_scores,</span>
+<span id="cb189-10"><a href="ordination-constrained.html#cb189-10" tabindex="-1"></a>     <span class="at">labels =</span> <span class="fu">rownames</span>(site_scores),</span>
+<span id="cb189-11"><a href="ordination-constrained.html#cb189-11" tabindex="-1"></a>     <span class="at">col =</span> u)</span>
+<span id="cb189-12"><a href="ordination-constrained.html#cb189-12" tabindex="-1"></a><span class="co"># environmental vectors</span></span>
+<span id="cb189-13"><a href="ordination-constrained.html#cb189-13" tabindex="-1"></a><span class="fu">text</span>(rda,</span>
+<span id="cb189-14"><a href="ordination-constrained.html#cb189-14" tabindex="-1"></a>     <span class="at">display =</span> <span class="st">&quot;bp&quot;</span>,</span>
+<span id="cb189-15"><a href="ordination-constrained.html#cb189-15" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">&quot;red&quot;</span>,</span>
+<span id="cb189-16"><a href="ordination-constrained.html#cb189-16" tabindex="-1"></a>     <span class="at">scaling =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-75-1.png" width="672" /></p>
+<div class="sourceCode" id="cb190"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb190-1"><a href="ordination-constrained.html#cb190-1" tabindex="-1"></a><span class="fu">plot</span>(dbr, <span class="at">type =</span> <span class="st">&quot;n&quot;</span>, <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb190-2"><a href="ordination-constrained.html#cb190-2" tabindex="-1"></a><span class="co"># site coordinates</span></span>
+<span id="cb190-3"><a href="ordination-constrained.html#cb190-3" tabindex="-1"></a>site_scores <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">scores</span>(dbr, <span class="at">display =</span> <span class="st">&quot;sites&quot;</span>, <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb190-4"><a href="ordination-constrained.html#cb190-4" tabindex="-1"></a><span class="co"># site labels with color gradient</span></span>
+<span id="cb190-5"><a href="ordination-constrained.html#cb190-5" tabindex="-1"></a><span class="fu">text</span>(site_scores,</span>
+<span id="cb190-6"><a href="ordination-constrained.html#cb190-6" tabindex="-1"></a>     <span class="at">labels =</span> <span class="fu">rownames</span>(site_scores),</span>
+<span id="cb190-7"><a href="ordination-constrained.html#cb190-7" tabindex="-1"></a>     <span class="at">col =</span> u)</span>
+<span id="cb190-8"><a href="ordination-constrained.html#cb190-8" tabindex="-1"></a><span class="co"># environmental vectors</span></span>
+<span id="cb190-9"><a href="ordination-constrained.html#cb190-9" tabindex="-1"></a><span class="fu">text</span>(dbr,</span>
+<span id="cb190-10"><a href="ordination-constrained.html#cb190-10" tabindex="-1"></a>     <span class="at">display =</span> <span class="st">&quot;bp&quot;</span>,</span>
+<span id="cb190-11"><a href="ordination-constrained.html#cb190-11" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">&quot;red&quot;</span>,</span>
+<span id="cb190-12"><a href="ordination-constrained.html#cb190-12" tabindex="-1"></a>     <span class="at">scaling =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-76-1.png" width="672" /></p>
+<p><strong>What do we see?</strong></p>
+<p>The RDA and dbRDA ordinations produce very similar site configurations, indicating that the constrained community pattern associated with mg and k2o is robust to the ordination approach. In both analyses, mg is associated with sites positioned high on the second axis, whereas k2o is associated with sites positioned toward the lower-right portion of the ordination, suggesting that these variables represent distinct environmental gradients related to community composition.</p>
+<div id="tri-plots---site-species-and-environmental-together" class="section level3 hasAnchor" number="9.3.1">
+<h3><span class="header-section-number">9.3.1</span> Tri-plots - site, species, and environmental together<a href="ordination-constrained.html#tri-plots---site-species-and-environmental-together" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Let’s add the species scores to the RDA plots.</p>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb191-1"><a href="ordination-constrained.html#cb191-1" tabindex="-1"></a>rda_mod <span class="ot">&lt;-</span> <span class="fu">rda</span>(<span class="fu">decostand</span>(spe, <span class="st">&quot;hellinger&quot;</span>) <span class="sc">~</span> k2o <span class="sc">+</span> mg, <span class="at">data =</span> env)</span>
+<span id="cb191-2"><a href="ordination-constrained.html#cb191-2" tabindex="-1"></a><span class="co">#rda_mod &lt;- rda(spe ~ k2o + mg, data = env)</span></span>
+<span id="cb191-3"><a href="ordination-constrained.html#cb191-3" tabindex="-1"></a></span>
+<span id="cb191-4"><a href="ordination-constrained.html#cb191-4" tabindex="-1"></a><span class="do">## Scaling = 2</span></span>
+<span id="cb191-5"><a href="ordination-constrained.html#cb191-5" tabindex="-1"></a><span class="fu">plot</span>(rda_mod, <span class="at">type =</span> <span class="st">&quot;n&quot;</span>, <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb191-6"><a href="ordination-constrained.html#cb191-6" tabindex="-1"></a><span class="co"># site scores</span></span>
+<span id="cb191-7"><a href="ordination-constrained.html#cb191-7" tabindex="-1"></a>site_scores <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">scores</span>(rda_mod,</span>
+<span id="cb191-8"><a href="ordination-constrained.html#cb191-8" tabindex="-1"></a>                      <span class="at">display =</span> <span class="st">&quot;sites&quot;</span>,</span>
+<span id="cb191-9"><a href="ordination-constrained.html#cb191-9" tabindex="-1"></a>                      <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb191-10"><a href="ordination-constrained.html#cb191-10" tabindex="-1"></a><span class="co"># colored site labels</span></span>
+<span id="cb191-11"><a href="ordination-constrained.html#cb191-11" tabindex="-1"></a><span class="fu">text</span>(site_scores,</span>
+<span id="cb191-12"><a href="ordination-constrained.html#cb191-12" tabindex="-1"></a>     <span class="at">labels =</span> <span class="fu">rownames</span>(spe),</span>
+<span id="cb191-13"><a href="ordination-constrained.html#cb191-13" tabindex="-1"></a>     <span class="at">col =</span> u)</span>
+<span id="cb191-14"><a href="ordination-constrained.html#cb191-14" tabindex="-1"></a><span class="co"># species labels</span></span>
+<span id="cb191-15"><a href="ordination-constrained.html#cb191-15" tabindex="-1"></a><span class="fu">text</span>(rda_mod,</span>
+<span id="cb191-16"><a href="ordination-constrained.html#cb191-16" tabindex="-1"></a>     <span class="at">display =</span> <span class="st">&quot;species&quot;</span>,</span>
+<span id="cb191-17"><a href="ordination-constrained.html#cb191-17" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">&quot;black&quot;</span>,</span>
+<span id="cb191-18"><a href="ordination-constrained.html#cb191-18" tabindex="-1"></a>     <span class="at">scaling =</span> <span class="dv">2</span>)</span>
+<span id="cb191-19"><a href="ordination-constrained.html#cb191-19" tabindex="-1"></a><span class="co"># environmental vectors</span></span>
+<span id="cb191-20"><a href="ordination-constrained.html#cb191-20" tabindex="-1"></a><span class="fu">text</span>(rda_mod,</span>
+<span id="cb191-21"><a href="ordination-constrained.html#cb191-21" tabindex="-1"></a>     <span class="at">display =</span> <span class="st">&quot;bp&quot;</span>,</span>
+<span id="cb191-22"><a href="ordination-constrained.html#cb191-22" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">&quot;red&quot;</span>,</span>
+<span id="cb191-23"><a href="ordination-constrained.html#cb191-23" tabindex="-1"></a>     <span class="at">scaling =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-77-1.png" width="672" /></p>
+<p><strong>What do we see?</strong></p>
+<p>The environment X site relations are the same as what we saw above.
+With respect to the species, we see many species cluster around the origin, meaning they are not strongly associated with the first two constrained axes.
+Being specific, <em>Sarcocornia fruticosa</em> appears to be positively associated with the environmental gradient represented by Mg and tends to occur in sites with relatively high Mg values.
+<em>Aeluropus littoralis</em> is the only other species that clearly stands out in the ordination and appears associated with the opposite end of the Mg-related gradient from <em>S. fruticosa</em>.</p>
 
+</div>
 </div>
 </div>
             </section>
@@ -367,8 +464,8 @@ Each element is one of the data tables we will need for our analyses.</p>
           </div>
         </div>
       </div>
-<a href="intro-to-RStudio.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="data-transform.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="ordination-unconstrained.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -399,7 +496,7 @@ gitbook.start({
     "size": 2
   },
   "edit": {
-    "link": "https://github.com/rstudio/bookdown-demo/edit/master/03-community-data.Rmd",
+    "link": "https://github.com/rstudio/bookdown-demo/edit/master/08-ordination-constrained.Rmd",
     "text": "Edit"
   },
   "history": {

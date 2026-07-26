@@ -93,6 +93,10 @@ Unconstrained methods (PCA, CA, PCoA) and constrained methods (RDA, CCA, dbRDA) 
 
 
 ```{r}
+# color vector for plotting
+u <- get_palette()
+u <- u[1:nrow(spe)]
+
 plot(rda, type = "n", scaling = 2)
 # site coordinates
 site_scores <- vegan::scores(rda, display = "sites", scaling = 2)

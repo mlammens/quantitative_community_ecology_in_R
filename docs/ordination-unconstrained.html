@@ -242,17 +242,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></li>
 <li class="chapter" data-level="8" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html"><i class="fa fa-check"></i><b>8</b> Ordination (unconstrained)</a>
 <ul>
-<li class="chapter" data-level="8.0.1" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#adding-environmental-information"><i class="fa fa-check"></i><b>8.0.1</b> Adding environmental information</a></li>
-<li class="chapter" data-level="8.1" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#ordination-goodness-of-fit"><i class="fa fa-check"></i><b>8.1</b> Ordination goodness-of-fit</a></li>
-<li class="chapter" data-level="8.2" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#dimensionality-selection-in-nmds"><i class="fa fa-check"></i><b>8.2</b> Dimensionality selection in NMDS</a></li>
-<li class="chapter" data-level="8.3" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#brief-discussion-of-pca-vs-pcoa-vs-nmds"><i class="fa fa-check"></i><b>8.3</b> Brief discussion of PCA vs PCoA vs NMDS</a>
+<li class="chapter" data-level="8.1" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#the-three-major-unconstrained-ordination-methods"><i class="fa fa-check"></i><b>8.1</b> The three major unconstrained ordination methods</a>
 <ul>
-<li class="chapter" data-level="8.3.1" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#nmds-non-metric-multidimensional-scaling"><i class="fa fa-check"></i><b>8.3.1</b> NMDS (Non-metric Multidimensional Scaling)</a></li>
-<li class="chapter" data-level="8.3.2" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#pcoa-principal-coordinates-analysis"><i class="fa fa-check"></i><b>8.3.2</b> PCoA (Principal Coordinates Analysis)</a></li>
-<li class="chapter" data-level="8.3.3" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#pca-principal-components-analysis"><i class="fa fa-check"></i><b>8.3.3</b> PCA (Principal Components Analysis)</a></li>
-<li class="chapter" data-level="8.3.4" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#comparison-summary"><i class="fa fa-check"></i><b>8.3.4</b> Comparison summary</a></li>
+<li class="chapter" data-level="8.1.1" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#adding-environmental-information"><i class="fa fa-check"></i><b>8.1.1</b> Adding environmental information</a></li>
 </ul></li>
-<li class="chapter" data-level="8.4" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#key-references-4"><i class="fa fa-check"></i><b>8.4</b> Key references</a></li>
+<li class="chapter" data-level="8.2" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#ordination-goodness-of-fit"><i class="fa fa-check"></i><b>8.2</b> Ordination goodness-of-fit</a></li>
+<li class="chapter" data-level="8.3" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#dimensionality-selection-in-nmds"><i class="fa fa-check"></i><b>8.3</b> Dimensionality selection in NMDS</a></li>
+<li class="chapter" data-level="8.4" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#brief-discussion-of-pca-vs-pcoa-vs-nmds"><i class="fa fa-check"></i><b>8.4</b> Brief discussion of PCA vs PCoA vs NMDS</a>
+<ul>
+<li class="chapter" data-level="8.4.1" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#nmds-non-metric-multidimensional-scaling"><i class="fa fa-check"></i><b>8.4.1</b> NMDS (Non-metric Multidimensional Scaling)</a></li>
+<li class="chapter" data-level="8.4.2" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#pcoa-principal-coordinates-analysis"><i class="fa fa-check"></i><b>8.4.2</b> PCoA (Principal Coordinates Analysis)</a></li>
+<li class="chapter" data-level="8.4.3" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#pca-principal-components-analysis"><i class="fa fa-check"></i><b>8.4.3</b> PCA (Principal Components Analysis)</a></li>
+<li class="chapter" data-level="8.4.4" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#comparison-summary"><i class="fa fa-check"></i><b>8.4.4</b> Comparison summary</a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="ordination-unconstrained.html"><a href="ordination-unconstrained.html#key-references-4"><i class="fa fa-check"></i><b>8.5</b> Key references</a></li>
 </ul></li>
 <li class="divider"></li>
 <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
@@ -285,7 +288,8 @@ Nearby points are more compositionally similar than distant points.</p>
 <p>Unconstrained ordination is a set of techniques that summarize patterns in a species abundance matrix without using any environmental variables or prior hypotheses about what drives those patterns.
 The ordination arranges sites (and sometimes species) in a low-dimensional space so that sites with similar community composition occur close together and dissimilar sites occur farther apart.
 In community ecology, methods such as NMDS, PCoA, and PCA are commonly used as unconstrained ordinations to explore major gradients in species composition and identify natural patterns in the data before relating them to environmental factors.</p>
-<p>The three major unconstrained ordination methods are:</p>
+<div id="the-three-major-unconstrained-ordination-methods" class="section level2 hasAnchor" number="8.1">
+<h2><span class="header-section-number">8.1</span> The three major unconstrained ordination methods<a href="ordination-unconstrained.html#the-three-major-unconstrained-ordination-methods" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <ol style="list-style-type: decimal">
 <li><strong>Non-metric Multidimensional Scaling</strong> - a rank-based method that focuses on preserving the order of dissimilarities rather than their exact values. NMDS is particularly useful for ecological data because it can handle non-linear relationships and is robust to outliers.</li>
 <li><strong>Principal Coordinates Analysis (PCoA)</strong> - a distance-based method that can use any dissimilarity measure (e.g., Bray-Curtis, Jaccard). PCoA is more flexible than PCA and can handle non-Euclidean distances, making it suitable for ecological data that often violate the assumptions of linearity.</li>
@@ -316,8 +320,8 @@ Note that we are using the dissimilarity matrix <code>D</code> calculated in <st
 NMDS and PCoA produce very similar configurations because both are based on ecological dissimilarities among sites, whereas PCA uses Euclidean distances on the transformed species matrix and displays a pronounced horseshoe pattern.
 The similarity among methods increases confidence that the dominant pattern is real, while the differences highlight the assumptions made by each ordination technique.</p>
 <hr />
-<div id="challenge-9" class="section level4 hasAnchor" number="8.0.0.1">
-<h4><span class="header-section-number">8.0.0.1</span> Challenge<a href="ordination-unconstrained.html#challenge-9" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<div id="challenge-9" class="section level4 hasAnchor" number="8.1.0.1">
+<h4><span class="header-section-number">8.1.0.1</span> Challenge<a href="ordination-unconstrained.html#challenge-9" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Re-rerun the PCA using a Hellinger transformation. What differences do you see in the ordination results?</p>
 <div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb168-1"><a href="ordination-unconstrained.html#cb168-1" tabindex="-1"></a>m3_hell <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(<span class="fu">decostand</span>(spe, <span class="st">&quot;hellinger&quot;</span>))</span></code></pre></div>
 <!---
@@ -329,8 +333,8 @@ All three methods reveal essentially the same ecological pattern. The similarity
 --->
 <hr />
 </div>
-<div id="adding-environmental-information" class="section level3 hasAnchor" number="8.0.1">
-<h3><span class="header-section-number">8.0.1</span> Adding environmental information<a href="ordination-unconstrained.html#adding-environmental-information" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="adding-environmental-information" class="section level3 hasAnchor" number="8.1.1">
+<h3><span class="header-section-number">8.1.1</span> Adding environmental information<a href="ordination-unconstrained.html#adding-environmental-information" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>We can add environmental information to the ordination plots to explore potential relationships between community composition and environmental gradients by coloring the points by environmental variable values.
 Below we do this using <code>ggplot2</code> to visualize the NMDS results with points colored by three environmental variables: <code>k</code>, <code>k2o</code>, and <code>sand</code>.</p>
 <div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb169-1"><a href="ordination-unconstrained.html#cb169-1" tabindex="-1"></a><span class="co"># To use ggplot, we need to first make a data.frame with the NMDS scores and the environmental variables</span></span>
@@ -361,8 +365,9 @@ Below we do this using <code>ggplot2</code> to visualize the NMDS results with p
 <span id="cb171-6"><a href="ordination-unconstrained.html#cb171-6" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
 <p><img src="bookdown-demo_files/figure-html/unnamed-chunk-68-3.png" width="672" /></p>
 </div>
-<div id="ordination-goodness-of-fit" class="section level2 hasAnchor" number="8.1">
-<h2><span class="header-section-number">8.1</span> Ordination goodness-of-fit<a href="ordination-unconstrained.html#ordination-goodness-of-fit" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+</div>
+<div id="ordination-goodness-of-fit" class="section level2 hasAnchor" number="8.2">
+<h2><span class="header-section-number">8.2</span> Ordination goodness-of-fit<a href="ordination-unconstrained.html#ordination-goodness-of-fit" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Ordination methods have intrinsic measures of fit (e.g., stress for NMDS). However, for all methods, a “good” ordination should have a decent correlation between the Euclidean inter-point ordination distances versus the original species dissimilarities used to construct the ordination.</p>
 <div class="sourceCode" id="cb172"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb172-1"><a href="ordination-unconstrained.html#cb172-1" tabindex="-1"></a><span class="fu">cor</span>(<span class="fu">dist</span>(m1<span class="sc">$</span>points), D, <span class="at">method=</span><span class="st">&#39;kendall&#39;</span>) <span class="co"># NMS almost always best</span></span></code></pre></div>
 <pre><code>## [1] 0.7622821</code></pre>
@@ -375,8 +380,8 @@ Below we do this using <code>ggplot2</code> to visualize the NMDS results with p
 <p><strong>NOTE:</strong> In NMDS <em>stress</em> measures how well the NMDS plot represents the original dissimilarities among sites. Lower stress means the distances on the ordination plot are a good representation of the ecological distances in the original data; higher stress means the plot is a poorer representation.</p>
 </blockquote>
 </div>
-<div id="dimensionality-selection-in-nmds" class="section level2 hasAnchor" number="8.2">
-<h2><span class="header-section-number">8.2</span> Dimensionality selection in NMDS<a href="ordination-unconstrained.html#dimensionality-selection-in-nmds" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="dimensionality-selection-in-nmds" class="section level2 hasAnchor" number="8.3">
+<h2><span class="header-section-number">8.3</span> Dimensionality selection in NMDS<a href="ordination-unconstrained.html#dimensionality-selection-in-nmds" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>For NMDS, the user must select the number of dimensions a priori.
 Yet, what is the “best” number of dimensions?
 We can examine how stress changes as we increment the number of dimensions, and select the dimensionality that balances sufficiently “low” stress with the fewest dimensions.</p>
@@ -409,8 +414,8 @@ We can examine how stress changes as we increment the number of dimensions, and 
 ## [4,] 0.09922072
 ## [5,] 0.07975792</code></pre>
 </div>
-<div id="brief-discussion-of-pca-vs-pcoa-vs-nmds" class="section level2 hasAnchor" number="8.3">
-<h2><span class="header-section-number">8.3</span> Brief discussion of PCA vs PCoA vs NMDS<a href="ordination-unconstrained.html#brief-discussion-of-pca-vs-pcoa-vs-nmds" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="brief-discussion-of-pca-vs-pcoa-vs-nmds" class="section level2 hasAnchor" number="8.4">
+<h2><span class="header-section-number">8.4</span> Brief discussion of PCA vs PCoA vs NMDS<a href="ordination-unconstrained.html#brief-discussion-of-pca-vs-pcoa-vs-nmds" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>For a <strong>species abundance matrix</strong> (sites × species), the choice among <strong>NMDS</strong>, <strong>PCoA</strong>, and <strong>PCA</strong> largely comes down to how well they handle the properties of community data:</p>
 <ul>
 <li>many zeros,</li>
@@ -418,8 +423,8 @@ We can examine how stress changes as we increment the number of dimensions, and 
 <li>nonlinear species responses,</li>
 <li>choice of ecological distance measure.</li>
 </ul>
-<div id="nmds-non-metric-multidimensional-scaling" class="section level3 hasAnchor" number="8.3.1">
-<h3><span class="header-section-number">8.3.1</span> NMDS (Non-metric Multidimensional Scaling)<a href="ordination-unconstrained.html#nmds-non-metric-multidimensional-scaling" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="nmds-non-metric-multidimensional-scaling" class="section level3 hasAnchor" number="8.4.1">
+<h3><span class="header-section-number">8.4.1</span> NMDS (Non-metric Multidimensional Scaling)<a href="ordination-unconstrained.html#nmds-non-metric-multidimensional-scaling" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><strong>Advantages</strong></p>
 <ul>
 <li>Uses almost any dissimilarity measure (Bray–Curtis is especially common).</li>
@@ -444,8 +449,8 @@ We can examine how stress changes as we increment the number of dimensions, and 
 <li>You care primarily about ecological gradients.</li>
 </ul>
 </div>
-<div id="pcoa-principal-coordinates-analysis" class="section level3 hasAnchor" number="8.3.2">
-<h3><span class="header-section-number">8.3.2</span> PCoA (Principal Coordinates Analysis)<a href="ordination-unconstrained.html#pcoa-principal-coordinates-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="pcoa-principal-coordinates-analysis" class="section level3 hasAnchor" number="8.4.2">
+<h3><span class="header-section-number">8.4.2</span> PCoA (Principal Coordinates Analysis)<a href="ordination-unconstrained.html#pcoa-principal-coordinates-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><strong>Advantages</strong></p>
 <ul>
 <li>Can use virtually any dissimilarity matrix:
@@ -473,8 +478,8 @@ We can examine how stress changes as we increment the number of dimensions, and 
 <li>You want something similar to PCA but based on Bray–Curtis or Jaccard distances.</li>
 </ul>
 </div>
-<div id="pca-principal-components-analysis" class="section level3 hasAnchor" number="8.3.3">
-<h3><span class="header-section-number">8.3.3</span> PCA (Principal Components Analysis)<a href="ordination-unconstrained.html#pca-principal-components-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="pca-principal-components-analysis" class="section level3 hasAnchor" number="8.4.3">
+<h3><span class="header-section-number">8.4.3</span> PCA (Principal Components Analysis)<a href="ordination-unconstrained.html#pca-principal-components-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p><strong>Advantages</strong></p>
 <ul>
 <li>Fast, simple, and widely understood.</li>
@@ -501,8 +506,8 @@ We can examine how stress changes as we increment the number of dimensions, and 
 <span id="cb184-2"><a href="ordination-unconstrained.html#cb184-2" tabindex="-1"></a><span class="fu">rda</span>(spe.log)</span></code></pre></div>
 <p>Hellinger-transformed PCA is very common and has strong theoretical support because Euclidean distances on Hellinger-transformed data approximate ecologically meaningful differences among communities.</p>
 </div>
-<div id="comparison-summary" class="section level3 hasAnchor" number="8.3.4">
-<h3><span class="header-section-number">8.3.4</span> Comparison summary<a href="ordination-unconstrained.html#comparison-summary" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="comparison-summary" class="section level3 hasAnchor" number="8.4.4">
+<h3><span class="header-section-number">8.4.4</span> Comparison summary<a href="ordination-unconstrained.html#comparison-summary" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>If you have a typical vegetation dataset:</p>
 <table>
 <thead>
@@ -543,8 +548,8 @@ We can examine how stress changes as we increment the number of dimensions, and 
 </ol>
 </div>
 </div>
-<div id="key-references-4" class="section level2 hasAnchor" number="8.4">
-<h2><span class="header-section-number">8.4</span> Key references<a href="ordination-unconstrained.html#key-references-4" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="key-references-4" class="section level2 hasAnchor" number="8.5">
+<h2><span class="header-section-number">8.5</span> Key references<a href="ordination-unconstrained.html#key-references-4" class="anchor-section" aria-label="Anchor link to header"></a></h2>
 <p>Kruskal, J.B. 1964. Multidimensional scaling by optimizing goodness-of-fit to a nonmetric hypothesis. Psychometrika 29: 1–28.</p>
 <p>Minchin, P.R. 1987. An evaluation of relative robustness of techniques for ecological ordinations. Vegetatio 69: 89–107.</p>
 

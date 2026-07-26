@@ -11,7 +11,7 @@ Unconstrained ordination is a set of techniques that summarize patterns in a spe
 The ordination arranges sites (and sometimes species) in a low-dimensional space so that sites with similar community composition occur close together and dissimilar sites occur farther apart.
 In community ecology, methods such as NMDS, PCoA, and PCA are commonly used as unconstrained ordinations to explore major gradients in species composition and identify natural patterns in the data before relating them to environmental factors. 
 
-The three major unconstrained ordination methods are:
+## The three major unconstrained ordination methods
 
 1. **Non-metric Multidimensional Scaling** - a rank-based method that focuses on preserving the order of dissimilarities rather than their exact values. NMDS is particularly useful for ecological data because it can handle non-linear relationships and is robust to outliers.
 2. **Principal Coordinates Analysis (PCoA)** - a distance-based method that can use any dissimilarity measure (e.g., Bray-Curtis, Jaccard). PCoA is more flexible than PCA and can handle non-Euclidean distances, making it suitable for ecological data that often violate the assumptions of linearity.

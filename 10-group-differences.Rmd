@@ -4,7 +4,7 @@
 
 Let’s assume PERMANOVA is the best choice for comparing groups in multivariate space. Other methods (ANOSIM, MRPP) exist, but PERMANOVA usually has better power and false-detection rates, even when groups may have different dispersions (Anderson and Walsh 2013) among other operational advantages.
 
-> **PERMANOVA** (Permutational Multivariate Analysis of Variance) tests whether the composition of groups differs in multivariate space based on a dissimilarity matrix (e.g., Bray-Curtis). It is analogous to ANOVA for community data and uses permutations rather than normality assumptions to assess statistical significance.
+> **PERMANOVA** (Permutational Multivariate Analysis of Variance) tests whether the composition of groups differs in multivariate space based on a dissimilarity matrix (e.g., Bray-Curtis). It is analogous to ANOVA for community data and uses permutations rather than normality assumptions to assess statistical significance. The permutations entail shuffling the group labels and creating a null distribution for the dispersion observed within clusters.
 
 ```{r}
 ## Recall in unconstrained ordination section

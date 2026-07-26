@@ -1,4 +1,4 @@
-# Ordination (constrained)
+# Ordination (constrained) {#ord_constrained}
 
 **How best to order sites by dissimilarities of community compositions, in response to measured environmental variables?**
 
@@ -171,3 +171,8 @@ Being specific, *Sarcocornia fruticosa* appears to be positively associated with
 *Aeluropus littoralis* is the only other species that clearly stands out in the ordination and appears associated with the opposite end of the Mg-related gradient from *S. fruticosa*.
 
 
+## Key references
+
+McArdle, B.H. & Anderson, M.J. 2001. Fitting multivariate models to community data: a comment on distance-based redundancy analysis. Ecology 82: 290-297.
+
+Roberts, D.W. 2008. Statistical analysis of multidimensional fuzzy set ordinations. Ecology 89: 1246-1260.

@@ -1,4 +1,4 @@
-# Ordination (unconstrained)
+# Ordination (unconstrained) {#ord_unconstrained}
 
 ***How best to order sites by dissimilarities of community compositions?***
 

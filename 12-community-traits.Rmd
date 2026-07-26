@@ -1,0 +1,245 @@
+# Community traits {#comm_traits}
+
+**How do species’ evolutionary relationships explain responses?**
+
+In this question, we are making the assumption that a species traits are directly related to their evolutionary history. 
+We can ask several questions about trait diversity, convergence/divergence, and relationships to environment.
+
+
+## Trait data
+
+Recall the traits matrix for the Mafragh dataset, which assigns each species (rows) a value for each of twelve traits (columns):
+
+```{r}
+names(tra)
+head(tra)
+
+# Plot lfp = length of flowering period
+ggplot(data = tra, aes(x = lfp)) +
+  geom_histogram()
+```
+
+> **NOTE:** Here is a link to the appendix of a paper that does a nice job describing the Mafragh data set [Appendix S2](https://besjournals.onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1111%2Fj.1365-2745.2010.01743.x&file=JEC_1743_sm_apps2.pdf)
+
+## Trait dissimilarity
+
+**Are traits (for species in a site) convergent or divergent?**
+
+The mean pairwise distance (MPD) shows how far (on average) the traits of one community are relative to all others. 
+Most commonly these are Euclidean or Gower distances. 
+A randomization test gives a test statistic called SES, standardized effect size. 
+
+SES(MPD) is essentially a z-score comparing the observed mean pairwise trait distance to the distribution expected under a null model. 
+Positive values indicate more trait divergence than expected (i.e., species have divergent traits), whereas negative values indicate more trait convergence than expected (i.e., species tend to converge on similar traits).
+We can examine trait divergence/convergence along a gradient, or test for divergence/convergence within groups.
+
+Below we are using the `ses.mpd` function in the `picante` package to examine trait divergence/convergence among the species in the Mafragh dataset. 
+
+```{r traits}
+### Euclidean trait dissimilarity
+###   (traits already scaled 0-1)
+Dt  <- dist(tra, method='euc') 
+
+### calculate trait SES of mean 
+###   pairwise distances in sites
+ses <- picante::ses.mpd(spe, Dt, 
+         null.model='richness')
+
+### plot SES across a nutrient gradient
+# Identify observations where the probability of the SES value is smaller than 0.05
+# Here p is based on quantiles, not theoretical normal distribution
+u <- ifelse(ses$mpd.obs.p < 0.05,2,1)
+plot(ses$mpd.obs.z ~ env$k, 
+     ylab='Trait SES(MPD)', 
+     xlab='Soil potassium', col=u)
+abline(lm(ses$mpd.obs.z ~ env$k)) # regression
+abline(h=0, lty=2) # random-traits line
+text(0.9, 1, 'Divergent')
+text(0.9, -1.5, 'Convergent')
+
+```
+
+**What do we see?**
+
+Trait SES(MPD) is generally negative and declines with increasing soil potassium, suggesting that higher-potassium sites tend to contain species with more similar traits than expected by chance. 
+Red points indicate sites with significantly low mean pairwise trait distance, consistent with significant trait convergence under the richness null model.
+
+
+
+## Community weighted means
+
+**How strongly are traits related to environment?**
+
+To evaluate the strength of relationship between traits and environment, we can perform ordination of sites based on traits (rather than species). 
+We first need to make a community-weighted means (CWM) matrix, a traits-by-site matrix whose values are trait means across the species in each site.
+
+### (Weighted) mean trait value per SU
+
+```{r cwm}
+### function to make CWM matrix
+makecwm <- function (spe, tra) {
+  spe <- as.matrix(spe)
+  tra <- as.matrix(tra)
+  `stdz` <- function(x) {
+    (x - min(x, na.rm=TRUE)) / 
+        diff(range(x, na.rm=TRUE))
+  }
+  tra <- apply(tra, MARGIN = 2, FUN = stdz)
+  awt <- spe %*% tra # abund-weighted totals, matrix multiplication
+  awt / rowSums(spe, na.rm=TRUE) # CWM matrix
+}
+
+### make the CWM traits matrix
+cwm <- data.frame(makecwm(spe, tra)) 
+
+### visualize
+tabasco(cwm, col=get_palette())      
+```
+
+**What do we see?**
+
+This community-weighted trait matrix suggests functional turnover among sites, especially in pollination mode, life-history strategy, and leaf/morphological traits. 
+The clearest patterns appear in categorical traits such as anemogamous/autogamous/entomogamous (i.e., wind/self/insect) and annual/biennial/perennial, which show strong blocks of high and low values across sites. 
+Continuous traits such as height vary more gradually, suggesting they may contribute less strongly to the main site differences. 
+
+### CWM ordination
+
+Ordination of the CWM matrix gives a configuration of sites in traits space, where distance between points indicates dissimilarity of trait compositions (trait syndromes). 
+Nonlinear regression of environmental variables in this traits space can help us visualize and understand trait-environment correlations.
+
+> **NOTE:** Below we use the distance measure `altGower` because it can handle mixed or semi-quantitative trait variables better than ordinary Euclidean distance.
+
+```{r cwm-03}
+### NMS based on abundance-weighted traits
+m <- metaMDS(cwm, 'altGower', k=2, trace=0)
+
+### SUs sized relative to a leaf trait
+plot(m, cex=cwm$lfp)
+
+### overlay enviro k variable
+o <- ordisurf(m, env$k, col=2, add=T)
+```
+
+**What do we see?**
+
+NMDS ordination of sites based on community-weighted plant traits. 
+Point size is proportional to community-weighted `lfp`, and red contour lines show a fitted soil potassium surface; potassium increases from left to right, suggesting that functional composition varies along the soil potassium gradient.
+
+We can fit also all of the environmental variables in trait space and see which have strong associations.
+
+```{r}
+### fit *all* environmental variables in traits space
+fit <- t(sapply(env, function(i) {
+  g <- summary(vegan::ordisurf(m ~ i, plot=F)) # fit GAM
+  c(`pval` = as.numeric(sprintf('%.3f',round(g$s.pv,3))),
+    `r2`   = as.numeric(sprintf('%.3f',round(g$r.sq,3))))
+}))
+cat('GAM p-values and goodness-of-fit, sorted\n',
+    '----------------------------------------\n')
+fit[rev(order(fit[,2])),]
+```
+
+Soil potassium (k) had the strongest nonlinear relationship with community-weighted trait composition, while elevation, magnesium, sodium, conductivity, and k2o showed moderate relationships. 
+Also note that the red crosses in the figure above are assocaited with the `lfp` trait.
+
+
+## Fourth-corner analysis and RLQ
+
+RLQ and fourth-corner analysis can also detect linear traits-environment relationships as mediated by the species abundance matrix. 
+Essentially we are asking, which environmental gradients are associated with which plant trait gradients, through the species composition matrix?
+There is no need to calculate the CWM matrix. 
+Because it boils down to a series of PCA operations, the RLQ method does not readily admit nonlinear relationships. 
+It is included here for completeness.
+
+### RLQ method
+
+We will complete an RLQ analysis using functions in the `ade4` package.
+
+```{r rlq-01}
+require(ade4)
+o_spe <- dudi.coa(spe, F) # Correspondence Analysis
+o_env <- dudi.hillsmith(env, F, row.w = o_spe$lw)
+o_tra <- dudi.hillsmith(tra, F, row.w = o_spe$cw)
+r     <- rlq(o_env, o_spe, o_tra, F)
+plot(r)
+summary(r)
+randtest(r)
+```
+
+
+**How to read this figure?!?**
+
+The figure has several panels:
+
+* R row scores - Top-left panel. These are the sites positioned in environmental RLQ space. Sites far apart differ in the environmental conditions most associated with trait variation.
+* Q row scores - Top-right panel. These are the species positioned in trait RLQ space. Species on the same side of the main axis tend to share trait associations; species on opposite sides have contrasting trait profiles.
+* R canonical weights - Bottom-middle-left panel. These arrows show which environmental variables define the RLQ axes.
+* Q canonical weights - Bottom-middle-right panel. These arrows show which traits define the RLQ axes.
+* Eigenvalues - Bottom-right. This confirms visually that Axis 1 is overwhelmingly dominant, with Axis 2 much smaller.
+
+Pulling this all together, this might be a reasonable interpretation:
+
+RLQ analysis reveals a strong relationship between environmental variables, species composition, and plant traits. The first RLQ axis explains 93.4% of the projected inertia, indicating that most of the trait–environment association is structured along a single dominant gradient. This gradient appears to be associated primarily with soil chemistry variables such as potassium, sodium, magnesium, and conductivity, and with contrasting plant traits related to life history, pollination mode, and morphology.
+
+
+### Fourth-corner analysis
+
+**Trait correlations**
+
+```{r rlq-04}
+fourthcorner.rlq(r, type='Q.axes')
+```
+
+
+**Environment correlations**
+
+```{r rlq-05}
+fourthcorner.rlq(r, type='R.axes')
+```
+
+
+## Phylogenetic correction of traits
+
+**How to remove phylogenetic relatedness from traits?**
+
+Often we suspect that close phylogenetic relatives may share similar trait values than more distant relatives (i.e., trait conservatism). For further analyses it may be useful to “remove” the effects of relatedness from traits, based on the phylogenetic variance-covariance matrix.
+
+```{r}
+### function to do phylogenetic correction
+`phylo_corr` <- function(phy, tra, ...){
+  if (class(phy) != 'phylo') stop('phy must be of class `phylo`')
+  if (!is.data.frame(tra)) tra <- as.data.frame(tra)
+  rn <- dimnames(tra)[[1]] # species names
+  cn <- dimnames(tra)[[2]] # traits names
+  n  <- dim(tra)[[2]]    # n of traits
+  if (!identical(phy$tip.label, rn)) stop('species name mismatch')
+  G  <- ape::vcv.phylo(phy) # phylo variance-covariance matrix
+  corfac <- chol(solve(G)) # 'correction factor' per Butler et al. (2000) 
+  U  <- as.data.frame(      # initialize U for 'corrected' trait values
+    matrix(NA, nrow=dim(tra)[[1]], ncol=dim(tra)[[2]],
+           dimnames=list(rn,cn)))
+  tra <- droplevels(tra)  # drop unused factor levels
+  tra[,sapply(tra,function(x)nlevels(x)==1)] <- 1 # correct 1-level factors
+  for(j in 1:n){       # corrections per individual trait
+    M       <- model.matrix(as.formula(paste0("~0+",cn[j])), data=tra)
+    corrtra <- data.frame(corfac %*% M)
+    U[,j]   <- corrtra[rn, ,drop=FALSE]
+  }
+  return(U)
+}
+### do the correction, then compare
+p <- phylo_corr(phy, tra) 
+par(mfrow=c(2,2))
+for(i in 7:10) {
+  plot(tra[,i], p[,i], pch=16, cex=0.7, col='#00000050',
+       main=dimnames(p)[[2]][i], xlab='Original', ylab='Corrected')
+}
+```
+
+## Key references
+
+
+Butler, M.A., T.W. Schoener, and J.B. Losos. 2000. The relationship between sexual size dimorphism and habitat use in Greater Antillean Anolis lizards. Evolution 54:259-272.
+
+Eklöf, A., and D.B. Stouffer. 2016. The phylogenetic component of food web structure and intervality. Theoretical Ecology 9:107–115.
+

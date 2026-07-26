@@ -1,4 +1,4 @@
-# Group indicator species
+# Group indicator species {#grp_indicator_spec}
 
 **Which species are indicative of pre-defined groups?**
 

@@ -1,0 +1,67 @@
+# Group clustering
+
+**How to group sites according to dissimilarity of community compositions?**
+
+## Hierarchical: Ward’s clustering
+
+Ward’s clustering is a hierarchical cluster analysis method based on community dissimilarities (Murtagh and Legendre 2014).
+In this approach, we can set the number of groups *a priori* for visualization and assigning group membership. 
+
+```{r}
+k   <- 7                                          # specify number of groups
+cl  <- hclust(D, method='ward.D2')                # clustering solution
+grp <- cutree(cl, k)                              # group memberships
+plot(cl) ; rect.hclust(cl, k, border=rainbow(k))  # plot the dendrogram
+
+# save cl as cl_ward to use below
+cl_ward <- cl
+```
+
+> **NOTE:** Height represents the amount of within-cluster variation introduced when clusters are merged. Clusters that join at low heights are very similar, whereas clusters that join at high heights are much more distinct.
+
+## Non-hierarchical: fuzzy clustering
+
+Non-hierarchical methods also exist. And, it may be useful to define groups based on fuzzy rather than crisp partitions, using fuzzy clustering (de Caceres et al. 2010).
+
+```{r}
+# install.packages("vegclust")
+require(vegclust)
+ns   <- 1       # number of random starts (increase for real analyses!)
+k    <- 7       # number of groups is specified in advance
+# fuzzy c-means
+cl   <- vegclustdist(D, mobileMemb=k, method='FCM', m=1.2, nstart=ns)
+# fuzzy c-means with a noise cluster
+cl_a <- vegclustdist(D, mobileMemb=k, method='NC', m=1.2, dnoise=0.8, nstart=ns)
+# fuzzy c-medoids
+cl_b <- vegclustdist(D, mobileMemb=k, method='FCMdd', m=1.2, nstart=ns)
+# crisp k-means
+cl_c <- vegclustdist(D, mobileMemb=k, method='KM', nstart=ns)
+
+# how well do the other methods agree with fuzzy c-means?
+concordance(cl, cl_a)
+concordance(cl, cl_b)
+concordance(cl, cl_c)
+```
+
+Let’s examine group memberships `grp` from the fuzzy clustering. While memberships are fuzzy, we can ask for a crisp membership based on a threshold or else the maximum fuzzy membership.
+
+```{r}
+head(round(cl$memb, 2))               # fuzzy membership
+(grp <- defuzzify(cl, 'cut', alpha=0.8)[[2]]) # crisp, at threshold (incl NAs)
+(grp <- defuzzify(cl, 'max')[[2]])    # crisp membership, at max membership
+table(grp, useNA='always')            # tally points per group
+```
+
+**Compare fuzzy clusters to Ward clusters**
+
+```{r}
+table(grp, cutree(cl_ward, k = 7))
+```
+
+The Ward and fuzzy clustering solutions show substantial agreement, with several fuzzy clusters corresponding closely to individual Ward clusters. However, some Ward groups, especially clusters 5, 6, and 7, are split across multiple fuzzy clusters, suggesting that these communities may represent transitional or less clearly separated assemblages.
+
+## Key references
+
+de Caceres, M., X. Font, F. Oliva. 2010. The management of numerical vegetation classifications with fuzzy clustering methods. Journal of Vegetation Science 21: 1138–1151.
+
+Murtagh, F., and P. Legendre. 2014. Ward’s hierarchical agglomerative clustering method: which algorithms implement Ward’s criterion? Journal of Classification 31: 274–295.

@@ -108,3 +108,17 @@ test-for-difference-in-community-compositions
 test-for-homogeneity-of-community-compositions
 permanova-equivalence-to-anova
 key-references-7
+grp_indicator_spec
+using-the-indval-function
+key-references-8
+comm_traits
+trait-data
+trait-dissimilarity
+community-weighted-means
+weighted-mean-trait-value-per-su
+cwm-ordination
+fourth-corner-analysis-and-rlq
+rlq-method
+fourth-corner-analysis
+phylogenetic-correction-of-traits
+key-references-9

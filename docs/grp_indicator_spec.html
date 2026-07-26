@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 10 Group clustering | Quantitative Community Ecology in R</title>
+  <title>Chapter 12 Group indicator species | Quantitative Community Ecology in R</title>
   <meta name="description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 10 Group clustering | Quantitative Community Ecology in R" />
+  <meta property="og:title" content="Chapter 12 Group indicator species | Quantitative Community Ecology in R" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="github-repo" content="mlammens/quantitative_community_ecology_in_R" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 10 Group clustering | Quantitative Community Ecology in R" />
+  <meta name="twitter:title" content="Chapter 12 Group indicator species | Quantitative Community Ecology in R" />
   
   <meta name="twitter:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="ord_constrained.html"/>
-<link rel="next" href="grp_diffs.html"/>
+<link rel="prev" href="grp_diffs.html"/>
+<link rel="next" href="comm_traits.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -326,111 +326,81 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="cluster" class="section level1 hasAnchor" number="10">
-<h1><span class="header-section-number">Chapter 10</span> Group clustering<a href="cluster.html#cluster" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p><strong>How to group sites according to dissimilarity of community compositions?</strong></p>
-<div id="hierarchical-wards-clustering" class="section level2 hasAnchor" number="10.1">
-<h2><span class="header-section-number">10.1</span> Hierarchical: Ward’s clustering<a href="cluster.html#hierarchical-wards-clustering" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Ward’s clustering is a hierarchical cluster analysis method based on community dissimilarities (Murtagh and Legendre 2014).
-In this approach, we can set the number of groups <em>a priori</em> for visualization and assigning group membership.</p>
-<div class="sourceCode" id="cb192"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb192-1"><a href="cluster.html#cb192-1" tabindex="-1"></a>k   <span class="ot">&lt;-</span> <span class="dv">7</span>                                          <span class="co"># specify number of groups</span></span>
-<span id="cb192-2"><a href="cluster.html#cb192-2" tabindex="-1"></a>cl  <span class="ot">&lt;-</span> <span class="fu">hclust</span>(D, <span class="at">method=</span><span class="st">&#39;ward.D2&#39;</span>)                <span class="co"># clustering solution</span></span>
-<span id="cb192-3"><a href="cluster.html#cb192-3" tabindex="-1"></a>grp <span class="ot">&lt;-</span> <span class="fu">cutree</span>(cl, k)                              <span class="co"># group memberships</span></span>
-<span id="cb192-4"><a href="cluster.html#cb192-4" tabindex="-1"></a><span class="fu">plot</span>(cl) ; <span class="fu">rect.hclust</span>(cl, k, <span class="at">border=</span><span class="fu">rainbow</span>(k))  <span class="co"># plot the dendrogram</span></span></code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-78-1.png" width="672" /></p>
-<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb193-1"><a href="cluster.html#cb193-1" tabindex="-1"></a><span class="co"># save cl as cl_ward to use below</span></span>
-<span id="cb193-2"><a href="cluster.html#cb193-2" tabindex="-1"></a>cl_ward <span class="ot">&lt;-</span> cl</span></code></pre></div>
+<div id="grp_indicator_spec" class="section level1 hasAnchor" number="12">
+<h1><span class="header-section-number">Chapter 12</span> Group indicator species<a href="grp_indicator_spec.html#grp_indicator_spec" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><strong>Which species are indicative of pre-defined groups?</strong></p>
+<p>The Indicator Value (<em>IndVal</em>) is the product of a species’ fidelity and specificity to a group (Dufrêne and Legendre 1997).</p>
+<div id="using-the-indval-function" class="section level2 hasAnchor" number="12.1">
+<h2><span class="header-section-number">12.1</span> Using the <code>indval</code> function<a href="grp_indicator_spec.html#using-the-indval-function" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Here we use <code>labdsv::indval</code> to examine indicators of single groups, but also use R package <code>indicspecies</code> to test whether species might indicate multiple groups.</p>
+<p>First, let’s use the same groups we used for PERMANOVA: which species are indicative of the four groups defined by soil potassium?
+We can compare these “real” indicator species against a random expectation.</p>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb228-1"><a href="grp_indicator_spec.html#cb228-1" tabindex="-1"></a><span class="do">### real groups -- same as in the Group Differences section</span></span>
+<span id="cb228-2"><a href="grp_indicator_spec.html#cb228-2" tabindex="-1"></a>grp <span class="ot">&lt;-</span> <span class="fu">cut</span>(env<span class="sc">$</span>k, <span class="fu">quantile</span>(env<span class="sc">$</span>k, <span class="at">probs=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="at">by=</span><span class="fl">0.25</span>)), <span class="at">include.lowest=</span>T,</span>
+<span id="cb228-3"><a href="grp_indicator_spec.html#cb228-3" tabindex="-1"></a>               <span class="at">labels=</span><span class="fu">c</span>(<span class="st">&#39;lo&#39;</span>,<span class="st">&#39;med&#39;</span>,<span class="st">&#39;hi&#39;</span>,<span class="st">&#39;veryhi&#39;</span>))   <span class="co"># group memberships</span></span>
+<span id="cb228-4"><a href="grp_indicator_spec.html#cb228-4" tabindex="-1"></a>iv  <span class="ot">&lt;-</span> labdsv<span class="sc">::</span><span class="fu">indval</span>(spe, grp) <span class="co"># indicator species analysis for *real* groups</span></span>
+<span id="cb228-5"><a href="grp_indicator_spec.html#cb228-5" tabindex="-1"></a><span class="fu">summary</span>(iv)                     <span class="co"># IndVal observed</span></span></code></pre></div>
+<pre><code>##                          cluster indicator_value probability
+## chamaemelum_fuscatum           1          0.2419       0.001
+## borago_officinalis             1          0.2211       0.005
+## convolvulus_tricolor           1          0.1857       0.004
+## stachys_marrubiifolia          1          0.1600       0.017
+## medicago_intertexta            2          0.2444       0.026
+## phalaris_coerulescens          3          0.2689       0.010
+## bolboschoenus_maritimus        4          0.4570       0.001
+## aeluropus_littoralis           4          0.4463       0.001
+## schoenoplectus_litoralis       4          0.3225       0.001
+## eleocharis_uniglumis           4          0.2083       0.003
+## juncus_maritimus               4          0.1790       0.036</code></pre>
+<pre><code>## 
+## Sum of probabilities                 =  17.763</code></pre>
+<pre><code>## 
+## Sum of Indicator Values              =  6.54</code></pre>
+<pre><code>## 
+## Sum of Significant Indicator Values  =  2.94</code></pre>
+<pre><code>## 
+## Number of Significant Indicators     =  11</code></pre>
+<pre><code>## 
+## Significant Indicator Distribution</code></pre>
+<pre><code>## 
+## 1 2 3 4 
+## 4 1 1 5</code></pre>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb236-1"><a href="grp_indicator_spec.html#cb236-1" tabindex="-1"></a><span class="do">### random groups</span></span>
+<span id="cb236-2"><a href="grp_indicator_spec.html#cb236-2" tabindex="-1"></a>rnd <span class="ot">&lt;-</span> <span class="fu">sample</span>(grp, <span class="fu">length</span>(grp), <span class="at">replace=</span>T) <span class="co"># define random groups by bootstrapping</span></span>
+<span id="cb236-3"><a href="grp_indicator_spec.html#cb236-3" tabindex="-1"></a>ivr <span class="ot">&lt;-</span> labdsv<span class="sc">::</span><span class="fu">indval</span>(spe, rnd) <span class="co"># indicator species analysis for *random* groups</span></span>
+<span id="cb236-4"><a href="grp_indicator_spec.html#cb236-4" tabindex="-1"></a><span class="fu">summary</span>(ivr)                    <span class="co"># IndVal expected at random</span></span></code></pre></div>
+<pre><code>##                       cluster indicator_value probability
+## sonchus_oleraceus           1          0.1717       0.025
+## lolium_rigidum              2          0.2269       0.008
+## atriplex_prostrata          2          0.1531       0.025
+## juncus_maritimus            3          0.1758       0.036
+## medicago_intertexta         4          0.2420       0.033
+## phalaris_coerulescens       4          0.2370       0.026</code></pre>
+<pre><code>## 
+## Sum of probabilities                 =  25.936</code></pre>
+<pre><code>## 
+## Sum of Indicator Values              =  4.67</code></pre>
+<pre><code>## 
+## Sum of Significant Indicator Values  =  1.21</code></pre>
+<pre><code>## 
+## Number of Significant Indicators     =  6</code></pre>
+<pre><code>## 
+## Significant Indicator Distribution</code></pre>
+<pre><code>## 
+## 1 2 3 4 
+## 1 2 1 2</code></pre>
+<p><strong>How many indicator species would you expect at random?</strong></p>
+<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb244-1"><a href="grp_indicator_spec.html#cb244-1" tabindex="-1"></a><span class="do">### null expectation setting alpha = 5%</span></span>
+<span id="cb244-2"><a href="grp_indicator_spec.html#cb244-2" tabindex="-1"></a><span class="fu">ceiling</span>( <span class="fu">ncol</span>(spe) <span class="sc">*</span> <span class="fl">0.05</span> )</span></code></pre></div>
+<pre><code>## [1] 3</code></pre>
 <blockquote>
-<p><strong>NOTE:</strong> Height represents the amount of within-cluster variation introduced when clusters are merged. Clusters that join at low heights are very similar, whereas clusters that join at high heights are much more distinct.</p>
+<p><strong>NOTE:</strong> If you defined groups by a clustering method using species information, do not use <em>IndVal</em> to find indicator species of those groups (that would be circular logic).</p>
 </blockquote>
 </div>
-<div id="non-hierarchical-fuzzy-clustering" class="section level2 hasAnchor" number="10.2">
-<h2><span class="header-section-number">10.2</span> Non-hierarchical: fuzzy clustering<a href="cluster.html#non-hierarchical-fuzzy-clustering" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Non-hierarchical methods also exist. And, it may be useful to define groups based on fuzzy rather than crisp partitions, using fuzzy clustering (de Caceres et al. 2010).</p>
-<div class="sourceCode" id="cb194"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb194-1"><a href="cluster.html#cb194-1" tabindex="-1"></a><span class="co"># install.packages(&quot;vegclust&quot;)</span></span>
-<span id="cb194-2"><a href="cluster.html#cb194-2" tabindex="-1"></a><span class="fu">require</span>(vegclust)</span></code></pre></div>
-<pre><code>## Loading required package: vegclust</code></pre>
-<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb196-1"><a href="cluster.html#cb196-1" tabindex="-1"></a>ns   <span class="ot">&lt;-</span> <span class="dv">1</span>       <span class="co"># number of random starts (increase for real analyses!)</span></span>
-<span id="cb196-2"><a href="cluster.html#cb196-2" tabindex="-1"></a>k    <span class="ot">&lt;-</span> <span class="dv">7</span>       <span class="co"># number of groups is specified in advance</span></span>
-<span id="cb196-3"><a href="cluster.html#cb196-3" tabindex="-1"></a><span class="co"># fuzzy c-means</span></span>
-<span id="cb196-4"><a href="cluster.html#cb196-4" tabindex="-1"></a>cl   <span class="ot">&lt;-</span> <span class="fu">vegclustdist</span>(D, <span class="at">mobileMemb=</span>k, <span class="at">method=</span><span class="st">&#39;FCM&#39;</span>, <span class="at">m=</span><span class="fl">1.2</span>, <span class="at">nstart=</span>ns)</span>
-<span id="cb196-5"><a href="cluster.html#cb196-5" tabindex="-1"></a><span class="co"># fuzzy c-means with a noise cluster</span></span>
-<span id="cb196-6"><a href="cluster.html#cb196-6" tabindex="-1"></a>cl_a <span class="ot">&lt;-</span> <span class="fu">vegclustdist</span>(D, <span class="at">mobileMemb=</span>k, <span class="at">method=</span><span class="st">&#39;NC&#39;</span>, <span class="at">m=</span><span class="fl">1.2</span>, <span class="at">dnoise=</span><span class="fl">0.8</span>, <span class="at">nstart=</span>ns)</span>
-<span id="cb196-7"><a href="cluster.html#cb196-7" tabindex="-1"></a><span class="co"># fuzzy c-medoids</span></span>
-<span id="cb196-8"><a href="cluster.html#cb196-8" tabindex="-1"></a>cl_b <span class="ot">&lt;-</span> <span class="fu">vegclustdist</span>(D, <span class="at">mobileMemb=</span>k, <span class="at">method=</span><span class="st">&#39;FCMdd&#39;</span>, <span class="at">m=</span><span class="fl">1.2</span>, <span class="at">nstart=</span>ns)</span>
-<span id="cb196-9"><a href="cluster.html#cb196-9" tabindex="-1"></a><span class="co"># crisp k-means</span></span>
-<span id="cb196-10"><a href="cluster.html#cb196-10" tabindex="-1"></a>cl_c <span class="ot">&lt;-</span> <span class="fu">vegclustdist</span>(D, <span class="at">mobileMemb=</span>k, <span class="at">method=</span><span class="st">&#39;KM&#39;</span>, <span class="at">nstart=</span>ns)</span>
-<span id="cb196-11"><a href="cluster.html#cb196-11" tabindex="-1"></a></span>
-<span id="cb196-12"><a href="cluster.html#cb196-12" tabindex="-1"></a><span class="co"># how well do the other methods agree with fuzzy c-means?</span></span>
-<span id="cb196-13"><a href="cluster.html#cb196-13" tabindex="-1"></a><span class="fu">concordance</span>(cl, cl_a)</span></code></pre></div>
-<pre><code>## adjustedRand 
-##    0.8224128</code></pre>
-<div class="sourceCode" id="cb198"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb198-1"><a href="cluster.html#cb198-1" tabindex="-1"></a><span class="fu">concordance</span>(cl, cl_b)</span></code></pre></div>
-<pre><code>## adjustedRand 
-##    0.6162529</code></pre>
-<div class="sourceCode" id="cb200"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb200-1"><a href="cluster.html#cb200-1" tabindex="-1"></a><span class="fu">concordance</span>(cl, cl_c)</span></code></pre></div>
-<pre><code>## adjustedRand 
-##    0.5436687</code></pre>
-<p>Let’s examine group memberships <code>grp</code> from the fuzzy clustering. While memberships are fuzzy, we can ask for a crisp membership based on a threshold or else the maximum fuzzy membership.</p>
-<div class="sourceCode" id="cb202"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb202-1"><a href="cluster.html#cb202-1" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">round</span>(cl<span class="sc">$</span>memb, <span class="dv">2</span>))               <span class="co"># fuzzy membership</span></span></code></pre></div>
-<pre><code>##     M1   M2   M3   M4  M5   M6   M7
-## 1 0.00 0.97 0.01 0.00 0.0 0.00 0.01
-## 2 0.00 0.00 0.00 0.89 0.1 0.01 0.00
-## 3 0.00 0.00 0.00 0.10 0.9 0.00 0.00
-## 4 0.00 0.00 0.00 0.00 0.0 0.04 0.96
-## 5 0.03 0.02 0.00 0.00 0.0 0.64 0.31
-## 6 0.00 0.00 0.00 0.00 0.0 1.00 0.00</code></pre>
-<div class="sourceCode" id="cb204"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb204-1"><a href="cluster.html#cb204-1" tabindex="-1"></a>(grp <span class="ot">&lt;-</span> <span class="fu">defuzzify</span>(cl, <span class="st">&#39;cut&#39;</span>, <span class="at">alpha=</span><span class="fl">0.8</span>)[[<span class="dv">2</span>]]) <span class="co"># crisp, at threshold (incl NAs)</span></span></code></pre></div>
-<pre><code>##    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 
-## &quot;M2&quot; &quot;M4&quot; &quot;M5&quot; &quot;M7&quot;   NA &quot;M6&quot; &quot;M6&quot; &quot;M2&quot; &quot;M5&quot; &quot;M2&quot; &quot;M2&quot; &quot;M7&quot; &quot;M2&quot; &quot;M2&quot; &quot;M2&quot; &quot;M7&quot; 
-##   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32 
-## &quot;M7&quot; &quot;M5&quot; &quot;M2&quot; &quot;M2&quot;   NA &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M2&quot; &quot;M5&quot;   NA   NA &quot;M5&quot; &quot;M5&quot; 
-##   33   34   35   36   37   38   39   40   41   42   43   44   45   46   47   48 
-## &quot;M7&quot; &quot;M5&quot;   NA &quot;M6&quot; &quot;M7&quot; &quot;M6&quot; &quot;M2&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M4&quot; &quot;M4&quot; &quot;M4&quot; &quot;M4&quot; &quot;M5&quot; &quot;M5&quot; 
-##   49   50   51   52   53   54   55   56   57   58   59   60   61   62   63   64 
-## &quot;M4&quot; &quot;M4&quot; &quot;M4&quot;   NA &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M3&quot; &quot;M5&quot; &quot;M6&quot; &quot;M6&quot; &quot;M1&quot; &quot;M1&quot; 
-##   65   66   67   68   69   70   71   72   73   74   75   76   77   78   79   80 
-## &quot;M1&quot; &quot;M2&quot; &quot;M6&quot; &quot;M2&quot; &quot;M6&quot;   NA &quot;M3&quot; &quot;M3&quot; &quot;M3&quot; &quot;M3&quot; &quot;M3&quot; &quot;M1&quot; &quot;M3&quot; &quot;M3&quot;   NA &quot;M2&quot; 
-##   81   82   83   84   85   86   87   88   89   90   91   92   93   94   95   96 
-## &quot;M3&quot; &quot;M1&quot; &quot;M1&quot; &quot;M1&quot; &quot;M1&quot; &quot;M1&quot; &quot;M1&quot; &quot;M2&quot; &quot;M1&quot; &quot;M1&quot; &quot;M7&quot; &quot;M7&quot; &quot;M1&quot; &quot;M1&quot; &quot;M1&quot; &quot;M1&quot; 
-##   97 
-## &quot;M1&quot;</code></pre>
-<div class="sourceCode" id="cb206"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb206-1"><a href="cluster.html#cb206-1" tabindex="-1"></a>(grp <span class="ot">&lt;-</span> <span class="fu">defuzzify</span>(cl, <span class="st">&#39;max&#39;</span>)[[<span class="dv">2</span>]])    <span class="co"># crisp membership, at max membership</span></span></code></pre></div>
-<pre><code>##    1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 
-## &quot;M2&quot; &quot;M4&quot; &quot;M5&quot; &quot;M7&quot; &quot;M6&quot; &quot;M6&quot; &quot;M6&quot; &quot;M2&quot; &quot;M5&quot; &quot;M2&quot; &quot;M2&quot; &quot;M7&quot; &quot;M2&quot; &quot;M2&quot; &quot;M2&quot; &quot;M7&quot; 
-##   17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32 
-## &quot;M7&quot; &quot;M5&quot; &quot;M2&quot; &quot;M2&quot; &quot;M2&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M2&quot; &quot;M5&quot; &quot;M7&quot; &quot;M2&quot; &quot;M5&quot; &quot;M5&quot; 
-##   33   34   35   36   37   38   39   40   41   42   43   44   45   46   47   48 
-## &quot;M7&quot; &quot;M5&quot; &quot;M4&quot; &quot;M6&quot; &quot;M7&quot; &quot;M6&quot; &quot;M2&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M4&quot; &quot;M4&quot; &quot;M4&quot; &quot;M4&quot; &quot;M5&quot; &quot;M5&quot; 
-##   49   50   51   52   53   54   55   56   57   58   59   60   61   62   63   64 
-## &quot;M4&quot; &quot;M4&quot; &quot;M4&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M5&quot; &quot;M3&quot; &quot;M5&quot; &quot;M6&quot; &quot;M6&quot; &quot;M1&quot; &quot;M1&quot; 
-##   65   66   67   68   69   70   71   72   73   74   75   76   77   78   79   80 
-## &quot;M1&quot; &quot;M2&quot; &quot;M6&quot; &quot;M2&quot; &quot;M6&quot; &quot;M6&quot; &quot;M3&quot; &quot;M3&quot; &quot;M3&quot; &quot;M3&quot; &quot;M3&quot; &quot;M1&quot; &quot;M3&quot; &quot;M3&quot; &quot;M1&quot; &quot;M2&quot; 
-##   81   82   83   84   85   86   87   88   89   90   91   92   93   94   95   96 
-## &quot;M3&quot; &quot;M1&quot; &quot;M1&quot; &quot;M1&quot; &quot;M1&quot; &quot;M1&quot; &quot;M1&quot; &quot;M2&quot; &quot;M1&quot; &quot;M1&quot; &quot;M7&quot; &quot;M7&quot; &quot;M1&quot; &quot;M1&quot; &quot;M1&quot; &quot;M1&quot; 
-##   97 
-## &quot;M1&quot;</code></pre>
-<div class="sourceCode" id="cb208"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb208-1"><a href="cluster.html#cb208-1" tabindex="-1"></a><span class="fu">table</span>(grp, <span class="at">useNA=</span><span class="st">&#39;always&#39;</span>)            <span class="co"># tally points per group</span></span></code></pre></div>
-<pre><code>## grp
-##   M1   M2   M3   M4   M5   M6   M7 &lt;NA&gt; 
-##   18   17    9    9   25   10    9    0</code></pre>
-<p><strong>Compare fuzzy clusters to Ward clusters</strong></p>
-<div class="sourceCode" id="cb210"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb210-1"><a href="cluster.html#cb210-1" tabindex="-1"></a><span class="fu">table</span>(grp, <span class="fu">cutree</span>(cl_ward, <span class="at">k =</span> <span class="dv">7</span>))</span></code></pre></div>
-<pre><code>##     
-## grp   1  2  3  4  5  6  7
-##   M1  0  0  0  1  1  0 16
-##   M2 16  0  0  0  1  0  0
-##   M3  0  0  0  0  8  1  0
-##   M4  0  9  0  0  0  0  0
-##   M5  0  0 23  0  0  2  0
-##   M6  0  0  0 10  0  0  0
-##   M7  0  0  0  2  5  0  2</code></pre>
-<p>The Ward and fuzzy clustering solutions show substantial agreement, with several fuzzy clusters corresponding closely to individual Ward clusters. However, some Ward groups, especially clusters 5, 6, and 7, are split across multiple fuzzy clusters, suggesting that these communities may represent transitional or less clearly separated assemblages.</p>
-</div>
-<div id="key-references-6" class="section level2 hasAnchor" number="10.3">
-<h2><span class="header-section-number">10.3</span> Key references<a href="cluster.html#key-references-6" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>de Caceres, M., X. Font, F. Oliva. 2010. The management of numerical vegetation classifications with fuzzy clustering methods. Journal of Vegetation Science 21: 1138–1151.</p>
-<p>Murtagh, F., and P. Legendre. 2014. Ward’s hierarchical agglomerative clustering method: which algorithms implement Ward’s criterion? Journal of Classification 31: 274–295.</p>
+<div id="key-references-8" class="section level2 hasAnchor" number="12.2">
+<h2><span class="header-section-number">12.2</span> Key references<a href="grp_indicator_spec.html#key-references-8" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Dufrêne, M. and Legendre, P. 1997. Species assemblages and indicator species: the need for a flexible asymmetrical approach. Ecological Monographs 67(3): 345–366.</p>
+<p>de Cáceres, M., P. Legendre, and M. Moretti. 2010. Improving indicator species analysis by combining groups of sites. Oikos 119:1674–1684.</p>
 
 </div>
 </div>
@@ -439,8 +409,8 @@ In this approach, we can set the number of groups <em>a priori</em> for visualiz
           </div>
         </div>
       </div>
-<a href="ord_constrained.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="grp_diffs.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="grp_diffs.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="comm_traits.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -471,7 +441,7 @@ gitbook.start({
     "size": 2
   },
   "edit": {
-    "link": "https://github.com/rstudio/bookdown-demo/edit/master/09-group-clustering.Rmd",
+    "link": "https://github.com/rstudio/bookdown-demo/edit/master/11-indicator-species.Rmd",
     "text": "Edit"
   },
   "history": {

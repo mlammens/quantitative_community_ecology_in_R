@@ -1,6 +1,6 @@
 --- 
 title: "Quantitative Community Ecology in R"
-author: "Matthew Aiello-Lammens and many others"
+author: "Matthew Aiello-Lammens, Martin Dovciak, Robert Smith, Carissa Brown, Morgan D. Frost, Anita Thompson"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 output: bookdown::gitbook

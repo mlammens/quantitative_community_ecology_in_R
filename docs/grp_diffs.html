@@ -4,18 +4,18 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 7 Dissimilarities | Quantitative Community Ecology in R</title>
+  <title>Chapter 11 Group differences | Quantitative Community Ecology in R</title>
   <meta name="description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 7 Dissimilarities | Quantitative Community Ecology in R" />
+  <meta property="og:title" content="Chapter 11 Group differences | Quantitative Community Ecology in R" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   <meta name="github-repo" content="mlammens/quantitative_community_ecology_in_R" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 7 Dissimilarities | Quantitative Community Ecology in R" />
+  <meta name="twitter:title" content="Chapter 11 Group differences | Quantitative Community Ecology in R" />
   
   <meta name="twitter:description" content="This is a site for materials taught in a workshop on quantitative community ecology in R affaliated with the ESA Vegetation section." />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="diversity.html"/>
-<link rel="next" href="ord_unconstrained.html"/>
+<link rel="prev" href="cluster.html"/>
+
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -304,102 +304,134 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="dissim" class="section level1 hasAnchor" number="7">
-<h1><span class="header-section-number">Chapter 7</span> Dissimilarities<a href="dissim.html#dissim" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<p><strong><em>How dissimilar are community compositions among sites?</em></strong></p>
-<p>Dissimilarities among sites help us position sites along gradients, organize them into clusters, or distinguish differences among groups of sites.</p>
-<div id="dissimilarity-matrix-for-species" class="section level2 hasAnchor" number="7.1">
-<h2><span class="header-section-number">7.1</span> Dissimilarity matrix for species<a href="dissim.html#dissimilarity-matrix-for-species" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>We can create a pairwise dissimilarity matrix <code>D</code> based on shared and unshared species among sites.
-An easy way to calculate this matrix is to use the <code>vegdist</code> (i.e., vegetation distance) function in the <code>vegan</code> package.
-For the resulting dissimilarity values, high values = more dissimilar (different) and low values = more similar (same).</p>
-<p>Euclidean distance is probably the most intuitive dissimilarity metric, however it is seldom useful for species abundance data.
-Here we use the more preferable Bray-Curtis (Sørensen) dissimilarity.
-Legendre and Legendre (2012) give a full survey of existing distance/dissimilarity measures (there are many – in fact, the <code>vegdist</code> function includes 22 different dissimilarity methods!!).
-Also, checkout the help file for <code>vegdist</code> for lots of helpful information and references – <code>?vegdist</code>.</p>
-<p>As in Section <a href="data-transform.html#data-transform">5</a> we are using the <code>tabasco</code> function to create a heatmap of a matrix.
-Recall that darker colors indicate greater values, thus greater turn-over in this case.</p>
-<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb146-1"><a href="dissim.html#cb146-1" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="at">method=</span><span class="st">&#39;bray&#39;</span>, <span class="at">binary=</span>T)</span>
-<span id="cb146-2"><a href="dissim.html#cb146-2" tabindex="-1"></a><span class="fu">tabasco</span>(<span class="fu">as.matrix</span>(d), <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-55-1.png" width="672" /></p>
-<hr />
-<div id="challenge-8" class="section level4 hasAnchor" number="7.1.0.1">
-<h4><span class="header-section-number">7.1.0.1</span> Challenge<a href="dissim.html#challenge-8" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p>Why is the diagonal white (i.e., blank)?</p>
-<hr />
+<div id="grp_diffs" class="section level1 hasAnchor" number="11">
+<h1><span class="header-section-number">Chapter 11</span> Group differences<a href="grp_diffs.html#grp_diffs" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><strong>Do community compositions significantly differ among groups?</strong></p>
+<p>Let’s assume PERMANOVA is the best choice for comparing groups in multivariate space. Other methods (ANOSIM, MRPP) exist, but PERMANOVA usually has better power and false-detection rates, even when groups may have different dispersions (Anderson and Walsh 2013) among other operational advantages.</p>
+<blockquote>
+<p><strong>PERMANOVA</strong> (Permutational Multivariate Analysis of Variance) tests whether the composition of groups differs in multivariate space based on a dissimilarity matrix (e.g., Bray-Curtis). It is analogous to ANOVA for community data and uses permutations rather than normality assumptions to assess statistical significance.</p>
+</blockquote>
+<div class="sourceCode" id="cb212"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb212-1"><a href="grp_diffs.html#cb212-1" tabindex="-1"></a><span class="do">## Recall in unconstrained ordination section</span></span>
+<span id="cb212-2"><a href="grp_diffs.html#cb212-2" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">metaMDS</span>(D, <span class="at">k=</span><span class="dv">2</span>, <span class="at">maxit=</span><span class="dv">250</span>, <span class="at">try=</span><span class="dv">100</span>, <span class="at">trymax=</span><span class="dv">101</span>, <span class="at">trace=</span><span class="dv">0</span>) <span class="co"># NMDS</span></span>
+<span id="cb212-3"><a href="grp_diffs.html#cb212-3" tabindex="-1"></a></span>
+<span id="cb212-4"><a href="grp_diffs.html#cb212-4" tabindex="-1"></a><span class="do">### define and visualize four groups</span></span>
+<span id="cb212-5"><a href="grp_diffs.html#cb212-5" tabindex="-1"></a>brk     <span class="ot">&lt;-</span> <span class="fu">quantile</span>(env<span class="sc">$</span>k, <span class="at">probs=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="at">by=</span><span class="fl">0.25</span>))   <span class="co"># define breaks</span></span>
+<span id="cb212-6"><a href="grp_diffs.html#cb212-6" tabindex="-1"></a>grp_k <span class="ot">&lt;-</span> <span class="fu">cut</span>(env<span class="sc">$</span>k, brk, <span class="at">include.lowest=</span>T,</span>
+<span id="cb212-7"><a href="grp_diffs.html#cb212-7" tabindex="-1"></a>               <span class="at">labels=</span><span class="fu">c</span>(<span class="st">&#39;lo&#39;</span>,<span class="st">&#39;med&#39;</span>,<span class="st">&#39;hi&#39;</span>,<span class="st">&#39;veryhi&#39;</span>))   <span class="co"># group memberships</span></span>
+<span id="cb212-8"><a href="grp_diffs.html#cb212-8" tabindex="-1"></a><span class="fu">table</span>(grp_k, <span class="at">useNA=</span><span class="st">&#39;always&#39;</span>)                       <span class="co"># group tally</span></span></code></pre></div>
+<pre><code>## grp_k
+##     lo    med     hi veryhi   &lt;NA&gt; 
+##     25     25     23     24      0</code></pre>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb214-1"><a href="grp_diffs.html#cb214-1" tabindex="-1"></a><span class="fu">tapply</span>(env<span class="sc">$</span>k, <span class="at">INDEX =</span> grp_k, <span class="at">FUN =</span> mean)           <span class="co"># group means</span></span></code></pre></div>
+<pre><code>##       lo      med       hi   veryhi 
+## 0.584000 1.012000 1.582609 2.870833</code></pre>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb216-1"><a href="grp_diffs.html#cb216-1" tabindex="-1"></a><span class="fu">plot</span>(m1<span class="sc">$</span>points, <span class="at">pch=</span><span class="cn">NA</span>)                              <span class="co"># visualize on the NMS</span></span>
+<span id="cb216-2"><a href="grp_diffs.html#cb216-2" tabindex="-1"></a><span class="fu">text</span>(m1<span class="sc">$</span>points, <span class="at">labels=</span>grp_k, <span class="at">col=</span><span class="fu">as.numeric</span>(grp_k)) <span class="co"># group memberships</span></span>
+<span id="cb216-3"><a href="grp_diffs.html#cb216-3" tabindex="-1"></a><span class="fu">ordispider</span>(m1, <span class="at">groups=</span>grp_k, <span class="at">col=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>)              <span class="co"># group centroids </span></span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-82-1.png" width="672" /></p>
+<p><strong>What do we see?</strong></p>
+<p>Grouping sites into quartiles of k shows that community composition varies along a k gradient in NMDS space.
+Low-k sites tend to occur toward the left side of the ordination, whereas very high-k sites are concentrated toward the right, suggesting that k is associated with the dominant compositional gradient.
+We can actually compare this to the NMDS plots created with environmental gradients in <strong>Section</strong> @ref{ord_unconstrained} and see this pattern as well.</p>
+<div id="test-for-difference-in-community-compositions" class="section level2 hasAnchor" number="11.1">
+<h2><span class="header-section-number">11.1</span> Test for difference in community compositions<a href="grp_diffs.html#test-for-difference-in-community-compositions" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>PERMANOVA tests for differences in multivariate centroids, in the space of the chosen dissimilarity measure.
+Recall that matrix D was our matrix of pairwise Bray-Curtis dissimilarities.</p>
+<div class="sourceCode" id="cb217"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb217-1"><a href="grp_diffs.html#cb217-1" tabindex="-1"></a><span class="do">### permanova: test for differences in multivariate *centroid*</span></span>
+<span id="cb217-2"><a href="grp_diffs.html#cb217-2" tabindex="-1"></a>a1 <span class="ot">&lt;-</span> <span class="fu">adonis2</span>(D <span class="sc">~</span> grp_k, <span class="at">permu=</span><span class="dv">999</span>)</span>
+<span id="cb217-3"><a href="grp_diffs.html#cb217-3" tabindex="-1"></a>a1</span></code></pre></div>
+<pre><code>## Permutation test for adonis under reduced model
+## Permutation: free
+## Number of permutations: 999
+## 
+## adonis2(formula = D ~ grp_k, permutations = 999)
+##          Df SumOfSqs      R2      F Pr(&gt;F)    
+## Model     3   11.588 0.24801 10.224  0.001 ***
+## Residual 93   35.136 0.75199                  
+## Total    96   46.724 1.00000                  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p><strong>How do we interpret this result?</strong></p>
+<p>Based on Bray-Curtis dissimilarities, four groups defined by soil potassium significantly differed in community compositions (PERMANOVA pseudo-F = 10.2, permutational p = 0.001, R2 = 0.25).
+The NMDS ordination helps us see that this is largely driven by the “veryhi” group, which you can test formally by repeating PERMANOVA for pairwise multiple comparisons.</p>
+<div id="test-for-homogeneity-of-community-compositions" class="section level3 hasAnchor" number="11.1.1">
+<h3><span class="header-section-number">11.1.1</span> Test for homogeneity of community compositions<a href="grp_diffs.html#test-for-homogeneity-of-community-compositions" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>A related test, PERMDISP, tests for differences in multivariate dispersion, in the space of the chosen dissimilarity measure. This is interpreted as a test of among-group homogeneity of community compositions, i.e., beta-diversity. Conveniently, we can ask for pairwise multiple comparisons.</p>
+<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb219-1"><a href="grp_diffs.html#cb219-1" tabindex="-1"></a><span class="do">### permdisp: test for differences in multivariate *dispersion*</span></span>
+<span id="cb219-2"><a href="grp_diffs.html#cb219-2" tabindex="-1"></a>b1 <span class="ot">&lt;-</span> <span class="fu">betadisper</span>(D, grp_k)</span>
+<span id="cb219-3"><a href="grp_diffs.html#cb219-3" tabindex="-1"></a>b1</span></code></pre></div>
+<pre><code>## 
+##  Homogeneity of multivariate dispersions
+## 
+## Call: betadisper(d = D, group = grp_k)
+## 
+## No. of Positive Eigenvalues: 44
+## No. of Negative Eigenvalues: 45
+## 
+## Average distance to median:
+##     lo    med     hi veryhi 
+## 0.6455 0.6148 0.5923 0.3802 
+## 
+## Eigenvalues for PCoA axes:
+## (Showing 8 of 89 eigenvalues)
+##  PCoA1  PCoA2  PCoA3  PCoA4  PCoA5  PCoA6  PCoA7  PCoA8 
+## 26.158  5.991  4.788  4.020  3.347  2.409  2.191  1.912</code></pre>
+<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb221-1"><a href="grp_diffs.html#cb221-1" tabindex="-1"></a><span class="fu">permutest</span>(b1, <span class="at">pairwise=</span><span class="cn">TRUE</span>, <span class="at">permu=</span><span class="dv">999</span>)</span></code></pre></div>
+<pre><code>## 
+## Permutation test for homogeneity of multivariate dispersions
+## Permutation: free
+## Number of permutations: 999
+## 
+## Response: Distances
+##           Df Sum Sq Mean Sq      F N.Perm Pr(&gt;F)    
+## Groups     3 1.0573 0.35244 7.9873    999  0.001 ***
+## Residuals 93 4.1036 0.04412                         
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Pairwise comparisons:
+## (Observed p-value below diagonal, permuted p-value above diagonal)
+##                lo        med         hi veryhi
+## lo                0.60500000 0.33100000  0.001
+## med    0.61171967            0.67800000  0.001
+## hi     0.33798371 0.68732930             0.003
+## veryhi 0.00016087 0.00075595 0.00103463</code></pre>
+<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb223-1"><a href="grp_diffs.html#cb223-1" tabindex="-1"></a><span class="fu">boxplot</span>(b1)</span></code></pre></div>
+<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-84-1.png" width="672" /></p>
+<p><strong>How do we interpret this?</strong></p>
+<p>Based on Principal Coordinates reduction of original Bray-Curtis dissimilarities, the four groups defined by soil potassium significantly differed in homogeneity of community compositions (PERMDISP F = 7.98, permutational p = 0.001).
+This was due to the “veryhi” potassium group having significantly lower dispersion (lower beta-diversity) than the lower-potassium groups.</p>
 </div>
-<div id="what-metric-to-use" class="section level3 hasAnchor" number="7.1.1">
-<h3><span class="header-section-number">7.1.1</span> What metric to use?<a href="dissim.html#what-metric-to-use" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p>The specific measure used might depend on your particular ecological question, your data collection methods, or on the variable types you are working with.</p>
-<p><strong>Jaccard</strong> - focuses on shared species, using presence-absence data only. Range 0-1.</p>
-<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb147-1"><a href="dissim.html#cb147-1" tabindex="-1"></a>jaccard <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="at">method =</span> <span class="st">&quot;jaccard&quot;</span>)</span></code></pre></div>
-<p><strong>Bray-Curtis</strong> - considers species composition and abundance. Range 0-1.</p>
-<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb148-1"><a href="dissim.html#cb148-1" tabindex="-1"></a>bray_curtis <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(spe, <span class="at">method =</span> <span class="st">&quot;bray&quot;</span>)</span></code></pre></div>
-<p><strong>Gower</strong> - measures general dissimilarity and can be used with continuous, ordinal, or categorical data. This makes it particularly useful when calculating dissimilarities among plots with mixed environmental variable types or among species with mixed trait variable types.</p>
-<div class="sourceCode" id="cb149"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb149-1"><a href="dissim.html#cb149-1" tabindex="-1"></a>gower <span class="ot">&lt;-</span> <span class="fu">vegdist</span>(tra, <span class="at">method =</span> <span class="st">&quot;gower&quot;</span>)</span></code></pre></div>
 </div>
+<div id="permanova-equivalence-to-anova" class="section level2 hasAnchor" number="11.2">
+<h2><span class="header-section-number">11.2</span> PERMANOVA equivalence to ANOVA<a href="grp_diffs.html#permanova-equivalence-to-anova" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>PERMANOVA works as ‘regular’ ANOVA when using Euclidean distances. We’d expect a different p-value since we’re using permutations, but identical F-values and sums-of-squares.</p>
+<div class="sourceCode" id="cb224"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb224-1"><a href="grp_diffs.html#cb224-1" tabindex="-1"></a>De <span class="ot">&lt;-</span> <span class="fu">dist</span>(env<span class="sc">$</span>k, <span class="st">&#39;euc&#39;</span>)            <span class="co"># Euclidean distances</span></span>
+<span id="cb224-2"><a href="grp_diffs.html#cb224-2" tabindex="-1"></a><span class="fu">adonis2</span>(De <span class="sc">~</span> grp_k, <span class="at">perm=</span><span class="dv">999</span>)      <span class="co"># examine F and SS</span></span></code></pre></div>
+<pre><code>## Permutation test for adonis under reduced model
+## Permutation: free
+## Number of permutations: 999
+## 
+## adonis2(formula = De ~ grp_k, permutations = 999)
+##          Df SumOfSqs      R2      F Pr(&gt;F)    
+## Model     3   72.186 0.76738 102.26  0.001 ***
+## Residual 93   21.883 0.23262                  
+## Total    96   94.069 1.00000                  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<div class="sourceCode" id="cb226"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb226-1"><a href="grp_diffs.html#cb226-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">anova</span>(<span class="fu">lm</span>(k <span class="sc">~</span> grp_k, env)))      <span class="co"># expect identical F and SS</span></span></code></pre></div>
+<pre><code>## Analysis of Variance Table
+## 
+## Response: k
+##           Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## grp_k      3 72.186 24.0621  102.26 &lt; 2.2e-16 ***
+## Residuals 93 21.883  0.2353                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
-<div id="partitioning-turnover-and-nestedness" class="section level2 hasAnchor" number="7.2">
-<h2><span class="header-section-number">7.2</span> Partitioning turnover and nestedness<a href="dissim.html#partitioning-turnover-and-nestedness" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p><strong>Turnover</strong> is related to species replacement across sites (or time)</p>
-<p><strong>Nestedness</strong> is the proportion of species that are subset of the species that occur at another site (or time period). In other words, are the species at one site found in another site?</p>
-<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb150-1"><a href="dissim.html#cb150-1" tabindex="-1"></a><span class="co"># Calculate beta diversity (Uniqueness and Nestedness)</span></span>
-<span id="cb150-2"><a href="dissim.html#cb150-2" tabindex="-1"></a>spe_pa <span class="ot">&lt;-</span> vegan<span class="sc">::</span><span class="fu">decostand</span>(spe, <span class="at">method =</span> <span class="st">&quot;pa&quot;</span>)</span>
-<span id="cb150-3"><a href="dissim.html#cb150-3" tabindex="-1"></a>beta_diversity <span class="ot">&lt;-</span> betapart<span class="sc">::</span><span class="fu">beta.pair</span>(spe_pa)</span></code></pre></div>
-<p><strong>There are three items in the list output:</strong></p>
-<p><strong>beta.sim</strong>: turnover component; represents dissimilarity due to species turnover/replacement. High SIM suggests species replacement is a main driver of site differences (not richness)</p>
-<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb151-1"><a href="dissim.html#cb151-1" tabindex="-1"></a><span class="fu">tabasco</span>(<span class="fu">as.matrix</span>(beta_diversity<span class="sc">$</span>beta.sim), <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-60-1.png" width="672" /></p>
-<p><strong>beta.sne</strong>: nestedness component; represents dissimilarity due to shared species or richness differences. High SNE suggests species loss and nestedness (richness differences) are main drivers of site differences.</p>
-<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb152-1"><a href="dissim.html#cb152-1" tabindex="-1"></a><span class="fu">tabasco</span>(<span class="fu">as.matrix</span>(beta_diversity<span class="sc">$</span>beta.sne), <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-61-1.png" width="672" /></p>
-<p><strong>beta.sor</strong>: total dissimilarity, using Sorenson or Jaccard dissimilarity</p>
-<div class="sourceCode" id="cb153"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb153-1"><a href="dissim.html#cb153-1" tabindex="-1"></a><span class="fu">tabasco</span>(<span class="fu">as.matrix</span>(beta_diversity<span class="sc">$</span>beta.sor), <span class="at">col=</span><span class="fu">get_palette</span>())</span></code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-62-1.png" width="672" /></p>
-</div>
-<div id="stepacross-adjustment" class="section level2 hasAnchor" number="7.3">
-<h2><span class="header-section-number">7.3</span> Stepacross adjustment<a href="dissim.html#stepacross-adjustment" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Sometimes a pair of sites are “maximally dissimilar”: they share no species at all, so pairwise dissimilarity is impossible to quantify using a proportional measure (e.g., Bray-Curtis).
-Stepacross adjustment solves this by linking “no-share” sites with intermediate site(s) that share at least some species in common.
-<em>Why should we be concerned about this?</em>
-As datasets become sparse (many zeros), large numbers of site pairs end up with Bray–Curtis = 1. This causes an accumulation of ties and a loss of information about the underlying ecological gradient.
-Smith (2017) describes other possible solutions.</p>
-<p>Here’s a “toy-example” of the issue:</p>
-<p>How dissimilar are SUs A and C? They share no species in common…</p>
-<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb154-1"><a href="dissim.html#cb154-1" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>, <span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>, <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>), <span class="at">nrow=</span><span class="dv">3</span>, <span class="at">byrow=</span>T), </span>
-<span id="cb154-2"><a href="dissim.html#cb154-2" tabindex="-1"></a>                <span class="at">row.names=</span><span class="fu">paste0</span>(<span class="st">&#39;su&#39;</span>,<span class="fu">c</span>(<span class="st">&#39;A&#39;</span>,<span class="st">&#39;B&#39;</span>,<span class="st">&#39;C&#39;</span>)))</span>
-<span id="cb154-3"><a href="dissim.html#cb154-3" tabindex="-1"></a><span class="fu">names</span>(m) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&#39;sp&#39;</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
-<span id="cb154-4"><a href="dissim.html#cb154-4" tabindex="-1"></a>m</span></code></pre></div>
-<pre><code>##     sp1 sp2 sp3 sp4 sp5
-## suA   1   1   0   0   0
-## suB   0   1   1   1   0
-## suC   0   0   0   1   1</code></pre>
-<p>…Bray-Curtis will max out at 1.0…</p>
-<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="dissim.html#cb156-1" tabindex="-1"></a><span class="fu">vegdist</span>(m, <span class="st">&#39;bray&#39;</span>)</span></code></pre></div>
-<pre><code>##     suA suB
-## suB 0.6    
-## suC 1.0 0.6</code></pre>
-<p>…but <code>stepacross()</code> replaces “too long” distances with shortest path.</p>
-<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="dissim.html#cb158-1" tabindex="-1"></a>sa <span class="ot">&lt;-</span> <span class="fu">stepacross</span>(<span class="fu">vegdist</span>(m, <span class="st">&#39;bray&#39;</span>))</span></code></pre></div>
-<pre><code>## Too long or NA distances: 1 out of 3 (33.3%)
-## Stepping across 3 dissimilarities...</code></pre>
-<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb160-1"><a href="dissim.html#cb160-1" tabindex="-1"></a>sa</span></code></pre></div>
-<pre><code>##     suA suB
-## suB 0.6    
-## suC 1.2 0.6</code></pre>
-<p>Visually we can think of this as the figure below:</p>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-63-1.png" width="672" /></p>
-<p>And here we show what happens when we use the <code>stepacross</code> function on our Mafragh data set.</p>
-<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb162-1"><a href="dissim.html#cb162-1" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="fu">stepacross</span>(d, <span class="st">&#39;shortest&#39;</span>, <span class="at">toolong =</span> <span class="dv">1</span>)</span></code></pre></div>
-<pre><code>## Too long or NA distances: 2055 out of 4656 (44.1%)
-## Stepping across 4656 dissimilarities...</code></pre>
-<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb164-1"><a href="dissim.html#cb164-1" tabindex="-1"></a><span class="fu">plot</span>(d, D, <span class="at">xlab =</span> <span class="st">&#39;Original&#39;</span>, <span class="at">ylab =</span> <span class="st">&#39;Stepacross&#39;</span>)</span></code></pre></div>
-<p><img src="bookdown-demo_files/figure-html/unnamed-chunk-64-1.png" width="672" /></p>
-</div>
-<div id="key-references-3" class="section level2 hasAnchor" number="7.4">
-<h2><span class="header-section-number">7.4</span> Key references<a href="dissim.html#key-references-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
-<p>Legendre, P., and L. Legendre. 2012. Numerical Ecology. Volume 24, Third Edition. Elsevier.</p>
-<p>Smith, R.J. 2017. Solutions for loss of information in high-beta-diversity community data. Methods in Ecology and Evolution 8:68–74.</p>
+<div id="key-references-7" class="section level2 hasAnchor" number="11.3">
+<h2><span class="header-section-number">11.3</span> Key references<a href="grp_diffs.html#key-references-7" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Anderson, M. J., and D. C. I. Walsh. 2013. PERMANOVA, ANOSIM, and the Mantel test in the face of heterogeneous dispersions: What null hypothesis are you testing? Ecological Monographs 83:557–574. <a href="https://doi.org/10.1890/12-2010.1" class="uri">https://doi.org/10.1890/12-2010.1</a></p>
 
 </div>
 </div>
@@ -408,8 +440,8 @@ Smith (2017) describes other possible solutions.</p>
           </div>
         </div>
       </div>
-<a href="diversity.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="ord_unconstrained.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="cluster.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -440,7 +472,7 @@ gitbook.start({
     "size": 2
   },
   "edit": {
-    "link": "https://github.com/rstudio/bookdown-demo/edit/master/06-dissimilarities.Rmd",
+    "link": "https://github.com/rstudio/bookdown-demo/edit/master/10-group-differences.Rmd",
     "text": "Edit"
   },
   "history": {

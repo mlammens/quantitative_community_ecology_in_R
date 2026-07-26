@@ -99,7 +99,12 @@ dbrda-the-community-analysis-swiss-army-knife
 visualizing-site-x-environment-relationships-with-rda-and-dbrda
 tri-plots---site-species-and-environmental-together
 key-references-5
-group-clustering
+cluster
 hierarchical-wards-clustering
 non-hierarchical-fuzzy-clustering
 key-references-6
+grp_diffs
+test-for-difference-in-community-compositions
+test-for-homogeneity-of-community-compositions
+permanova-equivalence-to-anova
+key-references-7
